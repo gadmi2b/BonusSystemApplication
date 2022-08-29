@@ -35,12 +35,12 @@ namespace BonusSystemApplication.Controllers
             List<AccessFilter> accessFilters = new List<AccessFilter>();
 
             #region Global accesses for user:
-            IEnumerable<FormGlobalAccess> formGlobalAccess = formGlobalAccessRepository.GetFormGlobalAccessByUserId(userId);
+            IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(userId);
             #endregion
 
             #region Forms where user has Global accesses:
-            IQueryable<Form> allForms = formRepository.GetFormsWithGlobalAccess(formGlobalAccess);
-            // !could be null here
+            IQueryable<Form> globalAccessForms = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
+            // could be null here
             #endregion
 
             #region Forms where user has Participation:
@@ -52,6 +52,14 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Request combination and data pulling into HomeIndexViewModels
+            List<Form> availableForms = globalAccessForms.ToList();
+
+            foreach (FormGlobalAccess formGA in formGlobalAccesses)
+            {
+                var expr = formRepository.GenerateGlobalAccessExpression(formGA).Compile();
+                List<Form> query = availableForms.Where(expr).ToList();
+                Console.WriteLine();
+            }
 
             #endregion
 

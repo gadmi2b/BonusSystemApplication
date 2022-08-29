@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BonusSystemApplication.Models.Repositories
 {
@@ -34,31 +35,13 @@ namespace BonusSystemApplication.Models.Repositories
 
             IQueryable<Form> formsQuery = null;
 
-
-
             foreach (var formGA in formGlobalAccesses)
             {
-                IQueryable<Form> query;
+                IQueryable <Form> query = formsQueryInitial.Where(GenerateGlobalAccessExpression(formGA));
 
-                if (formGA.DepartmentId == null) // all forms available for user
+                if(query == null)
                 {
-                    formsQuery = formsQueryInitial;
-                    break;
-                }
-                else if (formGA.TeamId == null) // forms with same: department
-                {
-                    query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId);
-                }
-                else if (formGA.WorkprojectId == null) // forms with same: department, team
-                {
-                    query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId &&
-                                                              f.Employee.TeamId == formGA.TeamId);
-                }
-                else // forms with: same department, team, workproject
-                {
-                    query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId &&
-                                                              f.Employee.TeamId == formGA.TeamId &&
-                                                              f.WorkprojectId == formGA.WorkprojectId);
+                    continue;
                 }
 
                 if (formsQuery == null)
@@ -89,6 +72,34 @@ namespace BonusSystemApplication.Models.Repositories
         public void DeleteForm(long id)
         {
             throw new NotImplementedException();
+        }
+
+
+        public Expression<Func<Form, bool>> GenerateGlobalAccessExpression(FormGlobalAccess formGlobalAccess)
+        {
+            Expression<Func<Form, bool>> expr;
+
+            if (formGlobalAccess.DepartmentId == null)
+            {
+                expr = (Form f) => true;
+            }
+            else if (formGlobalAccess.TeamId == null)
+            {
+                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId;
+            }
+            else if (formGlobalAccess.WorkprojectId == null)
+            {
+                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
+                                   f.Employee.TeamId == formGlobalAccess.TeamId;
+            }
+            else
+            {
+                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
+                                   f.Employee.TeamId == formGlobalAccess.TeamId &&
+                                   f.WorkprojectId == formGlobalAccess.WorkprojectId;
+            }
+
+            return expr;
         }
     }
 }

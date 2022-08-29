@@ -111,6 +111,40 @@
     //    return forms;
     //}
 
+    //-----------------------------------------------------------------
+    //foreach (var formGA in formGlobalAccesses)
+    //{
+    //    IQueryable<Form> query;
 
+    //    if (formGA.DepartmentId == null) // all forms available for user
+    //    {
+    //        formsQuery = formsQueryInitial;
+    //        break;
+    //    }
+    //    else if (formGA.TeamId == null) // forms with same: department
+    //    {
+    //        query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId);
+    //    }
+    //    else if (formGA.WorkprojectId == null) // forms with same: department, team
+    //    {
+    //        query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId &&
+    //                                                    f.Employee.TeamId == formGA.TeamId);
+    //    }
+    //    else // forms with: same department, team, workproject
+    //    {
+    //        query = formsQueryInitial.Where(f => f.Employee.DepartmentId == formGA.DepartmentId &&
+    //                                                    f.Employee.TeamId == formGA.TeamId &&
+    //                                                    f.WorkprojectId == formGA.WorkprojectId);
+    //    }
+
+    //    if (formsQuery == null)
+    //    {
+    //        formsQuery = query;
+    //    }
+    //    else
+    //    {
+    //        formsQuery = formsQuery.Union(query);
+    //    }
+    //}
 
 }

@@ -1,4 +1,5 @@
-﻿namespace BonusSystemApplication.Models.Repositories
+﻿using System.Linq.Expressions;
+namespace BonusSystemApplication.Models.Repositories
 {
     public interface IFormRepository
     {
@@ -10,5 +11,7 @@
         void CreateForm(Form form);
         void UpdateForm(Form form);
         void DeleteForm(long id);
+
+        public Expression<Func<Form, bool>> GenerateGlobalAccessExpression(FormGlobalAccess formGlobalAccess);
     }
 }
