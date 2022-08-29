@@ -1,0 +1,9 @@
+﻿.content {
+    margin: 10px 20px 10px 20px;
+    min-width: 1320px;
+}
+
+.content--styles {
+    border: 1px solid black;
+    border-radius: 2px;
+}

@@ -1,0 +1,82 @@
+﻿/* 
+ * CLI - COMMAND LANGUAGE INTERFACE:
+ * cd WebAppMvc - change project directory from current to one level deep
+ * dir - for info
+ * 
+ * dotnet ef migrations add Initial
+ * 
+ */
+
+/* 
+ * https://habr.com/ru/post/247373/
+ * A tables in SQL are non sorted values located in a heap: that's why indexes (a way to fast data search):
+ *  - Индекс состоит из набора страниц - узлов индекса, которые организованы в виде древовидной структуры — сбалансированного дерева.
+ *  
+ * Primary key -  automatically unique clastered index [ballanced-tree leafs contain row data]
+ * Unique constraint - automat. unique non-clastered index [ballanced-tree leafs contain pointers to row data in heap]
+ * 
+ * Foreign key constraint - is used to prevent actions that would destroy links between tables 
+ */
+
+
+/* 
+ * Models:
+ * 
+ * IEnumerable<T> (LINQ version for .NET)
+ *  - for a list of objects that only needs to be iterated through(no aditional operations like modification).
+ *  - is a special case, because it turns a collection into a read-only version, due to IEnumerable not having a Add or Remove method.
+ *  - forward-only list of items. You can't get at "item 4" without passing items 0-3.
+ *  
+ *  - in Views even @Model.Count() (like foreach) will lead to request all items from DB (create objects) and iterating through them. SELECT SQL operator is using
+ *  
+ * IQueryable<T> (LINQ version for ENTITY FRAMEWORK)
+ *  - query isn't executed until you really iterate over the items (.ToList() or foreach). Which means you still can add filters, like a Where()
+ *  - extends IEnumerable
+ *  
+ *  - in Views will not lead to additional SQL requests. @Model.Count() wiil cause SELECT COUNT SQL operator (counting on DB side)
+ * 
+ * ICollection<T>
+ *  - for a list of objects that needs to be iterated through and modified.
+ *  - is between IEnumerable and IList
+ *  - extends IEnumerable
+ * 
+ * IList<T>
+ *  - for a list of objects that needs to be iterated through, modified, sorted, access by index...
+ *  - random access to the full list
+ *  - probably entirely in memory (no deferred execution, but who knows what the exact class does that implements this?)
+ *  - extends IEnumerable and ICollection
+*/
+
+/* 
+ * GenericRepository.cs
+ * Set<T>() returns object DbSet<T>
+ * 
+ * https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/read-related-data?view=aspnetcore-6.0
+ * .AsNoTracking can greatly speed things up if you're not intending on actually editing the entities and resaving
+ */
+
+/*
+ * DomainModel в ASP.NET Core MVC
+ *  - прямая свявь с базой данных. Не должна содержать атрибутов валидации формы
+ * 
+ * ViewModel в ASP.NET Core MVC
+ *  - это модель, которая содержит более одной модели данных, необходимых для конкретного представления.
+ *    в одно представление отправляется одна модель (StudentDetailsViewModel): Student - Controller name, Details - Action name
+ *    но она состоит из нескольких (StudentModel, AdressModel) + доп. информация.
+ *  - обеспечивает строгую типизацию передаваемых во View данных 
+ *  - не должна содержать никакой логики, кроме относящейся к представлению
+ *  - может содержать атрибуты валидации формы
+ *  
+ *  EditModel в ASP.NET Core MVC
+ *   - содержит в себе модель, отправляему пользователю и адаптированную под редактирование (долнительные списки и т.д.)
+ */
+
+https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-6.0#what-is-the-mvc-pattern
+Model Responsibilities
+The Model in an MVC application represents the state of the application and any business logic or operations that should be performed by it. Business logic should be encapsulated in the model, along with any implementation logic for persisting the state of the application. Strongly-typed views typically use ViewModel types designed to contain the data to display on that view. The controller creates and populates these ViewModel instances from the model.
+
+View Responsibilities
+Views are responsible for presenting content through the user interface. They use the Razor view engine to embed .NET code in HTML markup. There should be minimal logic within views, and any logic in them should relate to presenting content. If you find the need to perform a great deal of logic in view files in order to display data from a complex model, consider using a View Component, ViewModel, or view template to simplify the view.
+
+Controller Responsibilities
+Controllers are the components that handle user interaction, work with the model, and ultimately select a view to render. In an MVC application, the view only displays information; the controller handles and responds to user input and interaction. In the MVC pattern, the controller is the initial entry point, and is responsible for selecting which model types to work with and which view to render (hence its name - it controls how the app responds to a given request).

@@ -1,0 +1,33 @@
+﻿.content-advanced {
+    display: flex;
+    margin: 0px 30px 30px 30px;
+}
+
+.content-advanced-proposal {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    width: 50%;
+}
+
+.content-advanced-proposal input {
+    margin-left: 12px;
+}
+
+.content-advanced-proposal label {
+    margin-left: 5px;
+}
+
+.content-advanced-worktime {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.content-advanced-worktime input {
+    text-align: center;
+    margin-left: 12px;
+    width: 60px;
+    height: 30px;
+}

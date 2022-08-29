@@ -1,0 +1,37 @@
+﻿@{
+   ViewData["Title"] = "Test Page";
+}
+
+@model BonusSystemApplication.Models.TestModels.MyModel
+
+<form asp-controller="Test" asp-action="Test" method="post">
+   <div id="RadioButtonGroup">
+      <label asp-for="Object.PropertyOne" class="radio-inline">
+         <input asp-for="Object.PropertyOne" value="A" type="radio" name="optradio" >Option One
+      </label>
+      <label asp-for="Object.PropertyOne" class="radio-inline">
+         <input asp-for="Object.PropertyOne" value="B" type="radio" name="optradio" >Option Two
+      </label>
+      <label asp-for="Object.PropertyOne" class="radio-inline">
+         <input asp-for="Object.PropertyOne" value="C" type="radio" name="optradio" >Option Three
+      </label>
+      <label asp-for="Object.PropertyOne" class="radio-inline">
+         <input asp-for="Object.PropertyOne" value="D" type="radio" name="optradio" >Option Four
+      </label>
+   </div>
+   <div id="RadioButtonGroup">
+      <label for="Object.PropertyTwo1" class="radio-inline">
+         <input asp-for="Object.PropertyTwo" id="Object.PropertyTwo1" value="A" type="radio">Option One
+      </label>
+      <label for="Object.PropertyTwo2" class="radio-inline">
+         <input asp-for="Object.PropertyTwo" id="Object.PropertyTwo2" value="B" type="radio">Option Two
+      </label>
+      <label for="Object.PropertyTwo3" class="radio-inline">
+         <input asp-for="Object.PropertyTwo" id="Object.PropertyTwo3" value="C" type="radio">Option Three
+      </label>
+      <label for="Object.PropertyTwo4" class="radio-inline">
+         <input asp-for="Object.PropertyTwo" id="Object.PropertyTwo4" value="D" type="radio">Option Four
+      </label>
+   </div>
+   <input type="submit" />
+</form>

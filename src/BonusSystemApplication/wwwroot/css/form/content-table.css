@@ -1,0 +1,170 @@
+﻿/*------------------ Reset base styles for table ------------------*/
+
+table, caption, tbody, tfoot, thead, tr, th, td {
+    font: inherit;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*------------------ Common styling: header, body, footer ------------------------*/
+
+.content-table {
+    width: 100%;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+
+.content-table input,
+.content-table textarea {
+    /* inherit because in the scripts corresponding styles are aplying to <td> elements */
+    background-color: inherit;
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+.content-table--column-nth { /* Row */
+    width: 30px;
+}
+
+.content-table--column-statement { /* Statement */
+    width: 120px;
+}
+
+.content-table--column-description { /* Description */
+    width: auto;
+}
+
+.content-table--column-key { /* IsKey */
+    width: 45px;
+}
+
+.content-table--column-measur { /* IsMeasurable */
+    width: 45px;
+    writing-mode: vertical-rl;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+}
+
+.content-table--column-units { /* Unit */
+    width: 120px;
+}
+
+.content-table--column-threshold { /* Threshold */
+    width: 90px;
+}
+
+.content-table--column-target { /* Target */
+    width: 90px;
+}
+
+.content-table--column-challenge { /* Challange */
+    width: 90px;
+}
+
+.content-table--column-wf { /* WeightFactor */
+    width: 65px;
+}
+
+.content-table--column-upperlimit { /* KpiUpperlimit */
+    width: 65px;
+}
+
+.content-table--column-keycheck { /* keyCheck */
+    width: 70px;
+}
+
+.content-table--column-achieved { /* Achieved */
+    width: 75px;
+}
+
+.content-table--column-kpi { /* Kpi */
+    width: 70px;
+}
+
+/*-------------- Header styling --------------*/
+
+.content-table__header-row-1 {
+    height: 30px;
+}
+
+.content-table__header-row-2 {
+    height: 75px;
+}
+
+.content-table__header th {
+    border: 1px solid #999;
+}
+
+/*-------------- Body styling --------------*/
+
+.content-table__body tr {
+    height: 30px;
+}
+
+.content-table__body td {
+    border: 1px solid #999;
+}
+
+.content-table__body input {
+    width: 100%;
+    text-align: center;
+    padding: 4px 4px;
+    border: none;
+    outline: none;
+}
+
+.content-table__body textarea {
+    resize: none;
+    outline: none;
+    border: none;
+    overflow: hidden;
+    padding: 4px 4px;
+    width: 100%;
+    vertical-align: middle;
+}
+
+/*-------------- Footer styling --------------*/
+
+.content-table__footer tr {
+    height: 40px;
+}
+
+.content-table__footer td {
+    text-align: right;
+}
+
+.content-table__footer input {
+    width: 100%;
+    text-align: center;
+    padding: 4px 4px;
+    border: none;
+    outline: none;
+}
+
+.content-table__footer--padding {
+    padding: 4px 4px;
+}
+
+.content-table__footer-sum {
+    color: #C00000;
+}
+
+.content-table__footer--border {
+    border: 1px solid #999;
+}
+
+.content-table__footer--position-relative {
+    position: relative;
+}
+
+.content-table__footer--position-absolute {
+    top: 45px;
+    left: 23px;
+    width: 138px;
+    position: absolute;
+    color: #C00000;
+}

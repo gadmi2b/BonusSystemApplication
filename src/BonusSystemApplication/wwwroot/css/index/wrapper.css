@@ -1,0 +1,33 @@
+﻿* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: Arial;
+  font-size: 14px;
+}
+
+.header {
+  grid-area: header;
+  border: 1px dashed grey; /*to remove*/
+}
+
+.content {
+  grid-area: content;
+  border: 1px dashed grey; /*to remove*/
+}
+
+.footer {
+  grid-area: footer;
+  border: 1px dashed grey; /*to remove*/
+}
+
+.wrapper {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 50px 1fr 50px;
+  grid-template-areas:
+    "header"
+    "content"
+    "footer";
+}
