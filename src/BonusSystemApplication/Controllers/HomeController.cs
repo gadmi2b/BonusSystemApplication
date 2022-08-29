@@ -40,6 +40,23 @@ namespace BonusSystemApplication.Controllers
 
             #region Forms where user has Global accesses:
             IQueryable<Form> allForms = formRepository.GetFormsWithGlobalAccess(formGlobalAccess);
+            // !could be null here
+            #endregion
+
+            #region Forms where user has Participation:
+
+            #endregion
+
+            #region Forms where user has Local access:
+
+            #endregion
+
+            #region Request combination and data pulling into HomeIndexViewModels
+
+            #endregion
+
+            #region Filtering in according to incoming FormSelector object
+
             #endregion
 
             return View();
