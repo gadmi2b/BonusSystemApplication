@@ -4,6 +4,7 @@ using System.Diagnostics;
 using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
 using BonusSystemApplication.Models.ViewModels;
+using Microsoft.Data.SqlClient.Server;
 
 namespace BonusSystemApplication.Controllers
 {
@@ -29,38 +30,120 @@ namespace BonusSystemApplication.Controllers
         public IActionResult Index()
         {
             // TODO: get userId during login process
-            long userId = 8;
-
-            // TODO: to fill accessFilters after getting all available forms
-            List<AccessFilter> accessFilters = new List<AccessFilter>();
+            long userId = 7;
 
             #region Global accesses for user:
             IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(userId);
             #endregion
 
-            #region Forms where user has Global accesses:
-            IQueryable<Form> globalAccessForms = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
-            // could be null here
+            #region Queries for forms where user has Global accesses:
+            IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
             #endregion
 
-            #region Forms where user has Participation:
-
+            #region Queries for forms where user has Local access:
+            IQueryable<Form> localAccessFormsQuery = formRepository.GetFormsWithLocalAccess(userId);
             #endregion
 
-            #region Forms where user has Local access:
-
+            #region Queries for forms where user has Participation:
+            IQueryable<Form> participantFormsQuery = formRepository.GetFormsWithParticipation(userId);
             #endregion
 
-            #region Request combination and data pulling into HomeIndexViewModels
-            List<Form> availableForms = globalAccessForms.ToList();
+            #region Queries combination
+            IQueryable<Form> combinedFormsQuery = participantFormsQuery.Union(localAccessFormsQuery);
+            if(globalAccessFormsQuery != null)
+            {
+                combinedFormsQuery = combinedFormsQuery.Union(globalAccessFormsQuery);
+            }
+            #endregion
+
+            #region Request data from database into forms
+            List<Form> availableForms = combinedFormsQuery
+                .Select(f => new Form {
+                    Id = f.Id,
+                    Employee= f.Employee,
+                    Workproject = f.Workproject,
+                    FormLocalAccess = f.FormLocalAccess,
+                    ApproverId = f.ApproverId,
+                    ManagerId = f.ManagerId,
+                    WorkprojectId = f.WorkprojectId,
+                    LastSavedDateTime = f.LastSavedDateTime,
+                    Period = f.Period,
+                    Year = f.Year,
+                })
+                .ToList();
+            #endregion
+
+            #region Determine formIds with Global access
+            List<long> formIdsWithGlobalAccess = new List<long>();
 
             foreach (FormGlobalAccess formGA in formGlobalAccesses)
             {
-                var expr = formRepository.GenerateGlobalAccessExpression(formGA).Compile();
-                List<Form> query = availableForms.Where(expr).ToList();
-                Console.WriteLine();
+                Func<Form, bool> delegateGA = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
+                formIdsWithGlobalAccess = availableForms
+                    .Where(f => delegateGA.Invoke(f))
+                    .Select(f => f.Id)
+                    .ToList();
             }
+            #endregion
 
+            #region Determine formIds with Local access
+            Func<Form, bool> delegateLA = ExpressionBuilder.GetExpressionForLocalAccess(userId).Compile();
+            List<long> formIdsWithLocalAccess = availableForms
+                .Where(f => delegateLA.Invoke(f))
+                .Select(f => f.Id)
+                .ToList();
+            #endregion
+
+            #region Determine formIds with Participation
+            // Common participation is not used. It was splitted into Employee/Manager/Approver
+            //
+            //Func<Form, bool> delegateParticipation = ExpressionBuilder.GetExpressionForParticipation(userId).Compile();
+            //List<long> formIdsWithParticipation = availableForms
+            //    .Where(f => delegateParticipation.Invoke(f))
+            //    .Select(f => f.Id)
+            //    .ToList();
+
+            Func<Form, bool> delEmployeeParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Employee);
+            List<long> formIdsWithEmployeeParticipation = availableForms
+                .Where(f => delEmployeeParticipation.Invoke(f))
+                .Select(f => f.Id)
+                .ToList();
+
+            Func<Form, bool> delManagerParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Manager);
+            List<long> formIdsWithManagerParticipation = availableForms
+                .Where(f => delManagerParticipation.Invoke(f))
+                .Select(f => f.Id)
+                .ToList();
+
+            Func<Form, bool> delApproverParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Approver);
+            List<long> formIdsWithApproverParticipation = availableForms
+                .Where(f => delApproverParticipation.Invoke(f))
+                .Select(f => f.Id)
+                .ToList();
+
+            #endregion
+
+            // TODO: find and apply AutoMapper here
+            // TODO: integrate AccessFilters identification into viewModels object creation
+            #region ViewModels preparation:
+            List<HomeIndexViewModel> homeIndexViewModels = availableForms
+                .Select(f => new HomeIndexViewModel
+                {
+                    Id = f.Id,
+                    EmployeeFullName = f.Employee.LastNameEng + " " + f.Employee.FirstNameEng,
+                    WorkprojectName = f.Workproject.Name,
+                    LastSavedDateTime = f.LastSavedDateTime,
+                    Period = f.Period,
+                    Year = f.Year,
+                })
+                .ToList();
+
+            HomeIndexViewModel.IdentifyAccessFilters(homeIndexViewModels,
+                                                     formIdsWithGlobalAccess,
+                                                     formIdsWithLocalAccess,
+                                                     formIdsWithEmployeeParticipation,
+                                                     formIdsWithManagerParticipation,
+                                                     formIdsWithApproverParticipation);
             #endregion
 
             #region Filtering in according to incoming FormSelector object
@@ -76,7 +159,6 @@ namespace BonusSystemApplication.Controllers
 
             IEnumerable<Form> forms = formRepository.GetForm(id);
             Form form = forms.First();
-
 
             ViewBag.Users = userRepository.GetAll().Select(u => new SelectListItem { Value = u.Id.ToString(), Text = $"{u.LastNameEng} {u.FirstNameEng}" }).ToList();
             ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();

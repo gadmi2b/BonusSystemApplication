@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace BonusSystemApplication.Models.Repositories
@@ -27,17 +29,34 @@ namespace BonusSystemApplication.Models.Repositories
         {
             throw new NotImplementedException();
         }
+        public void CreateForm(Form form)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateForm(Form form)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteForm(long id)
+        {
+            throw new NotImplementedException();
+        }
 
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
-                .Include(f => f.Employee);
+                .Include(f => f.Employee)
+                .Include(f => f.Workproject)
+                .Include(f => f.FormLocalAccess)
+                .AsNoTracking();
 
             IQueryable<Form> formsQuery = null;
 
             foreach (var formGA in formGlobalAccesses)
             {
-                IQueryable <Form> query = formsQueryInitial.Where(GenerateGlobalAccessExpression(formGA));
+                IQueryable <Form> query = formsQueryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
 
                 if(query == null)
                 {
@@ -55,51 +74,27 @@ namespace BonusSystemApplication.Models.Repositories
             }
 
             // TODO: add null check here or in controller
-
             return formsQuery;
         }
-
-        public void CreateForm(Form form)
+        public IQueryable<Form> GetFormsWithLocalAccess(long userId)
         {
-            throw new NotImplementedException();
+            IQueryable<Form> forms = context.Forms.AsQueryable()
+                .Include(f => f.Employee)
+                .Include(f => f.Workproject)
+                .Include(f => f.FormLocalAccess)
+                .Where(ExpressionBuilder.GetExpressionForLocalAccess(userId))
+                .AsNoTracking();
+            return forms;
         }
-
-        public void UpdateForm(Form form)
+        public IQueryable<Form> GetFormsWithParticipation(long userId)
         {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteForm(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Expression<Func<Form, bool>> GenerateGlobalAccessExpression(FormGlobalAccess formGlobalAccess)
-        {
-            Expression<Func<Form, bool>> expr;
-
-            if (formGlobalAccess.DepartmentId == null)
-            {
-                expr = (Form f) => true;
-            }
-            else if (formGlobalAccess.TeamId == null)
-            {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId;
-            }
-            else if (formGlobalAccess.WorkprojectId == null)
-            {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
-                                   f.Employee.TeamId == formGlobalAccess.TeamId;
-            }
-            else
-            {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
-                                   f.Employee.TeamId == formGlobalAccess.TeamId &&
-                                   f.WorkprojectId == formGlobalAccess.WorkprojectId;
-            }
-
-            return expr;
+            IQueryable<Form> forms = context.Forms.AsQueryable()
+                .Include(f => f.Employee)
+                .Include(f => f.Workproject)
+                .Include(f => f.FormLocalAccess)
+                .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
+                .AsNoTracking();
+            return forms;
         }
     }
 }

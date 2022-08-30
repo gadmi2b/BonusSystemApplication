@@ -2,7 +2,7 @@
 {
   public enum AccessFilter
   {
-        Unknown = 0,
+        Undefined = 0,
         Employee = 1,
         Manager = 2,
         Approver = 3,

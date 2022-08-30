@@ -1,4 +1,6 @@
-﻿namespace UsefulCode
+﻿using System.Linq.Expressions;
+
+namespace UsefulCode
 {
     // --------------------- HomeController ---------------------
     //public async Task<IActionResult> Index(List<UserRoles> selectedRoles)
@@ -147,4 +149,17 @@
     //    }
     //}
 
+    //var expr = formRepository.GenerateGlobalAccessExpression(formGA).Compile();
+    //Func<Form, bool> expr = (Form f) => f.Employee.DepartmentId == formGA.DepartmentId &&
+    //                                    f.Employee.TeamId == formGA.TeamId;
+
+
+    //Expression<Func<Form, bool>> exprEmployee = GetMethodForParticipation(userId, AccessFilter.Employee);
+    //Expression<Func<Form, bool>> exprManager = GetMethodForParticipation(userId, AccessFilter.Manager);
+    //Expression<Func<Form, bool>> exprApprover = GetMethodForParticipation(userId, AccessFilter.Approver);
+
+    //Expression exprFirstCombination = Expression.OrElse(exprEmployee.Body, exprManager.Body);
+    //Expression exprSecondCombination = Expression.OrElse(exprFirstCombination, exprApprover.Body);
+
+    //var expr = Expression.Lambda<Func<Form, bool>>(exprSecondCombination, Expression.Parameter(typeof(Form)));
 }
