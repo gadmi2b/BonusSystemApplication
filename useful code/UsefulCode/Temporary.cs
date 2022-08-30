@@ -20,8 +20,8 @@ namespace UsefulCode
 
     #endregion
 
-    #region HomeIndexViewModel: forms where user has participant role
-    //List<HomeIndexViewModel> homeIndexViewModels = new List<HomeIndexViewModel>();
+    #region TableRow: forms where user has participant role
+    //List<TableRow> tableRows = new List<TableRow>();
 
     // TODO: to analyse: split whole process into separate processes:
     //                   - getting forms (from different criteries)
@@ -30,7 +30,7 @@ namespace UsefulCode
 
     //foreach (Form form in formRepository.GetFormsRelatedToUser(userId))
     //{
-    //    HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
+    //    TableRow tableRow = new TableRow
     //    {
     //        Id = form.Id,
     //        WorkprojectName = form.Workproject.Name,
@@ -41,33 +41,33 @@ namespace UsefulCode
 
     //    if (form.EmployeeId == userId)
     //    {
-    //        homeIndexViewModel.UserRoles.Add(UserRoles.Employee);
+    //        tableRow.UserRoles.Add(UserRoles.Employee);
     //    }
     //    if (form.ManagerId == userId)
     //    {
-    //        homeIndexViewModel.UserRoles.Add(UserRoles.Manager);
+    //        tableRow.UserRoles.Add(UserRoles.Manager);
     //    }
     //    if (form.ApproverId == userId)
     //    {
-    //        homeIndexViewModel.UserRoles.Add(UserRoles.Approver);
+    //        tableRow.UserRoles.Add(UserRoles.Approver);
     //    }
 
     //    foreach(FormLocalAccess a in form.FormLocalAccess)
     //    {
     //        if(a.UserId == userId)
     //        {
-    //            homeIndexViewModel.UserRoles.Add(UserRoles.LocalAccess);
+    //            tableRow.UserRoles.Add(UserRoles.LocalAccess);
     //        }
     //    }
 
-    //    homeIndexViewModels.Add(homeIndexViewModel);
+    //    tableRows.Add(tableRow);
     //}
     #endregion
 
-    #region HomeIndexViewModel: forms where user local access
+    #region TableRow: forms where user local access
     //foreach (Form f in formRepository.GetFormsWithUserLocalAccess(userId))
     //{
-    //    HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
+    //    TableRow tableRow = new TableRow
     //    {
     //        Id = f.Id,
     //        WorkprojectName = f.Workproject.Name,
@@ -76,13 +76,13 @@ namespace UsefulCode
     //        Period = f.Period
     //    };
 
-    //    viewModelsForIndex.Add(homeIndexViewModel);
+    //    viewModelsForIndex.Add(tableRow);
     //}
     #endregion
 
     // --------------------- under rework ---------------------
 
-    //List<HomeIndexViewModel> filtered = homeIndexViewModels.FindAll(vm => vm.UserRoles.Contains(UserRoles.Employee));
+    //List<TableRow> filtered = tableRows.FindAll(vm => vm.UserRoles.Contains(UserRoles.Employee));
     //return View(await viewModelsForIndex.AsNoTracking().ToListAsync());
 
 

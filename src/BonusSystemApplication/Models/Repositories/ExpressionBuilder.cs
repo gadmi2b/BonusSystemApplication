@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using BonusSystemApplication.Models.ViewModels;
+using System.Linq.Expressions;
 
 namespace BonusSystemApplication.Models.Repositories
 {

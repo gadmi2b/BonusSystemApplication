@@ -56,7 +56,7 @@ namespace BonusSystemApplication.Controllers
             }
             #endregion
 
-            #region Request data from database into forms
+            #region Load data from database into forms
             List<Form> availableForms = combinedFormsQuery
                 .Select(f => new Form {
                     Id = f.Id,
@@ -124,10 +124,10 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             // TODO: find and apply AutoMapper here
-            // TODO: integrate AccessFilters identification into viewModels object creation
-            #region ViewModels preparation:
-            List<HomeIndexViewModel> homeIndexViewModels = availableForms
-                .Select(f => new HomeIndexViewModel
+            // TODO: integrate AccessFilters identification into tableRows object creation
+            #region Preparation of Table rows:
+            List<TableRow> tableRows = availableForms
+                .Select(f => new TableRow
                 {
                     Id = f.Id,
                     EmployeeFullName = f.Employee.LastNameEng + " " + f.Employee.FirstNameEng,
@@ -138,12 +138,79 @@ namespace BonusSystemApplication.Controllers
                 })
                 .ToList();
 
-            HomeIndexViewModel.IdentifyAccessFilters(homeIndexViewModels,
-                                                     formIdsWithGlobalAccess,
-                                                     formIdsWithLocalAccess,
-                                                     formIdsWithEmployeeParticipation,
-                                                     formIdsWithManagerParticipation,
-                                                     formIdsWithApproverParticipation);
+            TableRow.IdentifyAccessFilters(tableRows,
+                                           formIdsWithGlobalAccess,
+                                           formIdsWithLocalAccess,
+                                           formIdsWithEmployeeParticipation,
+                                           formIdsWithManagerParticipation,
+                                           formIdsWithApproverParticipation);
+            #endregion
+
+            #region Preparation of Table filters
+            //Access Filters
+            List<AccessFilter> availableAccessFilters = new List<AccessFilter>();
+            if(formIdsWithGlobalAccess.Count > 0)
+            {
+                availableAccessFilters.Add(AccessFilter.GlobalAccess);
+            }
+            if(formIdsWithLocalAccess.Count > 0)
+            {
+                availableAccessFilters.Add(AccessFilter.LocalAccess);
+            }
+            if (formIdsWithEmployeeParticipation.Count > 0)
+            {
+                availableAccessFilters.Add(AccessFilter.Employee);
+            }
+            if (formIdsWithManagerParticipation.Count > 0)
+            {
+                availableAccessFilters.Add(AccessFilter.Manager);
+            }
+            if (formIdsWithApproverParticipation.Count > 0)
+            {
+                availableAccessFilters.Add(AccessFilter.Approver);
+            }
+
+            //Employees Names
+            List<string> availableEmployees = new List<string>();
+            availableEmployees = availableForms
+                .Select(f => ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"))
+                .Distinct()
+                .ToList();
+
+            //Periods
+            List<Periods> availablePeriods = new List<Periods>();
+            availablePeriods = availableForms
+                .Select(f => f.Period)
+                .Distinct()
+                .ToList();
+
+            //Years
+            List<int> availableYears = new List<int>();
+            availableYears = availableForms
+                .Select(f => f.Year)
+                .Distinct()
+                .ToList();
+
+            //Departments
+            List<string> availableDepartments = new List<string>();
+            availableDepartments = availableForms
+                .Select(f => f.Employee.Department.Name)
+                .Distinct()
+                .ToList();
+
+            //Teams
+            List<string> availableTeams = new List<string>();
+            availableTeams = availableForms
+                .Select(f => f.Employee.Team.Name)
+                .Distinct()
+                .ToList();
+
+            //Workprojects
+            List<string> availableWorkprojects = new List<string>();
+            availableWorkprojects = availableForms
+                .Select(f => f.Workproject.Name)
+                .Distinct()
+                .ToList();
             #endregion
 
             #region Filtering in according to incoming FormSelector object
