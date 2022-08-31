@@ -1,4 +1,4 @@
-﻿using BonusSystemApplication.Models.ViewModels;
+﻿using BonusSystemApplication.Models.ViewModels.Index;
 using System.Linq.Expressions;
 
 namespace BonusSystemApplication.Models.Repositories

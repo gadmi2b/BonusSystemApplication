@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels
+﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public enum AccessFilter
     {

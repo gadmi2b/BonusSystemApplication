@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
-using BonusSystemApplication.Models.ViewModels;
 using Microsoft.Data.SqlClient.Server;
+using BonusSystemApplication.Models.ViewModels.Index;
 
 namespace BonusSystemApplication.Controllers
 {
@@ -27,10 +27,10 @@ namespace BonusSystemApplication.Controllers
             formGlobalAccessRepository = formGlobalAccessRepo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(TableFilters tableFilters)
         {
             // TODO: get userId during login process
-            long userId = 7;
+            long userId = 5;
 
             #region Global accesses for user:
             IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(userId);
@@ -50,7 +50,7 @@ namespace BonusSystemApplication.Controllers
 
             #region Queries combination
             IQueryable<Form> combinedFormsQuery = participantFormsQuery.Union(localAccessFormsQuery);
-            if(globalAccessFormsQuery != null)
+            if (globalAccessFormsQuery != null)
             {
                 combinedFormsQuery = combinedFormsQuery.Union(globalAccessFormsQuery);
             }
@@ -60,7 +60,7 @@ namespace BonusSystemApplication.Controllers
             List<Form> availableForms = combinedFormsQuery
                 .Select(f => new Form {
                     Id = f.Id,
-                    Employee= f.Employee,
+                    Employee = f.Employee,
                     Workproject = f.Workproject,
                     FormLocalAccess = f.FormLocalAccess,
                     ApproverId = f.ApproverId,
@@ -125,12 +125,13 @@ namespace BonusSystemApplication.Controllers
 
             // TODO: find and apply AutoMapper here
             // TODO: integrate AccessFilters identification into tableRows object creation
+            // TODO: all operations for HomeIndexViewModel preparation should be outside controller
             #region Preparation of Table rows:
             List<TableRow> tableRows = availableForms
                 .Select(f => new TableRow
                 {
                     Id = f.Id,
-                    EmployeeFullName = f.Employee.LastNameEng + " " + f.Employee.FirstNameEng,
+                    EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
                     WorkprojectName = f.Workproject.Name,
                     LastSavedDateTime = f.LastSavedDateTime,
                     Period = f.Period,
@@ -146,14 +147,14 @@ namespace BonusSystemApplication.Controllers
                                            formIdsWithApproverParticipation);
             #endregion
 
-            #region Preparation of Table filters
+            #region Preparation of Table filters: collecting all available items
             //Access Filters
             List<AccessFilter> availableAccessFilters = new List<AccessFilter>();
-            if(formIdsWithGlobalAccess.Count > 0)
+            if (formIdsWithGlobalAccess.Count > 0)
             {
                 availableAccessFilters.Add(AccessFilter.GlobalAccess);
             }
-            if(formIdsWithLocalAccess.Count > 0)
+            if (formIdsWithLocalAccess.Count > 0)
             {
                 availableAccessFilters.Add(AccessFilter.LocalAccess);
             }
@@ -213,7 +214,25 @@ namespace BonusSystemApplication.Controllers
                 .ToList();
             #endregion
 
-            #region Filtering in according to incoming FormSelector object
+            #region Preparation of Table filters: generating Select lists
+            tableFilters.SelectEmployee = new GenericSelect<string>(availableEmployees);
+            tableFilters.SelectPeriod = new GenericSelect<Periods>(availablePeriods);
+            tableFilters.SelectYear = new GenericSelect<int>(availableYears);
+            tableFilters.SelectAccess = new GenericSelect<AccessFilter>(availableAccessFilters);
+            tableFilters.SelectDepartment = new GenericSelect<string>(availableDepartments);
+            tableFilters.SelectTeam = new GenericSelect<string>(availableTeams);
+            tableFilters.SelectWorkproject = new GenericSelect<string>(availableWorkprojects);
+            #endregion
+
+            #region Checking of selected filters
+            //TODO: selected filters should be in all available items
+            if(!string.IsNullOrEmpty(tableFilters.Employee) && !availableEmployees.Contains(tableFilters.Employee))
+            {
+                tableFilters.Employee = string.Empty;
+            }
+            #endregion
+
+            #region Filtering in acc. to incoming FormSelector object
 
             #endregion
 
@@ -222,6 +241,10 @@ namespace BonusSystemApplication.Controllers
 
         public IActionResult Form()
         {
+            // TODO: to rework
+            //       id should come from Index view
+            //       add check that this form is available for current user
+            //       no view bags - all information in ViewModel
             long id = 1;
 
             IEnumerable<Form> forms = formRepository.GetForm(id);

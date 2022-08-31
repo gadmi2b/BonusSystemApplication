@@ -48,6 +48,9 @@ namespace BonusSystemApplication.Models.Repositories
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
                 .Include(f => f.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(f => f.Employee)
+                    .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
                 .Include(f => f.FormLocalAccess)
                 .AsNoTracking();
@@ -80,6 +83,9 @@ namespace BonusSystemApplication.Models.Repositories
         {
             IQueryable<Form> forms = context.Forms.AsQueryable()
                 .Include(f => f.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(f => f.Employee)
+                    .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
                 .Include(f => f.FormLocalAccess)
                 .Where(ExpressionBuilder.GetExpressionForLocalAccess(userId))
@@ -90,6 +96,9 @@ namespace BonusSystemApplication.Models.Repositories
         {
             IQueryable<Form> forms = context.Forms.AsQueryable()
                 .Include(f => f.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(f => f.Employee)
+                    .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
                 .Include(f => f.FormLocalAccess)
                 .Where(ExpressionBuilder.GetExpressionForParticipation(userId))

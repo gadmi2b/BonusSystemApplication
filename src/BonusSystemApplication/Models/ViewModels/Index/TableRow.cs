@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels
+﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public class TableRow
     {
@@ -19,14 +19,14 @@
         /// <param name="formIdsWithEmployeeParticipation">collection of form's ids related to participation as Employee</param>
         /// <param name="formIdsWithManagerParticipation">collection of form's ids related to participation as Manger</param>
         /// <param name="formIdsWithApproverParticipation">collection of form's ids related to participation as Approver</param>
-        public static void IdentifyAccessFilters (List<TableRow> tableRows,
+        public static void IdentifyAccessFilters(List<TableRow> tableRows,
                                                   List<long> formIdsWithGlobalAccess,
                                                   List<long> formIdsWithLocalAccess,
                                                   List<long> formIdsWithEmployeeParticipation,
                                                   List<long> formIdsWithManagerParticipation,
                                                   List<long> formIdsWithApproverParticipation)
         {
-            foreach(TableRow vm in tableRows)
+            foreach (TableRow vm in tableRows)
             {
                 if (formIdsWithGlobalAccess.Contains(vm.Id))
                 {
