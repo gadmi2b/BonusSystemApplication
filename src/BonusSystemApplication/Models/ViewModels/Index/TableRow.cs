@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
-    public class TableRow
+    public class TableRow : ITableRow
     {
         public long Id { get; set; }
         public string WorkprojectName { get; set; }

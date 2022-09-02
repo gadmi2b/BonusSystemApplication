@@ -30,11 +30,20 @@ namespace BonusSystemApplication.Controllers
 
         public IActionResult Index(TableFilters tableFilters)
         {
+            // TODO: to rename FormGlobalAccess to UserGlobalAccess
+            // TODO: to rename FormLocalAccess to UserLocalAccess
+            
+
             // TODO: get userId during login process
             long userId = 5;
 
+
             #region Global accesses for user:
             IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(userId);
+            #endregion
+
+            #region Collect application User data information
+            UserDataSinglton userData = new UserDataSinglton(userId, formGlobalAccesses);
             #endregion
 
             #region Queries for forms where user has Global accesses:
@@ -77,7 +86,7 @@ namespace BonusSystemApplication.Controllers
             #region Determine formIds with Global access
             List<long> formIdsWithGlobalAccess = new List<long>();
 
-            foreach (FormGlobalAccess formGA in formGlobalAccesses)
+            foreach (FormGlobalAccess formGA in userData.FormGlobalAccesses)
             {
                 Func<Form, bool> delegateGA = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
                 formIdsWithGlobalAccess = availableForms
@@ -95,7 +104,7 @@ namespace BonusSystemApplication.Controllers
                 .ToList();
             #endregion
 
-            #region Determine formIds with Participation
+            #region Determine formIds with individual participation
             // Common participation is not used. It was splitted into Employee/Manager/Approver
             //
             //Func<Form, bool> delegateParticipation = ExpressionBuilder.GetExpressionForParticipation(userId).Compile();
@@ -128,26 +137,26 @@ namespace BonusSystemApplication.Controllers
             // TODO: integrate AccessFilters identification into tableRows object creation
             // TODO: all operations for HomeIndexViewModel preparation should be outside controller
             #region Preparation of Table rows:
-            List<TableRow> tableRows = availableForms
-                .Select(f => new TableRow
-                {
-                    Id = f.Id,
-                    EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
-                    WorkprojectName = f.Workproject.Name,
-                    DepartmentName = f.Employee.Department?.Name,
-                    TeamName = f.Employee.Team?.Name,
-                    LastSavedDateTime = f.LastSavedDateTime,
-                    Period = f.Period,
-                    Year = f.Year,
-                })
-                .ToList();
+            //List<TableRow> tableRows = availableForms
+            //    .Select(f => new TableRow
+            //    {
+            //        Id = f.Id,
+            //        EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
+            //        WorkprojectName = f.Workproject.Name,
+            //        DepartmentName = f.Employee.Department?.Name,
+            //        TeamName = f.Employee.Team?.Name,
+            //        LastSavedDateTime = f.LastSavedDateTime,
+            //        Period = f.Period,
+            //        Year = f.Year,
+            //    })
+            //    .ToList();
 
-            TableRow.IdentifyAccessFilters(tableRows,
-                                           formIdsWithGlobalAccess,
-                                           formIdsWithLocalAccess,
-                                           formIdsWithEmployeeParticipation,
-                                           formIdsWithManagerParticipation,
-                                           formIdsWithApproverParticipation);
+            //TableRow.IdentifyAccessFilters(tableRows,
+            //                               formIdsWithGlobalAccess,
+            //                               formIdsWithLocalAccess,
+            //                               formIdsWithEmployeeParticipation,
+            //                               formIdsWithManagerParticipation,
+            //                               formIdsWithApproverParticipation);
             #endregion
 
             #region Preparation of Table filters: collecting all available items
@@ -270,21 +279,45 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Filtering in acc. to FormSelector object
-            List<TableRow> filteredTableRows = tableRows
-                .Where(t => string.IsNullOrEmpty(tableFilters.Employee) ? true : t.EmployeeFullName == tableFilters.Employee &&
-                            string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && t.Period == resultPeriod &&
-                            string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && t.AccessFilters.Contains(resultAcccess) &&
-                            string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && t.Year == resultYear &&
-                            string.IsNullOrEmpty(tableFilters.Department) ? true : t.DepartmentName == tableFilters.Department &&
-                            string.IsNullOrEmpty(tableFilters.Team) ? true : t.TeamName == tableFilters.Team &&
-                            string.IsNullOrEmpty(tableFilters.Workproject) ? true : t.WorkprojectName == tableFilters.Workproject)
+            //List<TableRow> filteredTableRows = tableRows
+            //    .Where(t => string.IsNullOrEmpty(tableFilters.Employee) ? true : t.EmployeeFullName == tableFilters.Employee &&
+            //                string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && t.Period == resultPeriod &&
+            //                string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && t.AccessFilters.Contains(resultAcccess) &&
+            //                string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && t.Year == resultYear &&
+            //                string.IsNullOrEmpty(tableFilters.Department) ? true : t.DepartmentName == tableFilters.Department &&
+            //                string.IsNullOrEmpty(tableFilters.Team) ? true : t.TeamName == tableFilters.Team &&
+            //                string.IsNullOrEmpty(tableFilters.Workproject) ? true : t.WorkprojectName == tableFilters.Workproject)
+            //    .ToList();
+
+            List<AccessFilter> accessFilters = new List<AccessFilter>();
+            List<TableRow> tableRows = availableForms
+                .Where(f => ITableRow.GetAccessFilters(f, out accessFilters) &&
+                            string.IsNullOrEmpty(tableFilters.Employee) ? true : $"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}" == tableFilters.Employee &&
+                            string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && f.Period == resultPeriod &&
+                            string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && accessFilters.Contains(resultAcccess) &&
+                            string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && f.Year == resultYear &&
+                            string.IsNullOrEmpty(tableFilters.Department) ? true : f.Employee.Department.Name == tableFilters.Department &&
+                            string.IsNullOrEmpty(tableFilters.Team) ? true : f.Employee.Team.Name == tableFilters.Team &&
+                            string.IsNullOrEmpty(tableFilters.Workproject) ? true : f.Workproject.Name == tableFilters.Workproject)
+                .Select(f => new TableRow
+                {
+                    Id = f.Id,
+                    EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
+                    WorkprojectName = f.Workproject.Name,
+                    DepartmentName = f.Employee.Department?.Name,
+                    TeamName = f.Employee.Team?.Name,
+                    LastSavedDateTime = f.LastSavedDateTime,
+                    Period = f.Period,
+                    Year = f.Year,
+                    AccessFilters = accessFilters,
+                })
                 .ToList();
             #endregion
-            //t.EmployeeFullName == (string.IsNullOrEmpty(tableFilters.Employee) ? t.EmployeeFullName : tableFilters.Employee) &&
+
             #region prepare HomeIndexViewModel
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
             {
-                TableRows = filteredTableRows,
+                TableRows = tableRows,
                 TableFilters = tableFilters
             };
             #endregion
