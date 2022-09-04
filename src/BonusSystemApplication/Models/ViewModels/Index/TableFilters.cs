@@ -4,25 +4,26 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public class TableFilters
     {
-        public string Employee { get; set; } = string.Empty;
-        public GenericSelect<string> SelectEmployee { get; set; }
+        public List<string> Employees { get; set; }
+        public GenericMultiSelectList<string, EmployeeSelect> EmployeeSelectList { get; set; }
 
-        public string Period { get; set; } = string.Empty;
-        public GenericSelect<Periods> SelectPeriod { get; set; }
+        public List<string> Periods { get; set; }
+        //public GenericMultiSelectList<Periods> SelectPeriod { get; set; }
 
-        public string Year { get; set; } = string.Empty;
-        public GenericSelect<int> SelectYear { get; set; }
+        public List<string> Years { get; set; }
+        //public GenericMultiSelectList<int> SelectYear { get; set; }
 
-        public string Access { get; set; } = string.Empty;
-        public GenericSelect<AccessFilter> SelectAccess { get; set; }
+        public List<string> Access { get; set; }
+        //public GenericMultiSelectList<AccessFilter> SelectAccess { get; set; }
 
-        public string Department { get; set; } = string.Empty;
-        public GenericSelect<string> SelectDepartment { get; set; }
+        public List<string> Department { get; set; }
+        //public GenericMultiSelectList<string> SelectDepartment { get; set; }
 
-        public string Team { get; set; } = string.Empty;
-        public GenericSelect<string> SelectTeam { get; set; }
+        public List<string> Team { get; set; }
+        //public GenericMultiSelectList<string> SelectTeam { get; set; }
 
-        public string Workproject { get; set; } = string.Empty;
-        public GenericSelect<string> SelectWorkproject { get; set; }
+        public List<string> Workproject { get; set; }
+        //public GenericMultiSelectList<string> SelectWorkproject { get; set; }
+
     }
 }

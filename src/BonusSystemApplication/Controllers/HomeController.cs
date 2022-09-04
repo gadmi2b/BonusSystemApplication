@@ -134,30 +134,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             // TODO: find and apply AutoMapper here
-            // TODO: integrate AccessFilters identification into tableRows object creation
             // TODO: all operations for HomeIndexViewModel preparation should be outside controller
-            #region Preparation of Table rows:
-            //List<TableRow> tableRows = availableForms
-            //    .Select(f => new TableRow
-            //    {
-            //        Id = f.Id,
-            //        EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
-            //        WorkprojectName = f.Workproject.Name,
-            //        DepartmentName = f.Employee.Department?.Name,
-            //        TeamName = f.Employee.Team?.Name,
-            //        LastSavedDateTime = f.LastSavedDateTime,
-            //        Period = f.Period,
-            //        Year = f.Year,
-            //    })
-            //    .ToList();
-
-            //TableRow.IdentifyAccessFilters(tableRows,
-            //                               formIdsWithGlobalAccess,
-            //                               formIdsWithLocalAccess,
-            //                               formIdsWithEmployeeParticipation,
-            //                               formIdsWithManagerParticipation,
-            //                               formIdsWithApproverParticipation);
-            #endregion
 
             #region Preparation of Table filters: collecting all available items
             //Access Filters
@@ -227,102 +204,96 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Preparation of Table filters: generating Select lists
-            tableFilters.SelectEmployee = new GenericSelect<string>(availableEmployees);
-            tableFilters.SelectPeriod = new GenericSelect<Periods>(availablePeriods);
-            tableFilters.SelectYear = new GenericSelect<int>(availableYears);
-            tableFilters.SelectAccess = new GenericSelect<AccessFilter>(availableAccessFilters);
-            tableFilters.SelectDepartment = new GenericSelect<string>(availableDepartments);
-            tableFilters.SelectTeam = new GenericSelect<string>(availableTeams);
-            tableFilters.SelectWorkproject = new GenericSelect<string>(availableWorkprojects);
+            //tableFilters.SelectEmployee = new GenericMultiSelectList<string>(availableEmployees);
+            //tableFilters.SelectPeriod = new GenericMultiSelectList<Periods>(availablePeriods);
+            //tableFilters.SelectYear = new GenericMultiSelectList<int>(availableYears);
+            //tableFilters.SelectAccess = new GenericMultiSelectList<AccessFilter>(availableAccessFilters);
+            //tableFilters.SelectDepartment = new GenericMultiSelectList<string>(availableDepartments);
+            //tableFilters.SelectTeam = new GenericMultiSelectList<string>(availableTeams);
+            //tableFilters.SelectWorkproject = new GenericMultiSelectList<string>(availableWorkprojects);
+            tableFilters.EmployeeSelectList = new GenericMultiSelectList<string, EmployeeSelect>(availableEmployees, null);
+
             #endregion
 
-            #region Checking of selected filters
+            #region Checking of selected by user filters
             //TODO: selected filters should be in available items
-            if(!string.IsNullOrEmpty(tableFilters.Employee) &&
-                !availableEmployees.Contains(tableFilters.Employee))
-            {
-                tableFilters.Employee = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Period) &&
-                !Enum.TryParse(tableFilters.Period, out Periods resultPeriod) &&
-                !availablePeriods.Contains(resultPeriod))
-            {
-                tableFilters.Period = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Access) &&
-                !Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) &&
-                !availableAccessFilters.Contains(resultAcccess))
-            {
-                tableFilters.Access = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Year) &&
-                !int.TryParse(tableFilters.Year, out int resultYear) &&
-                !availableYears.Contains(resultYear))
-            {
-                tableFilters.Year = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Department) &&
-                !availableDepartments.Contains(tableFilters.Department))
-            {
-                tableFilters.Department = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Team) &&
-                !availableTeams.Contains(tableFilters.Team))
-            {
-                tableFilters.Team = string.Empty;
-            }
-            if (!string.IsNullOrEmpty(tableFilters.Workproject) &&
-                !availableWorkprojects.Contains(tableFilters.Workproject))
-            {
-                tableFilters.Workproject = string.Empty;
-            }
+            //if (!string.IsNullOrEmpty(tableFilters.Employee) &&
+            //    !availableEmployees.Contains(tableFilters.Employee))
+            //{
+            //    tableFilters.Employee = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Period) &&
+            //    Enum.TryParse(tableFilters.Period, out Periods resultPeriod) &&
+            //    !availablePeriods.Contains(resultPeriod))
+            //{
+            //    tableFilters.Period = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Access) &&
+            //    Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) &&
+            //    !availableAccessFilters.Contains(resultAcccess))
+            //{
+            //    tableFilters.Access = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Year) &&
+            //    int.TryParse(tableFilters.Year, out int resultYear) &&
+            //    !availableYears.Contains(resultYear))
+            //{
+            //    tableFilters.Year = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Department) &&
+            //    !availableDepartments.Contains(tableFilters.Department))
+            //{
+            //    tableFilters.Department = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Team) &&
+            //    !availableTeams.Contains(tableFilters.Team))
+            //{
+            //    tableFilters.Team = string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(tableFilters.Workproject) &&
+            //    !availableWorkprojects.Contains(tableFilters.Workproject))
+            //{
+            //    tableFilters.Workproject = string.Empty;
+            //}
             #endregion
 
             #region Filtering in acc. to FormSelector object
-            //List<TableRow> filteredTableRows = tableRows
-            //    .Where(t => string.IsNullOrEmpty(tableFilters.Employee) ? true : t.EmployeeFullName == tableFilters.Employee &&
-            //                string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && t.Period == resultPeriod &&
-            //                string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && t.AccessFilters.Contains(resultAcccess) &&
-            //                string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && t.Year == resultYear &&
-            //                string.IsNullOrEmpty(tableFilters.Department) ? true : t.DepartmentName == tableFilters.Department &&
-            //                string.IsNullOrEmpty(tableFilters.Team) ? true : t.TeamName == tableFilters.Team &&
-            //                string.IsNullOrEmpty(tableFilters.Workproject) ? true : t.WorkprojectName == tableFilters.Workproject)
-            //    .ToList();
+            //tableFilters.Period = "Q4";
 
-            List<AccessFilter> accessFilters = new List<AccessFilter>();
-            List<TableRow> tableRows = availableForms
-                .Where(f => ITableRow.GetAccessFilters(f, out accessFilters) &&
-                            string.IsNullOrEmpty(tableFilters.Employee) ? true : $"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}" == tableFilters.Employee &&
-                            string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && f.Period == resultPeriod &&
-                            string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && accessFilters.Contains(resultAcccess) &&
-                            string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && f.Year == resultYear &&
-                            string.IsNullOrEmpty(tableFilters.Department) ? true : f.Employee.Department.Name == tableFilters.Department &&
-                            string.IsNullOrEmpty(tableFilters.Team) ? true : f.Employee.Team.Name == tableFilters.Team &&
-                            string.IsNullOrEmpty(tableFilters.Workproject) ? true : f.Workproject.Name == tableFilters.Workproject)
-                .Select(f => new TableRow
-                {
-                    Id = f.Id,
-                    EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
-                    WorkprojectName = f.Workproject.Name,
-                    DepartmentName = f.Employee.Department?.Name,
-                    TeamName = f.Employee.Team?.Name,
-                    LastSavedDateTime = f.LastSavedDateTime,
-                    Period = f.Period,
-                    Year = f.Year,
-                    AccessFilters = accessFilters,
-                })
-                .ToList();
+            //List<AccessFilter> accessFilters = new List<AccessFilter>();
+            //List<TableRow> tableRows = availableForms
+            //    .Where(f => userData.GetAccessFilters(f, out accessFilters) &&
+            //                (string.IsNullOrEmpty(tableFilters.Employee) ? true : $"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}" == tableFilters.Employee) &&
+            //                (string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && f.Period == resultPeriod) &&
+            //                (string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && f.Year == resultYear) &&
+            //                (string.IsNullOrEmpty(tableFilters.Department) ? true : f.Employee.Department.Name == tableFilters.Department) &&
+            //                (string.IsNullOrEmpty(tableFilters.Team) ? true : f.Employee.Team.Name == tableFilters.Team) &&
+            //                (string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && accessFilters.Contains(resultAcccess)) &&
+            //                (string.IsNullOrEmpty(tableFilters.Workproject) ? true : f.Workproject.Name == tableFilters.Workproject))
+            //    .Select(f => new TableRow
+            //    {
+            //        Id = f.Id,
+            //        EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
+            //        WorkprojectName = f.Workproject.Name,
+            //        DepartmentName = f.Employee.Department?.Name,
+            //        TeamName = f.Employee.Team?.Name,
+            //        LastSavedDateTime = f.LastSavedDateTime,
+            //        Period = f.Period,
+            //        Year = f.Year,
+            //        AccessFilters = accessFilters,
+            //    })
+            //    .ToList();
             #endregion
 
             #region prepare HomeIndexViewModel
-            HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
-            {
-                TableRows = tableRows,
-                TableFilters = tableFilters
-            };
+            //HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
+            //{
+            //    TableRows = tableRows,
+            //    TableFilters = tableFilters
+            //};
             #endregion
 
-            return View(homeIndexViewModel);
+            return View();
         }
 
         public IActionResult Form()
