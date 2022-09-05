@@ -1,11 +1,11 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
-    public class BaseSelect
+    public class SelectBase
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public BaseSelect(int id, string name)
+        public SelectBase(int id, string name)
         {
             Id = id;
             Name = name;

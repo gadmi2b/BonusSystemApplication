@@ -26,9 +26,9 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         /// <param name="form">Incoming form to check</param>
         /// <param name="accessFilters">Out for collecting accesses</param>
         /// <returns>true if at least one access was found</returns>
-        public bool GetAccessFilters(Form form, out List<AccessFilter> accessFilters)
+        public bool GetPermissions(Form form, out List<Permissions> permissions)
         {
-            List<AccessFilter> accesses = new List<AccessFilter>();
+            List<Permissions> permissionsTemp = new List<Permissions>();
 
             Func<Form, bool> delegateAccess;
 
@@ -37,38 +37,37 @@ namespace BonusSystemApplication.Models.ViewModels.Index
                 delegateAccess = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
                 if (delegateAccess.Invoke(form))
                 {
-                    accesses.Add(AccessFilter.GlobalAccess);
+                    permissionsTemp.Add(Permissions.GlobalAccess);
                 }
-
             }
 
             delegateAccess = ExpressionBuilder.GetExpressionForLocalAccess(UserId).Compile();
             if (delegateAccess.Invoke(form))
             {
-                accesses.Add(AccessFilter.LocalAccess);
+                permissionsTemp.Add(Permissions.LocalAccess);
             }
 
-            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, AccessFilter.Employee);
+            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, Permissions.Employee);
             if (delegateAccess.Invoke(form))
             {
-                accesses.Add(AccessFilter.Employee);
+                permissionsTemp.Add(Permissions.Employee);
             }
 
-            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, AccessFilter.Manager);
+            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, Permissions.Manager);
             if (delegateAccess.Invoke(form))
             {
-                accesses.Add(AccessFilter.Manager);
+                permissionsTemp.Add(Permissions.Manager);
             }
 
-            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, AccessFilter.Approver);
+            delegateAccess = ExpressionBuilder.GetMethodForParticipation(UserId, Permissions.Approver);
             if (delegateAccess.Invoke(form))
             {
-                accesses.Add(AccessFilter.Approver);
+                permissionsTemp.Add(Permissions.Approver);
             }
 
-            accessFilters = accesses;
+            permissions = permissionsTemp;
 
-            if (accesses.Count > 0) return true;
+            if (permissionsTemp.Count > 0) return true;
             else return false;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
-    public enum AccessFilter
+    public enum Permissions
     {
         Undefined = 0,
         Employee = 1,

@@ -44,17 +44,17 @@ namespace BonusSystemApplication.Models.Repositories
             return expr;
         }
 
-        public static Func<Form, bool> GetMethodForParticipation(long userId, AccessFilter participantRole)
+        public static Func<Form, bool> GetMethodForParticipation(long userId, Permissions participantRole)
         {
-            if(participantRole == AccessFilter.Employee)
+            if(participantRole == Permissions.Employee)
             {
                 return (f) => f.EmployeeId == userId;
             }
-            else if (participantRole == AccessFilter.Manager)
+            else if (participantRole == Permissions.Manager)
             {
                 return (f) => f.ManagerId == userId;
             }
-            else if (participantRole == AccessFilter.Approver)
+            else if (participantRole == Permissions.Approver)
             {
                 return (f) => f.ApproverId == userId;
             }

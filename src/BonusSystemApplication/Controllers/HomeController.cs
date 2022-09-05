@@ -83,6 +83,8 @@ namespace BonusSystemApplication.Controllers
                 .ToList();
             #endregion
 
+            FormDataSingleton formData = new FormDataSingleton(availableForms);
+
             #region Determine formIds with Global access
             List<long> formIdsWithGlobalAccess = new List<long>();
 
@@ -105,27 +107,19 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Determine formIds with individual participation
-            // Common participation is not used. It was splitted into Employee/Manager/Approver
-            //
-            //Func<Form, bool> delegateParticipation = ExpressionBuilder.GetExpressionForParticipation(userId).Compile();
-            //List<long> formIdsWithParticipation = availableForms
-            //    .Where(f => delegateParticipation.Invoke(f))
-            //    .Select(f => f.Id)
-            //    .ToList();
-
-            Func<Form, bool> delEmployeeParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Employee);
+            Func<Form, bool> delEmployeeParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Employee);
             List<long> formIdsWithEmployeeParticipation = availableForms
                 .Where(f => delEmployeeParticipation.Invoke(f))
                 .Select(f => f.Id)
                 .ToList();
 
-            Func<Form, bool> delManagerParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Manager);
+            Func<Form, bool> delManagerParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Manager);
             List<long> formIdsWithManagerParticipation = availableForms
                 .Where(f => delManagerParticipation.Invoke(f))
                 .Select(f => f.Id)
                 .ToList();
 
-            Func<Form, bool> delApproverParticipation = ExpressionBuilder.GetMethodForParticipation(userId, AccessFilter.Approver);
+            Func<Form, bool> delApproverParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Approver);
             List<long> formIdsWithApproverParticipation = availableForms
                 .Where(f => delApproverParticipation.Invoke(f))
                 .Select(f => f.Id)
@@ -138,26 +132,26 @@ namespace BonusSystemApplication.Controllers
 
             #region Preparation of Table filters: collecting all available items
             //Access Filters
-            List<AccessFilter> availableAccessFilters = new List<AccessFilter>();
+            List<Permissions> availablePermissions = new List<Permissions>();
             if (formIdsWithGlobalAccess.Count > 0)
             {
-                availableAccessFilters.Add(AccessFilter.GlobalAccess);
+                availablePermissions.Add(Permissions.GlobalAccess);
             }
             if (formIdsWithLocalAccess.Count > 0)
             {
-                availableAccessFilters.Add(AccessFilter.LocalAccess);
+                availablePermissions.Add(Permissions.LocalAccess);
             }
             if (formIdsWithEmployeeParticipation.Count > 0)
             {
-                availableAccessFilters.Add(AccessFilter.Employee);
+                availablePermissions.Add(Permissions.Employee);
             }
             if (formIdsWithManagerParticipation.Count > 0)
             {
-                availableAccessFilters.Add(AccessFilter.Manager);
+                availablePermissions.Add(Permissions.Manager);
             }
             if (formIdsWithApproverParticipation.Count > 0)
             {
-                availableAccessFilters.Add(AccessFilter.Approver);
+                availablePermissions.Add(Permissions.Approver);
             }
 
             //Employees Names
@@ -204,15 +198,13 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Preparation of Table filters: generating Select lists
-            //tableFilters.SelectEmployee = new GenericMultiSelectList<string>(availableEmployees);
-            //tableFilters.SelectPeriod = new GenericMultiSelectList<Periods>(availablePeriods);
-            //tableFilters.SelectYear = new GenericMultiSelectList<int>(availableYears);
-            //tableFilters.SelectAccess = new GenericMultiSelectList<AccessFilter>(availableAccessFilters);
-            //tableFilters.SelectDepartment = new GenericMultiSelectList<string>(availableDepartments);
-            //tableFilters.SelectTeam = new GenericMultiSelectList<string>(availableTeams);
-            //tableFilters.SelectWorkproject = new GenericMultiSelectList<string>(availableWorkprojects);
-            tableFilters.EmployeeSelectList = new GenericMultiSelectList<string, EmployeeSelect>(availableEmployees, null);
-
+            //tableFilters.EmployeeSelectList = new GenericMultiSelectList<string, SelectEmployee>(availableEmployees, null);
+            //tableFilters.PeriodSelectList = new GenericMultiSelectList<Periods, SelectPeriod>(availablePeriods, null);
+            //tableFilters.YearSelectList = new GenericMultiSelectList<int, SelectYear>(availableYears, null);
+            //tableFilters.PermissionSelectList = new GenericMultiSelectList<Permissions, SelectPermission>(availablePermissions, null);
+            //tableFilters.DepartmentSelectList = new GenericMultiSelectList<string, SelectDepartment>(availableDepartments, null);
+            //tableFilters.TeamSelectList = new GenericMultiSelectList<string, SelectTeam>(availableTeams, null);
+            //tableFilters.WorkprojectSelectList = new GenericMultiSelectList<string, SelectWorkproject>(availableWorkprojects, null);
             #endregion
 
             #region Checking of selected by user filters
@@ -229,8 +221,8 @@ namespace BonusSystemApplication.Controllers
             //    tableFilters.Period = string.Empty;
             //}
             //if (!string.IsNullOrEmpty(tableFilters.Access) &&
-            //    Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) &&
-            //    !availableAccessFilters.Contains(resultAcccess))
+            //    Enum.TryParse(tableFilters.Permission, out Permissions resultPermission) &&
+            //    !availablePermissions.Contains(resultPermission))
             //{
             //    tableFilters.Access = string.Empty;
             //}
@@ -260,15 +252,15 @@ namespace BonusSystemApplication.Controllers
             #region Filtering in acc. to FormSelector object
             //tableFilters.Period = "Q4";
 
-            //List<AccessFilter> accessFilters = new List<AccessFilter>();
+            //List<Permissions> permissions = new List<Permissions>();
             //List<TableRow> tableRows = availableForms
-            //    .Where(f => userData.GetAccessFilters(f, out accessFilters) &&
+            //    .Where(f => userData.GetPermissions(f, out permissions) &&
             //                (string.IsNullOrEmpty(tableFilters.Employee) ? true : $"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}" == tableFilters.Employee) &&
             //                (string.IsNullOrEmpty(tableFilters.Period) ? true : Enum.TryParse(tableFilters.Period, out resultPeriod) && f.Period == resultPeriod) &&
             //                (string.IsNullOrEmpty(tableFilters.Year) ? true : int.TryParse(tableFilters.Year, out int resultYear) && f.Year == resultYear) &&
             //                (string.IsNullOrEmpty(tableFilters.Department) ? true : f.Employee.Department.Name == tableFilters.Department) &&
             //                (string.IsNullOrEmpty(tableFilters.Team) ? true : f.Employee.Team.Name == tableFilters.Team) &&
-            //                (string.IsNullOrEmpty(tableFilters.Access) ? true : Enum.TryParse(tableFilters.Access, out AccessFilter resultAcccess) && accessFilters.Contains(resultAcccess)) &&
+            //                (string.IsNullOrEmpty(tableFilters.Permission) ? true : Enum.TryParse(tableFilters.Permissions, out Permissions resultPermission) && permissions.Contains(resultPermission)) &&
             //                (string.IsNullOrEmpty(tableFilters.Workproject) ? true : f.Workproject.Name == tableFilters.Workproject))
             //    .Select(f => new TableRow
             //    {
@@ -280,7 +272,7 @@ namespace BonusSystemApplication.Controllers
             //        LastSavedDateTime = f.LastSavedDateTime,
             //        Period = f.Period,
             //        Year = f.Year,
-            //        AccessFilters = accessFilters,
+            //        Permissions = permissions,
             //    })
             //    .ToList();
             #endregion

@@ -10,19 +10,4 @@
         S2 = 5,
         Y = 6,
     }
-
-    //public static class Period
-    //{
-
-    //    public static List<string> GetPeriods()
-    //    {
-    //        List<string> periods = new List<string>();
-    //        foreach (string name in Enum.GetNames(typeof(Periods)))
-    //        {
-    //            periods.Add(name);
-    //        }
-
-    //        return periods;
-    //    }
-    //}
 }
