@@ -5,7 +5,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
     public class GenericMultiSelectList<T1,T2> where T2 : SelectBase
     {
         public MultiSelectList MultiSelectList { get; set; }
-        public GenericMultiSelectList(List<T1> collection, string[] selectedValues)
+        public GenericMultiSelectList(List<T1> collection, List<string> selectedValues)
         {
             Type listType = typeof(T1);
             Func<T1, string> expr = (T1 param) => string.Empty;
