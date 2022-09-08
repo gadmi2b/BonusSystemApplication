@@ -1,0 +1,85 @@
+﻿/*------------------ Reset base styles for table ------------------*/
+
+table, caption, tbody, tfoot, thead, tr, th, td {
+    font: inherit;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*------------------ Common styling: header, body, footer ------------------------*/
+
+.content-table {
+    border-collapse: collapse;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 20px;
+}
+
+
+.content-table--column-nth { /* Row */
+    width: 30px;
+}
+
+.content-table--column-checkbox {
+    width: 30px;
+}
+
+.content-table--column-employee { /* Employee */
+    width: 180px;
+}
+
+.content-table--column-department { /* department */
+    width: 120px;
+}
+
+.content-table--column-team { /* team */
+    width: 120px;
+}
+
+.content-table--column-workproject { /* workproject */
+    width: 90px;
+}
+
+.content-table--column-period { /* period */
+    width: 60px;
+}
+
+.content-table--column-year { /* year */
+    width: 60px;
+}
+
+.content-table--column-datetime { /* datetime */
+    width: 120px;
+}
+
+.content-table--column-permission { /* permission */
+    width: 180px;
+}
+
+
+/*-------------- Header styling --------------*/
+
+.content-table__header-row {
+    height: 60px;
+}
+
+.content-table__header th {
+    border: 1px solid #999;
+    text-align: center;
+    padding: 4px 4px;
+}
+
+/*-------------- Body styling --------------*/
+
+.content-table__body tr {
+    height: 30px;
+}
+
+.content-table__body td {
+    border: 1px solid #999;
+    text-align: center;
+    padding: 4px 4px;
+}

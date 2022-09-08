@@ -40,8 +40,6 @@ namespace BonusSystemApplication.Models.ViewModels.Index
                 counterId++;
             }
 
-
-
             MultiSelectList = new MultiSelectList(baseSelects,
                                                   $"{nameof(SelectBase.Id)}",
                                                   $"{nameof(SelectBase.Name)}",

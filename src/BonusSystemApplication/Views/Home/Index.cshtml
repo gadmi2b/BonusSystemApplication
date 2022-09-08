@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model HomeIndexViewModel
 @{
   Layout = null;
 }
@@ -10,14 +8,34 @@
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <environment include="Development">
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
-  </environment>
-
   <link rel="stylesheet" href="~/css/index/wrapper.css" />
   <link rel="stylesheet" href="~/css/index/content.css" />
+  <link rel="stylesheet" href="~/css/index/content-select.css" />
+  <link rel="stylesheet" href="~/css/index/content-table.css" />
+
+  <link rel="stylesheet" href="~/lib/bootstrap/bootstrap/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="~/lib/bootstrap/bootstrap-multiselect/css/bootstrap-multiselect.css"/>
+  <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="~/lib/popper.js/umd/popper.min.js"></script>
+  <script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="~/lib/bootstrap/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+  <script type="text/javascript" src="~/js/index/bootstrap.js"></script>
 
 </head>
+
+@*----------------------------------------
+BEM convention: Block Elements Modifiers
+.stick-man          || blocks with -
+
+.stick-man__head    || elements with __
+.stick-man__arms
+.stick-man__feet
+
+.stick-man--blue    || modifiers with --
+
+.stick-man__head--small
+----------------------------------------*@
 
 <body class="wrapper">
   <header class="header">
@@ -25,11 +43,103 @@
   </header>
 
   <content class="content">
-    <div>some content</div>
+    <div class="content-select">
+      <label asp-for="TableFilters.SelectedEmployees">Employee:</label>
+      <select asp-for="TableFilters.SelectedEmployees"
+              asp-items="@(new SelectList(Model.TableFilters.EmployeeSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <label asp-for="TableFilters.SelectedPeriods">Period:</label>
+      <select asp-for="TableFilters.SelectedPeriods"
+              asp-items="@(new SelectList(Model.TableFilters.PeriodSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <label asp-for="TableFilters.SelectedYears">Year:</label>
+      <select asp-for="TableFilters.SelectedYears"
+              asp-items="@(new SelectList(Model.TableFilters.YearSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <label asp-for="TableFilters.SelectedPermissions">Permission:</label>
+      <select asp-for="TableFilters.SelectedPermissions"
+              asp-items="@(new SelectList(Model.TableFilters.PermissionSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <span></span>
+      <span></span>
+      <label asp-for="TableFilters.SelectedDepartments">Department:</label>
+      <select asp-for="TableFilters.SelectedDepartments"
+              asp-items="@(new SelectList(Model.TableFilters.DepartmentSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <label asp-for="TableFilters.SelectedTeams">Team:</label>
+      <select asp-for="TableFilters.SelectedTeams"
+              asp-items="@(new SelectList(Model.TableFilters.TeamSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+      <label asp-for="TableFilters.SelectedWorkprojects">Workproject:</label>
+      <select asp-for="TableFilters.SelectedWorkprojects"
+              asp-items="@(new SelectList(Model.TableFilters.WorkprojectSelectList.MultiSelectList,"Value", "Text"))"
+              class="js-bootstrap-multiselect" multiple>
+      </select>
+    </div>
+
+    <form asp-controller="Home" asp-action="Form" method="post">
+      <table class="content-table">
+        <thead class="content-table__header">
+          <tr class="content-table__header-row">
+            <th class="content-table--column-checkbox"></th>
+            <th class="content-table--column-nth"><b>#</b></th>
+            <th class="content-table--column-workproject"><b>Workproject</b></th>
+            <th class="content-table--column-employee"><b>Employee</b></th>
+            <th class="content-table--column-period"><b>Period</b></th>
+            <th class="content-table--column-year"><b>Year</b></th>
+            <th class="content-table--column-department"><b>Department</b></th>
+            <th class="content-table--column-team"><b>Team</b></th>
+            <th class="content-table--column-datetime"><b>Last modified</b></th>
+            <th class="content-table--column-permission"><b>Permission</b></th>
+          </tr>
+        </thead>
+        <tbody class="content-table__body">
+          @for(int i = 0; i < Model.TableRows.Count(); i++)
+          {
+            <tr>
+              <td><input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" /></td>
+              <td><span>@(i+1)</span></td>
+              <td><span>@Model.TableRows[i].WorkprojectName</span></td>
+              <td><span>@Model.TableRows[i].EmployeeFullName</span></td>
+              <td><span>@Model.TableRows[i].Period</span></td>
+              <td><span>@Model.TableRows[i].Year</span></td>
+              <td><span>@Model.TableRows[i].DepartmentName</span></td>
+              <td><span>@Model.TableRows[i].TeamName</span></td>
+              <td><span>@Model.TableRows[i].LastSavedDateTime</span></td>
+              <td>
+                <span>
+                  @{ string permission = string.Empty; }
+                  @foreach(string s in @Model.TableRows[i].Permissions)
+                  {
+                    if(string.IsNullOrEmpty(permission))
+                    {
+                      permission = s;
+                    }
+                    else
+                    {
+                      permission = permission + "; " + s;
+                    }
+                  }
+                  @permission
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <input type="submit" name="submit" value="Press me" class="btn btn-primary" />
+    </form>
   </content>
 
   <footer class="footer">
 
   </footer>
 </body>
+
 </html>

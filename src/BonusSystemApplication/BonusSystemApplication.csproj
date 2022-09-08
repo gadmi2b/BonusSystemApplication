@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\js\index\" />
+    <Folder Include="wwwroot\lib\bootstrap\" />
   </ItemGroup>
 
 </Project>

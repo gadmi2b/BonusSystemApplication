@@ -19,7 +19,7 @@ namespace BonusSystemApplication.Controllers
         private IFormRepository formRepository;
 
         public HomeController(ILogger<HomeController> logger, IFormRepository formRepo, IGenericRepository<User> userRepo,
-                                IGenericRepository<Workroject> workprojectRepo, IFormGlobalAccessRepository formGlobalAccessRepo)
+                              IGenericRepository<Workroject> workprojectRepo, IFormGlobalAccessRepository formGlobalAccessRepo)
         {
             _logger = logger;
             formRepository = formRepo;
@@ -80,13 +80,6 @@ namespace BonusSystemApplication.Controllers
 
             FormDataSingleton formData = new FormDataSingleton(availableForms, formGlobalAccesses);
 
-            tableFilters.SelectedPeriods.Add("Q2");
-            tableFilters.SelectedPeriods.Add("Q1");
-            tableFilters.SelectedPeriods.Add("Q5");
-            tableFilters.SelectedPeriods.Add("Q3");
-            tableFilters.SelectedPeriods.Add("");
-
-
             tableFilters.PrepareMultiSelectLists(formData);
 
             List<string> formPermissions = new List<string>();
@@ -114,10 +107,10 @@ namespace BonusSystemApplication.Controllers
             };
             #endregion
 
-            return View();
+            return View(homeIndexViewModel);
         }
 
-        public IActionResult Form()
+        public IActionResult Form(int[] selectedFormIds)
         {
             // TODO: to rework
             //       id should come from Index view

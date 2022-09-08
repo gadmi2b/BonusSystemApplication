@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap@4.6.2",
+      "destination": "wwwroot/lib/bootstrap/bootstrap/",
+      "files": [
+        "js/bootstrap.min.js",
+        "js/bootstrap.min.js.map",
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.bundle.min.js.map",
+        "css/bootstrap.min.css",
+        "css/bootstrap.min.css.map"
+      ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "popper.js@1.16.1",
+      "destination": "wwwroot/lib/popper.js/",
+      "files": [
+        "umd/popper.min.js",
+        "umd/popper.min.js.map"
+      ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap-multiselect@1.1.2",
+      "destination": "wwwroot/lib/bootstrap/bootstrap-multiselect/",
+      "files": [
+        "js/bootstrap-multiselect.min.js",
+        "js/bootstrap-multiselect.js",
+        "css/bootstrap-multiselect.min.css",
+        "css/bootstrap-multiselect.css"
+      ]
+    }
+  ]
+}

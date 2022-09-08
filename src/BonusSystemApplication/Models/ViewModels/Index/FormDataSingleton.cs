@@ -21,7 +21,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             if (isCreated)
             {
-                throw new Exception("Only one instance is allowed to be created");
+                //throw new Exception("Only one instance is allowed to be created");
             }
             isCreated = true;
 
