@@ -13,14 +13,18 @@ table {
 
 .content-table {
     border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.content-table-form {
     margin-left: 30px;
     margin-right: 30px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 
 .content-table--column-nth { /* Row */
-    width: 30px;
+    width: 60px;
 }
 
 .content-table--column-checkbox {
@@ -28,7 +32,7 @@ table {
 }
 
 .content-table--column-employee { /* Employee */
-    width: 180px;
+    width: 210px;
 }
 
 .content-table--column-department { /* department */
@@ -40,23 +44,23 @@ table {
 }
 
 .content-table--column-workproject { /* workproject */
-    width: 90px;
-}
-
-.content-table--column-period { /* period */
-    width: 60px;
-}
-
-.content-table--column-year { /* year */
-    width: 60px;
-}
-
-.content-table--column-datetime { /* datetime */
     width: 120px;
 }
 
-.content-table--column-permission { /* permission */
+.content-table--column-period { /* period */
+    width: 90px;
+}
+
+.content-table--column-year { /* year */
+    width: 90px;
+}
+
+.content-table--column-datetime { /* datetime */
     width: 180px;
+}
+
+.content-table--column-permission { /* permission */
+    width: 240px;
 }
 
 

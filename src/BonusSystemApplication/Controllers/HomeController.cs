@@ -26,13 +26,12 @@ namespace BonusSystemApplication.Controllers
             userRepository = userRepo;
             workprojectRepository = workprojectRepo;
             formGlobalAccessRepository = formGlobalAccessRepo;
+
+            UserData.UserId = 5;
         }
 
-        public IActionResult Index(TableFilters tableFilters)
+        public IActionResult Index(UserSelections userSelections)
         {
-            // TODO: get userId during login process
-            UserData.UserId = 5;
-
             #region Global accesses for user
             IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(UserData.UserId);
             #endregion
@@ -78,45 +77,62 @@ namespace BonusSystemApplication.Controllers
                 .ToList();
             #endregion
 
-            FormDataSingleton formData = new FormDataSingleton(availableForms, formGlobalAccesses);
+            UserData.SetAvailableFormIds(availableForms);
+            FormDataAvailable formDataAvailable = new FormDataAvailable(availableForms, UserData.UserId, formGlobalAccesses);
+            userSelections.PrepareSelections(formDataAvailable);
+            FormDataSorted formDataSorted = new FormDataSorted(availableForms, UserData.UserId, formGlobalAccesses, userSelections);
 
-            tableFilters.PrepareMultiSelectLists(formData);
-
-            List<string> formPermissions = new List<string>();
-            List<TableRow> tableRows = availableForms
-                .Where(f => formData.IsFormHasPermissions(f, out formPermissions) && tableFilters.IsFormCanBeShown(f, formPermissions))
-                .Select(f => new TableRow
+            #region Prepare TableRows
+            List<TableRow> tableRows = formDataSorted.FormAndPermissions
+                .Select(pair => new TableRow
                 {
-                    Id = f.Id,
-                    EmployeeFullName = ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"),
-                    WorkprojectName = f.Workproject.Name,
-                    DepartmentName = f.Employee.Department?.Name,
-                    TeamName = f.Employee.Team?.Name,
-                    LastSavedDateTime = f.LastSavedDateTime,
-                    Period = f.Period.ToString(),
-                    Year = f.Year.ToString(),
-                    Permissions = formPermissions,
+                    Id = pair.Key.Id,
+                    EmployeeFullName = ($"{pair.Key.Employee.LastNameEng} {pair.Key.Employee.FirstNameEng}"),
+                    WorkprojectName = pair.Key.Workproject.Name,
+                    DepartmentName = pair.Key.Employee.Department?.Name,
+                    TeamName = pair.Key.Employee.Team?.Name,
+                    LastSavedDateTime = pair.Key.LastSavedDateTime,
+                    Period = pair.Key.Period.ToString(),
+                    Year = pair.Key.Year.ToString(),
+                    Permissions = pair.Value
                 })
                 .ToList();
+            #endregion
 
-            #region prepare HomeIndexViewModel
+            #region Prepare TableSelectLists
+            TableSelectLists tableSelectLists = new TableSelectLists();
+            tableSelectLists.PrepareMultiSelectLists(formDataSorted, userSelections);
+            #endregion
+
+            #region Prepare HomeIndexViewModel
             HomeIndexViewModel homeIndexViewModel = new HomeIndexViewModel
             {
                 TableRows = tableRows,
-                TableFilters = tableFilters
+                TableSelectLists = tableSelectLists,
             };
             #endregion
 
             return View(homeIndexViewModel);
         }
 
-        public IActionResult Form(int[] selectedFormIds)
+        [HttpPost]
+        public IActionResult Form(List<long> selectedFormIds)
         {
-            // TODO: to rework
-            //       id should come from Index view
-            //       add check that this form is available for current user
-            //       no view bags - all information in ViewModel
-            long id = 1;
+            //TODO: JS should in a cycle calls Form action and send to it only one select formId
+            #region Validation of selected form ids
+            List<long> itemsToRemove = new List<long>();
+            foreach (long formId in selectedFormIds)
+            {
+                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                {
+                    itemsToRemove.Add(formId);
+                }
+            }
+            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            itemsToRemove.Clear();
+            #endregion
+
+            long id = selectedFormIds.ElementAt(0);
 
             IEnumerable<Form> forms = formRepository.GetForm(id);
             Form form = forms.First();
@@ -125,6 +141,14 @@ namespace BonusSystemApplication.Controllers
             ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();
 
             return View(form);
+        }
+
+        [HttpPost]
+        public IActionResult OpenBlankForm()
+        {
+            //TODO: create blank form model: necessary ObjectiveResults and other
+            Form form = new Form();
+            return View("Form", form);
         }
 
         [HttpPost]

@@ -5,6 +5,7 @@ $(document).ready(function() {
     includeResetOption: true,
     buttonWidth: '200px',
     maxHeight: 200,
-    numberDisplayed: 1
+    numberDisplayed: 1,
+    visibility: true
   });
 });

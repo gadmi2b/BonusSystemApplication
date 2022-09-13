@@ -1,13 +1,15 @@
 ﻿@model HomeIndexViewModel
 @{
   Layout = null;
+  TableSelectLists tableSelectLists = Model.TableSelectLists;
+  UserSelections userSelections = new UserSelections();
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  
   <link rel="stylesheet" href="~/css/index/wrapper.css" />
   <link rel="stylesheet" href="~/css/index/content.css" />
   <link rel="stylesheet" href="~/css/index/content-select.css" />
@@ -18,7 +20,7 @@
   <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="~/lib/popper.js/umd/popper.min.js"></script>
   <script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
+  @*<script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>*@
   <script type="text/javascript" src="~/lib/bootstrap/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
   <script type="text/javascript" src="~/js/index/bootstrap.js"></script>
 
@@ -41,49 +43,68 @@ BEM convention: Block Elements Modifiers
   <header class="header">
     <p>You can do it!</p>
   </header>
+  
 
   <content class="content">
-    <div class="content-select">
-      <label asp-for="TableFilters.SelectedEmployees">Employee:</label>
-      <select asp-for="TableFilters.SelectedEmployees"
-              asp-items="@(new SelectList(Model.TableFilters.EmployeeSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <label asp-for="TableFilters.SelectedPeriods">Period:</label>
-      <select asp-for="TableFilters.SelectedPeriods"
-              asp-items="@(new SelectList(Model.TableFilters.PeriodSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <label asp-for="TableFilters.SelectedYears">Year:</label>
-      <select asp-for="TableFilters.SelectedYears"
-              asp-items="@(new SelectList(Model.TableFilters.YearSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <label asp-for="TableFilters.SelectedPermissions">Permission:</label>
-      <select asp-for="TableFilters.SelectedPermissions"
-              asp-items="@(new SelectList(Model.TableFilters.PermissionSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <span></span>
-      <span></span>
-      <label asp-for="TableFilters.SelectedDepartments">Department:</label>
-      <select asp-for="TableFilters.SelectedDepartments"
-              asp-items="@(new SelectList(Model.TableFilters.DepartmentSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <label asp-for="TableFilters.SelectedTeams">Team:</label>
-      <select asp-for="TableFilters.SelectedTeams"
-              asp-items="@(new SelectList(Model.TableFilters.TeamSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-      <label asp-for="TableFilters.SelectedWorkprojects">Workproject:</label>
-      <select asp-for="TableFilters.SelectedWorkprojects"
-              asp-items="@(new SelectList(Model.TableFilters.WorkprojectSelectList.MultiSelectList,"Value", "Text"))"
-              class="js-bootstrap-multiselect" multiple>
-      </select>
-    </div>
+    <form asp-controller="Home" asp-action="Index" method="post" class="content-select-form">
+        <div class="button-groups__title">Multiselect filters:</div>
+        <div class="content-select">
+            <label>Employee:</label>
+            <select asp-for="@userSelections.SelectedEmployees"
+                    asp-items="@(new SelectList(tableSelectLists.EmployeeSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <label>Period:</label>
+            <select asp-for="@userSelections.SelectedPeriods"
+                    asp-items="@(new SelectList(tableSelectLists.PeriodSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <label>Year:</label>
+            <select asp-for="@userSelections.SelectedYears"
+                    asp-items="@(new SelectList(tableSelectLists.YearSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <label>Permission:</label>
+            <select asp-for="@userSelections.SelectedPermissions"
+                    asp-items="@(new SelectList(tableSelectLists.PermissionSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <span></span>
+            <span></span>
+            <label>Department:</label>
+            <select asp-for="@userSelections.SelectedDepartments"
+                    asp-items="@(new SelectList(tableSelectLists.DepartmentSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <label>Team:</label>
+            <select asp-for="@userSelections.SelectedTeams"
+                    asp-items="@(new SelectList(tableSelectLists.TeamSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+            <label>Workproject:</label>
+            <select asp-for="@userSelections.SelectedWorkprojects"
+                    asp-items="@(new SelectList(tableSelectLists.WorkprojectSelectList.MultiSelectList,"Text", "Text"))"
+                    class="js-bootstrap-multiselect" multiple visibility: hidden>
+            </select>
+        </div>
+        <input type="submit" name="submit" value="Apply filters" class="button" />
+    </form>
 
-    <form asp-controller="Home" asp-action="Form" method="post">
+    <form method="post" class="content-table-form">
+      <div class="button-groups">
+          <span class="button-groups__group">
+            <div class="button-groups__title">Work with empty form:</div>
+            <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="button" />
+          </span>
+          <span class="button-groups__group">
+              <div class="button-groups__title">Work based on selected form/forms:</div>
+              <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="button" />
+              <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="button" />
+              <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="button" />
+              <input type="submit" value="Remove" asp-controller="Home" asp-action="Form" class="button" />
+          </span>
+      </div>
+
       <table class="content-table">
         <thead class="content-table__header">
           <tr class="content-table__header-row">
@@ -133,7 +154,6 @@ BEM convention: Block Elements Modifiers
           }
         </tbody>
       </table>
-      <input type="submit" name="submit" value="Press me" class="btn btn-primary" />
     </form>
   </content>
 
