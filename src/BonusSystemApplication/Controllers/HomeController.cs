@@ -115,9 +115,9 @@ namespace BonusSystemApplication.Controllers
             return View(homeIndexViewModel);
         }
 
-        [HttpPost]
-        public IActionResult Form(List<long> selectedFormIds)
+        public IActionResult Form(long id)
         {
+            List<long> selectedFormIds = new List<long>();
             //TODO: JS should in a cycle calls Form action and send to it only one select formId
             #region Validation of selected form ids
             List<long> itemsToRemove = new List<long>();
@@ -131,8 +131,6 @@ namespace BonusSystemApplication.Controllers
             selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
             itemsToRemove.Clear();
             #endregion
-
-            long id = selectedFormIds.ElementAt(0);
 
             IEnumerable<Form> forms = formRepository.GetForm(id);
             Form form = forms.First();
@@ -149,6 +147,44 @@ namespace BonusSystemApplication.Controllers
             //TODO: create blank form model: necessary ObjectiveResults and other
             Form form = new Form();
             return View("Form", form);
+        }
+
+        [HttpPost]
+        public IActionResult CreateFormBasedOnSelection(List<long> selectedFormIds)
+        {
+            #region Validation of selected form ids
+            List<long> itemsToRemove = new List<long>();
+            foreach (long formId in selectedFormIds)
+            {
+                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                {
+                    itemsToRemove.Add(formId);
+                }
+            }
+            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            itemsToRemove.Clear();
+            #endregion
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult PromoteFormsBasedOnSelection(List<long> selectedFormIds)
+        {
+            #region Validation of selected form ids
+            List<long> itemsToRemove = new List<long>();
+            foreach (long formId in selectedFormIds)
+            {
+                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                {
+                    itemsToRemove.Add(formId);
+                }
+            }
+            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            itemsToRemove.Clear();
+            #endregion
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

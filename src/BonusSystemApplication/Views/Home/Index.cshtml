@@ -23,6 +23,7 @@
   @*<script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>*@
   <script type="text/javascript" src="~/lib/bootstrap/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
   <script type="text/javascript" src="~/js/index/bootstrap.js"></script>
+  <script type="text/javascript" src="~/js/index/index.js"></script>
 
 </head>
 
@@ -92,17 +93,17 @@ BEM convention: Block Elements Modifiers
 
     <form method="post" class="content-table-form">
       <div class="button-groups">
-          <span class="button-groups__group">
-            <div class="button-groups__title">Work with empty form:</div>
-            <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="button" />
-          </span>
-          <span class="button-groups__group">
-              <div class="button-groups__title">Work based on selected form/forms:</div>
-              <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="button" />
-              <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="button" />
-              <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="button" />
-              <input type="submit" value="Remove" asp-controller="Home" asp-action="Form" class="button" />
-          </span>
+        <span class="button-groups__group">
+          <div class="button-groups__title">Work with empty form:</div>
+          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="button" />
+        </span>
+        <span class="button-groups__group">
+          <div class="button-groups__title">Work based on selected form/forms:</div>
+          <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="button" id="js-open-button" />
+          <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="button" id="js-create-button" />
+          <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="button" />
+          <input type="submit" value="Delete" asp-controller="Home" asp-action="Form" class="button" />
+        </span>
       </div>
 
       <table class="content-table">
@@ -124,7 +125,7 @@ BEM convention: Block Elements Modifiers
           @for(int i = 0; i < Model.TableRows.Count(); i++)
           {
             <tr>
-              <td><input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" /></td>
+              <td><input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox" /></td>
               <td><span>@(i+1)</span></td>
               <td><span>@Model.TableRows[i].WorkprojectName</span></td>
               <td><span>@Model.TableRows[i].EmployeeFullName</span></td>

@@ -1,4 +1,5 @@
-﻿//Initialize the plugin:
+﻿//Initialize the multiselect plugin:
+
 $(document).ready(function() {
   $('.js-bootstrap-multiselect').multiselect({
     enableFiltering: true,
