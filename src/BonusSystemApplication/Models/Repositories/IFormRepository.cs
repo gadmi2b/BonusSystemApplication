@@ -3,7 +3,7 @@ namespace BonusSystemApplication.Models.Repositories
 {
     public interface IFormRepository
     {
-        IEnumerable<Form> GetForm(long id);
+        Form GetForm(long id);
         IEnumerable<Form> GetForms();
         IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses);
         IQueryable<Form> GetFormsWithLocalAccess(long userId);

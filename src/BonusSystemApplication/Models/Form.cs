@@ -44,6 +44,6 @@
         public long? ApproverId { get; set; }
         public User? Approver { get; set; }
         public long? WorkprojectId { get; set; }
-        public Workroject? Workproject { get; set; }
+        public Workproject? Workproject { get; set; }
     }
 }

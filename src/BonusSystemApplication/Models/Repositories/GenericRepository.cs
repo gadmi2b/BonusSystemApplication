@@ -1,4 +1,6 @@
-﻿namespace BonusSystemApplication.Models.Repositories
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace BonusSystemApplication.Models.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -10,9 +12,11 @@
             return context.Set<T>().Find(id);
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual IQueryable<T> GetQueryForAll()
         {
-            return context.Set<T>();
+            return context.Set<T>()
+                .AsQueryable()
+                .AsNoTracking();
         }
 
         public virtual void Add(T entity)

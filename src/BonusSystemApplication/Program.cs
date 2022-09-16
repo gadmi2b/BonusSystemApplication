@@ -13,7 +13,7 @@ string connectionString = builder.Configuration["ConnectionStrings:DefaultConnec
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddTransient<IGenericRepository<User>, GenericRepository<User>>();
-builder.Services.AddTransient<IGenericRepository<Workroject>, GenericRepository<Workroject>>();
+builder.Services.AddTransient<IGenericRepository<Workproject>, GenericRepository<Workproject>>();
 
 builder.Services.AddTransient<IFormGlobalAccessRepository, FormGlobalAccessRepository>();
 builder.Services.AddTransient<IFormRepository, FormRepository>();

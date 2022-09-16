@@ -10,7 +10,7 @@ namespace BonusSystemApplication.Models.Repositories
         private DataContext context;
         public FormRepository(DataContext ctx) => context = ctx;
 
-        public IEnumerable<Form> GetForm(long id)
+        public Form GetForm(long id)
         {
             return context.Forms
                 .Include(f => f.Employee)
@@ -22,7 +22,7 @@ namespace BonusSystemApplication.Models.Repositories
                 .Include(f => f.Workproject)
                 .Include(f => f.ObjectivesResults)
                 .Where(f => f.Id == id)
-                .ToList();
+                .First();
         }
 
         public IEnumerable<Form> GetForms()

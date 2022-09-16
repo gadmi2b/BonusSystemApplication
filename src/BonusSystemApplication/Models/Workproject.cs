@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models
 {
-    public class Workroject
+    public class Workproject
     {
         public long Id { get; set; }
         public string Name { get; set; }

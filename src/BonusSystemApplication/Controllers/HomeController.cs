@@ -4,8 +4,9 @@ using System.Diagnostics;
 using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
 using Microsoft.Data.SqlClient.Server;
-using BonusSystemApplication.Models.ViewModels.Index;
 using BonusSystemApplication.Models.ViewModels;
+using BonusSystemApplication.Models.ViewModels.Index;
+using BonusSystemApplication.Models.ViewModels.FormViewModel;
 
 namespace BonusSystemApplication.Controllers
 {
@@ -13,13 +14,13 @@ namespace BonusSystemApplication.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private IGenericRepository<User> userRepository;
-        private IGenericRepository<Workroject> workprojectRepository;
+        private IGenericRepository<Workproject> workprojectRepository;
 
         private IFormGlobalAccessRepository formGlobalAccessRepository;
         private IFormRepository formRepository;
 
         public HomeController(ILogger<HomeController> logger, IFormRepository formRepo, IGenericRepository<User> userRepo,
-                              IGenericRepository<Workroject> workprojectRepo, IFormGlobalAccessRepository formGlobalAccessRepo)
+                              IGenericRepository<Workproject> workprojectRepo, IFormGlobalAccessRepository formGlobalAccessRepo)
         {
             _logger = logger;
             formRepository = formRepo;
@@ -36,7 +37,7 @@ namespace BonusSystemApplication.Controllers
             IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(UserData.UserId);
             #endregion
 
-            #region Queries to request available for User forms (repeat in Form action)
+            #region Queries to request available for User forms
 
                 #region Queries for forms where user has Global accesses
                 IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
@@ -115,11 +116,10 @@ namespace BonusSystemApplication.Controllers
             return View(homeIndexViewModel);
         }
 
-        public IActionResult Form(long id)
+        [HttpPost]
+        public IActionResult Form(List<long> selectedFormIds)
         {
-            List<long> selectedFormIds = new List<long>();
-            //TODO: JS should in a cycle calls Form action and send to it only one select formId
-            #region Validation of selected form ids
+            #region Validate selected form ids
             List<long> itemsToRemove = new List<long>();
             foreach (long formId in selectedFormIds)
             {
@@ -130,23 +130,142 @@ namespace BonusSystemApplication.Controllers
             }
             selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
             itemsToRemove.Clear();
+
+            if(selectedFormIds.Count() == 0)
+            {
+                return RedirectToAction("Index");
+            }
             #endregion
 
-            IEnumerable<Form> forms = formRepository.GetForm(id);
-            Form form = forms.First();
+            long id = selectedFormIds.ElementAt(0);
+            Form form = formRepository.GetForm(id);
 
-            ViewBag.Users = userRepository.GetAll().Select(u => new SelectListItem { Value = u.Id.ToString(), Text = $"{u.LastNameEng} {u.FirstNameEng}" }).ToList();
-            ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();
+            ObjectivesDefinition objectivesDefinition = null;
+            ObjectivesSignature obectivesSignature = null;
+            ResultsDefinition resultsDefinition = null;
+            ResultsSignature resultsSignature = null;
+
+            #region Fill ViewModels
+            objectivesDefinition = new ObjectivesDefinition
+            {
+                FormId = form.Id,
+                IsObjectivesFreezed = form.IsObjectivesFreezed,
+                Period = form.Period.ToString(),
+                Year = form.Year.ToString(),
+                ObjectivesResults = form.ObjectivesResults,
+                EmployeeFullName = $"{form.Employee.LastNameEng} {form.Employee.FirstNameEng}",
+                ManagerFullName = $"{form.Manager?.LastNameEng} {form.Manager?.FirstNameEng}",
+                ApproverFullName = $"{form.Approver?.LastNameEng} {form.Approver?.FirstNameEng}",
+                WorkprojectName = form.Workproject.Name,
+                IsWpmHox = form.IsWpmHox,
+                Team = form.Employee.Team.Name,
+                Position = form.Employee.Position.NameEng,
+                Pid = form.Employee.Pid,
+                WorkprojectDescription = form.Workproject.Name,
+            };
+
+            if (objectivesDefinition.IsObjectivesFreezed)
+            {
+                obectivesSignature = new ObjectivesSignature
+                {
+                    IsObjectivesSignedByEmployee = form.IsObjectivesSignedByEmployee,
+                    ObjectivesEmployeeSignature = form.ObjectivesEmployeeSignature == null ? string.Empty : form.ObjectivesEmployeeSignature,
+                    IsObjectivesRejectedByEmployee = form.IsObjectivesRejectedByEmployee,
+                    IsObjectivesSignedByManager = form.IsObjectivesSignedByManager,
+                    ObjectivesManagerSignature = form.ObjectivesManagerSignature == null ? string.Empty : form.ObjectivesManagerSignature,
+                    IsObjectivesSignedByApprover = form.IsObjectivesSignedByApprover,
+                    ObjectivesApproverSignature = form.ObjectivesApproverSignature == null ? string.Empty : form.ObjectivesApproverSignature,
+                };
+
+                if (obectivesSignature.IsObjectivesSigned)
+                {
+                    resultsDefinition = new ResultsDefinition
+                    {
+                        IsResultsFreezed = form.IsResultsFreezed,
+                        OverallKpi = form.OverallKpi,
+                        IsProposalForBonusPayment = form.IsProposalForBonusPayment,
+                        ManagerComment = form.ManagerComment,
+                        EmployeeComment = form.EmployeeComment,
+                        OtherComment = form.OtherComment,
+                        ObjectivesResults = form.ObjectivesResults,
+                    };
+
+                    if (resultsDefinition.IsResultsFreezed)
+                    {
+                        resultsSignature = new ResultsSignature()
+                        {
+                            IsResultsSignedByEmployee = form.IsResultsSignedByEmployee,
+                            ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature,
+                            IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee,
+                            IsResultsSignedByManager = form.IsResultsSignedByManager,
+                            ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature,
+                            IsResultsSignedByApprover = form.IsResultsSignedByApprover,
+                            ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature,
+                        };
+
+                        if (resultsSignature.IsResultsSigned)
+                        {
+                            //do nothing
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+                    }
+                    else
+                    {
+                        resultsSignature = new ResultsSignature();
+                    }
+                }
+                else
+                {
+                    resultsDefinition = new ResultsDefinition();
+                    resultsSignature = new ResultsSignature();
+                }
+            }
+            else
+            {
+                obectivesSignature = new ObjectivesSignature();
+                resultsDefinition = new ResultsDefinition();
+                resultsSignature = new ResultsSignature();
+            }
+            #endregion
+
+            // TODO: check form status:
+            //       stage#1: only ObjectivesDefinition should be loaded
+            //                only ObjectivesDefinition could be saved
+            //       stage#2: only ObjectivesDefinition and ObjectivesSignature should be loaded
+            //                only ObjectivesSignature could be saved
+            //       stage#3: only ObjectivesDefinition and ObjectivesSignature and ResultsDefinition should be loaded
+            //                only ResultsDefinition could be saved
+            //       stage#4: only ObjectivesDefinition and ObjectivesSignature and ResultsDefinition and ResultsSignature should be loaded
+            //                only ResultsSignature could be saved
+
+
+
+            // ----------------------------------------------------------------------
+
+            List<User> users = userRepository.GetQueryForAll()
+                .Select(u => new User
+                {
+                    LastNameEng = u.LastNameEng,
+                    FirstNameEng = u.FirstNameEng,
+                })
+                .ToList();
+
+            List<Workproject> workprojects = workprojectRepository.GetQueryForAll()
+                .Select(w => new Workproject
+                {
+                    Name= w.Name,
+                })
+                .ToList();
+
+            // TODO generate selectLists in a new ViewModel
+
+            //ViewBag.Users = userRepository.GetAll().Select(u => new SelectListItem { Value = u.Id.ToString(), Text = $"{u.LastNameEng} {u.FirstNameEng}" }).ToList();
+            //ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();
 
             return View(form);
-        }
-
-        [HttpPost]
-        public IActionResult OpenBlankForm()
-        {
-            //TODO: create blank form model: necessary ObjectiveResults and other
-            Form form = new Form();
-            return View("Form", form);
         }
 
         [HttpPost]
@@ -167,6 +286,33 @@ namespace BonusSystemApplication.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult OpenBlankForm()
+        {
+            //TODO: create blank form model: necessary ObjectiveResults and other
+            Form form = new Form()
+            {
+                Id = 0,
+            };
+
+            List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
+            for(int i=0; i < 10; i++)
+            {
+                ObjectiveResult objectiveResult = new ObjectiveResult()
+                {
+                    Id = 0,
+                    Row = i + 1,
+                    Form = form,
+                };
+                objectivesResults.Add(objectiveResult);
+            }
+
+            form.ObjectivesResults = objectivesResults;
+
+            return View("Form", form);
+        }
+
 
         [HttpPost]
         public IActionResult PromoteFormsBasedOnSelection(List<long> selectedFormIds)

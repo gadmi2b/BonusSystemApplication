@@ -10,6 +10,6 @@
         public long? TeamId { get; set; }
         public Team? Team { get; set; }
         public long? WorkprojectId { get; set; }
-        public Workroject? Workroject { get; set; }
+        public Workproject? Workproject { get; set; }
     }
 }

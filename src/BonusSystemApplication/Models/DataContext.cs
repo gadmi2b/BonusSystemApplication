@@ -9,7 +9,7 @@ namespace BonusSystemApplication.Models
         public DbSet<FormLocalAccess> FormLocalAccess { get; set; }
         public DbSet<FormGlobalAccess> FormGlobalAccess { get; set; }
         public DbSet<ObjectiveResult> ObjectivesResults { get; set; }
-        public DbSet<Workroject> Workprojects { get; set; }
+        public DbSet<Workproject> Workprojects { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Position> Positions { get; set; }
@@ -105,10 +105,10 @@ namespace BonusSystemApplication.Models
 
             #region Workproject configuring
 
-            modelBuilder.Entity<Workroject>().HasIndex(w => w.Name).IsUnique();
-            modelBuilder.Entity<Workroject>().Property(w => w.Name).IsRequired();
+            modelBuilder.Entity<Workproject>().HasIndex(w => w.Name).IsUnique();
+            modelBuilder.Entity<Workproject>().Property(w => w.Name).IsRequired();
 
-            modelBuilder.Entity<Workroject>().Property(w => w.IsActive).HasDefaultValue(true);
+            modelBuilder.Entity<Workproject>().Property(w => w.IsActive).HasDefaultValue(true);
 
             #endregion
 
