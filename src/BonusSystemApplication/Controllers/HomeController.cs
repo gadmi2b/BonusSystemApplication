@@ -137,98 +137,116 @@ namespace BonusSystemApplication.Controllers
             }
             #endregion
 
+            // selection of ONE formId is already controlled on client side
+            // control here - just for double check
             long id = selectedFormIds.ElementAt(0);
-            Form form = formRepository.GetForm(id);
 
-            ObjectivesDefinition objectivesDefinition = null;
-            ObjectivesSignature obectivesSignature = null;
-            ResultsDefinition resultsDefinition = null;
-            ResultsSignature resultsSignature = null;
+            #region Getting formQuery and Form data precisely
+            IQueryable<Form> formQuery = formRepository.GetFormQuery(id);
+            Form form = formQuery
+                .Select(f => new Form
+                {
+                    // ObjectivesDefinition data block
+                    Id = f.Id,
+                    IsObjectivesFreezed = f.IsObjectivesFreezed,
+                    Employee = new User
+                    {
+                        FirstNameEng = f.Employee.FirstNameEng,
+                        LastNameEng = f.Employee.LastNameEng,
+                        Pid = f.Employee.Pid,
+                        Team = new Team
+                        {
+                            Name = f.Employee.Team.Name,
+                        },
+                        Position = new Position
+                        {
+                            NameEng = f.Employee.Position.NameEng,
+                        },
+                    },
+                    Manager = new User
+                    {
+                        FirstNameEng = f.Employee.FirstNameEng,
+                        LastNameEng = f.Employee.LastNameEng,
+                    },
+                    Approver = new User
+                    {
+                        FirstNameEng = f.Employee.FirstNameEng,
+                        LastNameEng = f.Employee.LastNameEng,
+                    },
+                    Workproject = new Workproject
+                    {
+                        Name = f.Workproject.Name,
+                        Description = f.Workproject.Description,
+                    },
+                    Period = f.Period,
+                    Year = f.Year,
+                    IsWpmHox = f.IsWpmHox,
+                    ObjectivesResults = f.ObjectivesResults,
 
-            #region Fill ViewModels
-            objectivesDefinition = new ObjectivesDefinition
+                    // ObjectivesSignature data block
+                    IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
+                    ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
+                    IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
+                    IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
+                    ObjectivesManagerSignature = f.ObjectivesManagerSignature,
+                    IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
+                    ObjectivesApproverSignature = f.ObjectivesApproverSignature,
+
+                    // ResultsDefinition data block
+                    IsResultsFreezed = f.IsResultsFreezed,
+                    OverallKpi = f.OverallKpi,
+                    IsProposalForBonusPayment = f.IsProposalForBonusPayment,
+                    ManagerComment = f.ManagerComment,
+                    EmployeeComment = f.EmployeeComment,
+                    OtherComment = f.OtherComment,
+
+                    // ResultsSignature data block
+                    IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
+                    ResultsEmployeeSignature = f.ResultsEmployeeSignature,
+                    IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
+                    IsResultsSignedByManager = f.IsResultsSignedByManager,
+                    ResultsManagerSignature = f.ResultsManagerSignature,
+                    IsResultsSignedByApprover = f.IsResultsSignedByApprover,
+                    ResultsApproverSignature = f.ResultsApproverSignature,
+                })
+                .First();
+            #endregion
+
+            #region Getting queries for Users and Workprojects
+            IQueryable<User> usersQuery = userRepository.GetQueryForAll();
+            IQueryable<Workproject> workprojectsQuery = workprojectRepository.GetQueryForAll();
+            #endregion
+
+            #region Prepare HomeFormViewModel
+            HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
-                FormId = form.Id,
-                IsObjectivesFreezed = form.IsObjectivesFreezed,
-                Period = form.Period.ToString(),
-                Year = form.Year.ToString(),
-                ObjectivesResults = form.ObjectivesResults,
-                EmployeeFullName = $"{form.Employee.LastNameEng} {form.Employee.FirstNameEng}",
-                ManagerFullName = $"{form.Manager?.LastNameEng} {form.Manager?.FirstNameEng}",
-                ApproverFullName = $"{form.Approver?.LastNameEng} {form.Approver?.FirstNameEng}",
-                WorkprojectName = form.Workproject.Name,
-                IsWpmHox = form.IsWpmHox,
-                Team = form.Employee.Team.Name,
-                Position = form.Employee.Position.NameEng,
-                Pid = form.Employee.Pid,
-                WorkprojectDescription = form.Workproject.Name,
+                ObjectivesDefinition = new ObjectivesDefinition(form),
+                ObjectivesSignature = new ObjectivesSignature(form),
+                ResultsDefinition = new ResultsDefinition(form),
+                ResultsSignature = new ResultsSignature(form),
+
+                PeriodSelectList = Enum.GetNames(typeof(Periods))
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s,
+                        Text = s,
+                    })
+                    .ToList(),
+                EmployeeSelectList = usersQuery
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = $"{u.LastNameEng} {u.FirstNameEng}",
+                    })
+                    .ToList(),
+                WorkprojectSelectList = workprojectsQuery
+                    .Select(w => new SelectListItem
+                    {
+                        Value = w.Id.ToString(),
+                        Text = w.Name,
+                    })
+                    .ToList(),
             };
-
-            if (objectivesDefinition.IsObjectivesFreezed)
-            {
-                obectivesSignature = new ObjectivesSignature
-                {
-                    IsObjectivesSignedByEmployee = form.IsObjectivesSignedByEmployee,
-                    ObjectivesEmployeeSignature = form.ObjectivesEmployeeSignature == null ? string.Empty : form.ObjectivesEmployeeSignature,
-                    IsObjectivesRejectedByEmployee = form.IsObjectivesRejectedByEmployee,
-                    IsObjectivesSignedByManager = form.IsObjectivesSignedByManager,
-                    ObjectivesManagerSignature = form.ObjectivesManagerSignature == null ? string.Empty : form.ObjectivesManagerSignature,
-                    IsObjectivesSignedByApprover = form.IsObjectivesSignedByApprover,
-                    ObjectivesApproverSignature = form.ObjectivesApproverSignature == null ? string.Empty : form.ObjectivesApproverSignature,
-                };
-
-                if (obectivesSignature.IsObjectivesSigned)
-                {
-                    resultsDefinition = new ResultsDefinition
-                    {
-                        IsResultsFreezed = form.IsResultsFreezed,
-                        OverallKpi = form.OverallKpi,
-                        IsProposalForBonusPayment = form.IsProposalForBonusPayment,
-                        ManagerComment = form.ManagerComment,
-                        EmployeeComment = form.EmployeeComment,
-                        OtherComment = form.OtherComment,
-                        ObjectivesResults = form.ObjectivesResults,
-                    };
-
-                    if (resultsDefinition.IsResultsFreezed)
-                    {
-                        resultsSignature = new ResultsSignature()
-                        {
-                            IsResultsSignedByEmployee = form.IsResultsSignedByEmployee,
-                            ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature,
-                            IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee,
-                            IsResultsSignedByManager = form.IsResultsSignedByManager,
-                            ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature,
-                            IsResultsSignedByApprover = form.IsResultsSignedByApprover,
-                            ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature,
-                        };
-
-                        if (resultsSignature.IsResultsSigned)
-                        {
-                            //do nothing
-                        }
-                        else
-                        {
-                            //do nothing
-                        }
-                    }
-                    else
-                    {
-                        resultsSignature = new ResultsSignature();
-                    }
-                }
-                else
-                {
-                    resultsDefinition = new ResultsDefinition();
-                    resultsSignature = new ResultsSignature();
-                }
-            }
-            else
-            {
-                obectivesSignature = new ObjectivesSignature();
-                resultsDefinition = new ResultsDefinition();
-                resultsSignature = new ResultsSignature();
-            }
             #endregion
 
             // TODO: check form status:
@@ -242,30 +260,10 @@ namespace BonusSystemApplication.Controllers
             //                only ResultsSignature could be saved
 
 
-
-            // ----------------------------------------------------------------------
-
-            List<User> users = userRepository.GetQueryForAll()
-                .Select(u => new User
-                {
-                    LastNameEng = u.LastNameEng,
-                    FirstNameEng = u.FirstNameEng,
-                })
-                .ToList();
-
-            List<Workproject> workprojects = workprojectRepository.GetQueryForAll()
-                .Select(w => new Workproject
-                {
-                    Name= w.Name,
-                })
-                .ToList();
-
-            // TODO generate selectLists in a new ViewModel
-
             //ViewBag.Users = userRepository.GetAll().Select(u => new SelectListItem { Value = u.Id.ToString(), Text = $"{u.LastNameEng} {u.FirstNameEng}" }).ToList();
             //ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();
 
-            return View(form);
+            return View(homeFormViewModel);
         }
 
         [HttpPost]

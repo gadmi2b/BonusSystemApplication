@@ -22,5 +22,23 @@
                        IsObjectivesSignedByApprover;
             }
         }
+
+        public ObjectivesSignature(Form form)
+        {
+            if (form.IsObjectivesFreezed)
+            {
+                IsObjectivesSignedByEmployee = form.IsObjectivesSignedByEmployee;
+                ObjectivesEmployeeSignature = form.ObjectivesEmployeeSignature == null ? string.Empty : form.ObjectivesEmployeeSignature;
+                IsObjectivesRejectedByEmployee = form.IsObjectivesRejectedByEmployee;
+                IsObjectivesSignedByManager = form.IsObjectivesSignedByManager;
+                ObjectivesManagerSignature = form.ObjectivesManagerSignature == null ? string.Empty : form.ObjectivesManagerSignature;
+                IsObjectivesSignedByApprover = form.IsObjectivesSignedByApprover;
+                ObjectivesApproverSignature = form.ObjectivesApproverSignature == null ? string.Empty : form.ObjectivesApproverSignature;
+            }
+            else
+            {
+                // just keep default values
+            }
+        }
     }
 }

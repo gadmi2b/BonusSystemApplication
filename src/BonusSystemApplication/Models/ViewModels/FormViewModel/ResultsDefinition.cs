@@ -12,5 +12,36 @@
         public string EmployeeComment { get; set; } = string.Empty;
         public string OtherComment { get; set; } = string.Empty;
         public IList<ObjectiveResult> ObjectivesResults { get; set; } = new List<ObjectiveResult>();
+
+        public ResultsDefinition(Form form)
+        {
+            if(form.IsObjectivesFreezed &&
+               form.IsObjectivesSignedByEmployee &&
+               form.IsObjectivesSignedByManager &&
+               form.IsObjectivesSignedByApprover)
+            {
+                IsResultsFreezed = form.IsResultsFreezed;
+                OverallKpi = form.OverallKpi;
+                IsProposalForBonusPayment = form.IsProposalForBonusPayment;
+                ManagerComment = form.ManagerComment;
+                EmployeeComment = form.EmployeeComment;
+                OtherComment = form.OtherComment;
+                ObjectivesResults = form.ObjectivesResults;
+            }
+            else
+            {
+                // just keep default values
+                for(int i = 0; i < 10; i++)
+                {
+                    ObjectiveResult result = new ObjectiveResult
+                    {
+                        KeyCheck = string.Empty,
+                        Achieved = string.Empty,
+                        Kpi = null,
+                    };
+                    ObjectivesResults.Add(result);
+                }
+            }
+        }
     }
 }

@@ -1,12 +1,14 @@
 ﻿/**
  * maintains the table
+ * ObjectivesDefinition_ObjectivesResults_0__Statement
  */
 
 class Table {
 
   static totalRows = 10;
 
-  static base = "ObjectivesResults";
+  static baseObjectives = "ObjectivesDefinition_ObjectivesResults";
+  static baseResults = "ResultsDefinition_ObjectivesResults";
   static row = "Row";
   static statement = "Statement";
   static description = "Description";
@@ -58,7 +60,12 @@ class Table {
    * @param {number} rowNumber - the number of row cell belong to
    */
   static getCellId(columnName, rowNumber) {
-    return (this.base + "_" + rowNumber + "__" + columnName);
+
+    if (columnName === this.keyCheck || columnName === this.achieved || columnName === this.kpi) {
+      return (this.baseResults + "_" + rowNumber + "__" + columnName);
+    } else {
+      return (this.baseObjectives + "_" + rowNumber + "__" + columnName);
+    }
   }
 
 

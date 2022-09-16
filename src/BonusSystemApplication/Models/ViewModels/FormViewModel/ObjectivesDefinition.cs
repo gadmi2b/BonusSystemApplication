@@ -5,21 +5,39 @@
     /// </summary>
     public class ObjectivesDefinition
     {
-        public long FormId { get; set; }
+        public long FormId { get; set; } = 0;
         public bool IsObjectivesFreezed { get; set; } = false;
-        public string Period { get; set; }
-        public string Year { get; set; }
+        public string Period { get; set; } = string.Empty;
+        public string Year { get; set; } = string.Empty;
+        public string EmployeeFullName { get; set; } = string.Empty;
+        public string ManagerFullName { get; set; } = string.Empty;
+        public string ApproverFullName { get; set; } = string.Empty;
+        public string WorkprojectName { get; set; } = string.Empty;
+        public bool IsWpmHox { get; set; } = false;
         public IList<ObjectiveResult> ObjectivesResults { get; set; }
-        public string EmployeeFullName { get; set; }
-        public string ManagerFullName { get; set; }
-        public string ApproverFullName { get; set; }
-        public string WorkprojectName { get; set; }
-        public bool IsWpmHox { get; set; }
 
         //readonly values
-        public string Team { get; set; }
-        public string Position { get; set; }
-        public string Pid { get; set; }
-        public string WorkprojectDescription { get; set; }
+        public string TeamName { get; set; } = string.Empty;
+        public string PositionName { get; set; } = string.Empty;
+        public string Pid { get; set; } = string.Empty;
+        public string WorkprojectDescription { get; set; } = string.Empty;
+
+        public ObjectivesDefinition(Form form)
+        {
+            FormId = form.Id;
+            IsObjectivesFreezed = form.IsObjectivesFreezed;
+            Period = form.Period.ToString();
+            Year = form.Year.ToString();
+            ObjectivesResults = form.ObjectivesResults;
+            EmployeeFullName = $"{form.Employee.LastNameEng} {form.Employee.FirstNameEng}";
+            ManagerFullName = $"{form.Manager?.LastNameEng} {form.Manager?.FirstNameEng}";
+            ApproverFullName = $"{form.Approver?.LastNameEng} {form.Approver?.FirstNameEng}";
+            WorkprojectName = form.Workproject.Name;
+            IsWpmHox = form.IsWpmHox;
+            TeamName = form.Employee.Team.Name;
+            PositionName = form.Employee.Position.NameEng;
+            Pid = form.Employee.Pid;
+            WorkprojectDescription = form.Workproject.Name;
+        }
     }
 }

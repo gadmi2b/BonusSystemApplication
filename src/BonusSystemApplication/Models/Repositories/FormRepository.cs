@@ -44,6 +44,12 @@ namespace BonusSystemApplication.Models.Repositories
             throw new NotImplementedException();
         }
 
+        public IQueryable<Form> GetFormQuery(long formId)
+        {
+            return context.Forms.AsQueryable()
+                    .Where(f => f.Id == formId);
+        }
+
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
