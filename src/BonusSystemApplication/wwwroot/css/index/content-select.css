@@ -20,28 +20,16 @@
     justify-self: end;
 }
 
-
-.button {
-    padding: 4px 8px;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    margin-right: 15px;
-}
-
-.button:is(:hover) {
-    border: 1px solid black;
-}
-
-.button-groups {
+.button-group--flex {
     display: flex;
     margin-bottom: 20px;
 }
 
-.button-groups__group {
+.button-group--margin {
     margin-right: 120px;
 }
 
-.button-groups__title {
+.button-group__title {
     font-weight: 600;
     margin-bottom: 10px;
     font-size: 16px;

@@ -13,7 +13,7 @@ function runTests() {
 
 function testTableClassGetCellId() {
   //arrange
-  const expected = "ObjectivesResults_3__Row";
+  const expected = "ObjectivesDefinition_ObjectivesResults_3__Row";
 
   //act
   const actual = Table.getCellId(Table.row, 3);
@@ -31,7 +31,7 @@ function testTableClassGetRowNumberById() {
   const expected = 5;
 
   //act
-  const actual = Table.getRowNumberById("ObjectivesResults_5__Target");
+  const actual = Table.getRowNumberById("ObjectivesDefinition_ObjectivesResults_5__Target");
 
   //asset
   if (expected === actual) {
@@ -46,7 +46,7 @@ function testTableClassGetColumnNameById() {
   const expected = "Target";
 
   //act
-  const actual = Table.getColumnNameById("ObjectivesResults_5__Target");
+  const actual = Table.getColumnNameById("ObjectivesDefinition_ObjectivesResults_5__Target");
 
   //asset
   if (expected === actual) {
@@ -91,8 +91,8 @@ function testTableClassSetValue() {
   const expected = "55";
 
   //act
-  Table.setValue("ObjectivesResults_9__Target", 55);
-  const actual = document.getElementById("ObjectivesResults_9__Target").value;
+  Table.setValue("ObjectivesDefinition_ObjectivesResults_9__Target", 55);
+  const actual = document.getElementById("ObjectivesDefinition_ObjectivesResults_9__Target").value;
 
   //asset
   if (expected === actual) {

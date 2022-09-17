@@ -1,7 +1,7 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     /// <summary>
-    /// Stage #3 of form defenition: form results, proposal for bonus payment and comments 
+    /// Stage #3 of form definition: form results, proposal for bonus payment and comments 
     /// </summary>
     public class ResultsDefinition
     {
@@ -26,7 +26,14 @@
                 ManagerComment = form.ManagerComment;
                 EmployeeComment = form.EmployeeComment;
                 OtherComment = form.OtherComment;
-                ObjectivesResults = form.ObjectivesResults;
+                ObjectivesResults = form.ObjectivesResults
+                    .Select(x => new ObjectiveResult
+                    {
+                        KeyCheck = x.KeyCheck,
+                        Achieved = x.Achieved,
+                        Kpi = x.Kpi,
+                    })
+                    .ToList();
             }
             else
             {

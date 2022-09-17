@@ -1,7 +1,7 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     /// <summary>
-    /// Stage #1 of form defenition: form header, participants and objectives 
+    /// Stage #1 of form definition: form header, participants and objectives 
     /// </summary>
     public class ObjectivesDefinition
     {
@@ -28,7 +28,6 @@
             IsObjectivesFreezed = form.IsObjectivesFreezed;
             Period = form.Period.ToString();
             Year = form.Year.ToString();
-            ObjectivesResults = form.ObjectivesResults;
             EmployeeFullName = $"{form.Employee.LastNameEng} {form.Employee.FirstNameEng}";
             ManagerFullName = $"{form.Manager?.LastNameEng} {form.Manager?.FirstNameEng}";
             ApproverFullName = $"{form.Approver?.LastNameEng} {form.Approver?.FirstNameEng}";
@@ -38,6 +37,23 @@
             PositionName = form.Employee.Position.NameEng;
             Pid = form.Employee.Pid;
             WorkprojectDescription = form.Workproject.Name;
+            ObjectivesResults = form.ObjectivesResults
+                .Select(x => new ObjectiveResult
+                {
+                    Id = x.Id,
+                    Row = x.Row,
+                    Statement = x.Statement,
+                    Description = x.Description,
+                    IsKey = x.IsKey,
+                    IsMeasurable = x.IsMeasurable,
+                    Unit = x.Unit,
+                    Threshold = x.Threshold,
+                    Target = x.Target,
+                    Challenge = x.Challenge,
+                    WeightFactor = x.WeightFactor,
+                    KpiUpperLimit = x.KpiUpperLimit,
+                })
+                .ToList();
         }
     }
 }

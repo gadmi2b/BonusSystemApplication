@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="~/css/index/content.css" />
   <link rel="stylesheet" href="~/css/index/content-select.css" />
   <link rel="stylesheet" href="~/css/index/content-table.css" />
+  <link rel="stylesheet" href="~/css/common.css" />
 
   <link rel="stylesheet" href="~/lib/bootstrap/bootstrap/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="~/lib/bootstrap/bootstrap-multiselect/css/bootstrap-multiselect.css"/>
@@ -92,17 +93,17 @@ BEM convention: Block Elements Modifiers
     </form>
 
     <form method="post" class="content-table-form">
-      <div class="button-groups">
-        <span class="button-groups__group">
-          <div class="button-groups__title">Work with empty form:</div>
-          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="button" />
+      <div class="button-group--flex">
+        <span class="button-group--margin">
+          <div class="button-group__title">Work with empty form:</div>
+          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="cmn-button" />
         </span>
-        <span class="button-groups__group">
-          <div class="button-groups__title">Work based on selected form/forms:</div>
-          <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="button" id="js-open-button" />
-          <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="button" id="js-create-button" />
-          <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="button" />
-          <input type="submit" value="Delete" asp-controller="Home" asp-action="Form" class="button" />
+        <span class="button-group--margin">
+          <div class="button-group__title">Work based on selected form/forms:</div>
+          <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-open-button" />
+          <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-create-button" />
+          <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="cmn-button" />
+          <input type="submit" value="Delete" asp-controller="Home" asp-action="Form" class="cmn-button" />
         </span>
       </div>
 

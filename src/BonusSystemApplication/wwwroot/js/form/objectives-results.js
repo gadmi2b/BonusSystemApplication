@@ -30,7 +30,9 @@ $(document).ready(function () {
     Table.ifEmptyThenColorBackground(Table.getCellId(Table.kpiUpperLimit, row));
     Table.ifEmptyThenColorBackground(Table.getCellId(Table.achieved, row));
   }
-  checkSigantureBlocksState();
+
+  // >> functionality were transfered to server side <<
+  //checkSigantureBlocksState();
 
 });
 
@@ -528,31 +530,32 @@ function checkProposalForBonusPaymentState() {
 
 
 // ---------- Business logic: content-signatures -----------
+// >> functionality were transfered to server side <<
 
-function checkSigantureBlocksState() {
-  const objectivesBlock = document.getElementById("js-signatureBlockObjectives");
-  const resultsBlock = document.getElementById("js-signatureBlockResults");
+//function checkSigantureBlocksState() {
+//  const objectivesBlock = document.getElementById("js-signatureBlockObjectives");
+//  const resultsBlock = document.getElementById("js-signatureBlockResults");
 
-  const isObjectivesFreezedValue = Table.getValueById("js-isObjectivesFreezed");
-  const isResultsFreezedValue = Table.getValueById("js-isResultsFreezed");
+//  const isObjectivesFreezedValue = Table.getValueById("js-isObjectivesFreezed");
+//  const isResultsFreezedValue = Table.getValueById("js-isResultsFreezed");
 
-  // if objectives aren't freezed - both blocks must be disabled
-  if (!isObjectivesFreezedValue || isObjectivesFreezedValue === "False") {
-    enableElement(objectivesBlock, false);
-    enableElement(resultsBlock, false);
-    return;
-  } else {
-    enableElement(objectivesBlock, true);
-  }
+//  // if objectives aren't freezed - both blocks must be disabled
+//  if (!isObjectivesFreezedValue || isObjectivesFreezedValue === "False") {
+//    enableElement(objectivesBlock, false);
+//    enableElement(resultsBlock, false);
+//    return;
+//  } else {
+//    enableElement(objectivesBlock, true);
+//  }
 
-  // if results aren't freezed - results signature block must be disabled
-  if (!isResultsFreezedValue || isResultsFreezedValue === "False") {
-    enableElement(resultsBlock, false);
-    return;
-  } else {
-    enableElement(resultsBlock, true);
-  }
-}
+//  // if results aren't freezed - results signature block must be disabled
+//  if (!isResultsFreezedValue || isResultsFreezedValue === "False") {
+//    enableElement(resultsBlock, false);
+//    return;
+//  } else {
+//    enableElement(resultsBlock, true);
+//  }
+//}
 
 // ---------- Help functions --------------------
 

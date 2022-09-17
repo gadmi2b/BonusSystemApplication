@@ -1,7 +1,7 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     /// <summary>
-    /// Stage #2 of form defenition: objectives were freezed and signatures collection is in progress 
+    /// Stage #2 of form definition: objectives were freezed and signatures collection is in progress 
     /// </summary>
     public class ObjectivesSignature
     {

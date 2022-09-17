@@ -115,7 +115,7 @@ class Table {
     }
 
     const parts = cellId.split(deliminator);
-    const rowNumber = Number.parseInt(parts[1]);
+    const rowNumber = Number.parseInt(parts[2]);
     return rowNumber;
   }
 

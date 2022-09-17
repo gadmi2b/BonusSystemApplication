@@ -1,7 +1,7 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     /// <summary>
-    /// Stage #4 of form defenition: results were freezed and signatures collection is in progress 
+    /// Stage #4 of form definition: results were freezed and signatures collection is in progress 
     /// </summary>
     public class ResultsSignature
     {

@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="~/css/form/content-advanced.css" />
   <link rel="stylesheet" href="~/css/form/content-comments.css" />
   <link rel="stylesheet" href="~/css/form/content-signatures.css" />
+  <link rel="stylesheet" href="~/css/form/sidebar.css" />
+  <link rel="stylesheet" href="~/css/common.css" />
 
   <title>Set title here</title>
 </head>
@@ -197,7 +199,11 @@ BEM convention: Block Elements Modifiers
     @*-------------------------- Content - Signatures --------------------------*@
     <div class="content-signatures">
       <p>Freeze objectives before validation.</p>
-      <fieldset class="content-signatures-block" id="js-signatureBlockObjectives" disabled>
+      @* objectives signature process is forbidden if:
+         objectives is not freezed or results is freezed *@
+      <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
+                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                             Model.ResultsDefinition.IsResultsFreezed)">
         <div class="content-signatures-block__checkbox">
           <label asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee">Employee:</label>
           <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"/>
@@ -221,8 +227,14 @@ BEM convention: Block Elements Modifiers
         <span class="content-signatures-block__signature">I do not agree with objectives</span>
       </fieldset>
 
+      @* results signature process is forbidden if:
+         objectives is not freezed or objectives is not signed or
+         results is not freezed*@
       <p>Freeze results before validation.</p>
-      <fieldset class="content-signatures-block" id="js-signatureBlockResults" disabled>
+      <fieldset class="content-signatures-block" id="js-signatureBlockResults"
+                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                            !Model.ObjectivesSignature.IsObjectivesSigned ||
+                            !Model.ResultsDefinition.IsResultsFreezed)">
         <div class="content-signatures-block__checkbox">
           <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
           <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
@@ -248,8 +260,28 @@ BEM convention: Block Elements Modifiers
     </div>
   </content>
 
-  <sidebar class="sidebar">
-
+  <sidebar class="sidebar sidebar--padding">
+    <div class="button-group">
+        <p class="button-group__title">Objectives:</p>
+        <input type="submit" value="Freeze" asp-controller="Home" asp-action="Freeze" class="cmn-button button--width"
+                disabled="@(Model.ObjectivesDefinition.IsObjectivesFreezed)" />
+        <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
+                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed)" />
+    </div>
+    <div class="button-group">
+        <p class="button-group__title">Results:</p>
+        <input type="submit" value="Freeze" asp-controller="Home" asp-action="Freeze" class="cmn-button button--width"
+               disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                            Model.ResultsDefinition.IsResultsFreezed)" />
+        <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
+               disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                           !Model.ResultsDefinition.IsResultsFreezed)"/>
+    </div>
+    <div class="button-group">
+        <p class="button-group__line"></p>
+        <input type="submit" value="Save" asp-controller="Home" asp-action="SaveForm" class="cmn-button button--width" />
+        <input type="submit" value="Search" asp-controller="Home" asp-action="Index" class="cmn-button button--width" />
+    </div>
   </sidebar>
 
   <footer class="footer">

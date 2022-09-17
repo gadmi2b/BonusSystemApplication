@@ -1,0 +1,14 @@
+﻿/*
+    common styles for all views
+*/
+
+.cmn-button {
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    margin-right: 15px;
+}
+
+.cmn-button:is(:hover) {
+    border: 1px solid black;
+}
