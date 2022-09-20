@@ -37,229 +37,232 @@ BEM convention: Block Elements Modifiers
       <p>You can do it!</p>
   </header>
 
-  <content class="content">
-    <div style="display:none">
-      <input asp-for="ObjectivesDefinition.FormId" type="hidden" readonly />
-      <input asp-for="ObjectivesDefinition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
-      <input asp-for="ResultsDefinition.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
-    </div>
+  <form method="post" id="content-form">
+      <content class="content">
+        <div style="display:none">
+          <input asp-for="ObjectivesDefinition.FormId" type="hidden" readonly />
+          <input asp-for="ObjectivesDefinition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
+          <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />
+          <input asp-for="ResultsDefinition.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
+          <input asp-for="ResultsSignature.IsResultsSigned" type="hidden" readonly />
+        </div>
 
-    @*-------------------------- Content - Period --------------------------*@
-    <div class="content-period">
-      @* TODO: add alt="HTML5" style="width:128px;height:128px" for image *@
-      <img class="content-period__image" src="~/images/Ecar.png" alt="logo"/>
-      <div class="content-period-center">
-        <span class="content-period-center__title">PERSONAL PERFORMANCE OBJECTIVES FOR</span>
-        <select asp-for="ObjectivesDefinition.Period" asp-items="Model.PeriodSelectList"
-                class="content--styles content-period-center__period">
-        </select>
-        <span class="content-period-center__joinder">OF</span>
-        <input asp-for="ObjectivesDefinition.Year" type="text" class="content--styles content-period-center__year" />
-      </div>
-      <div class="content-period__text">Please complete the form in English</div>
-    </div>
+        @*-------------------------- Content - Period --------------------------*@
+        <div class="content-period">
+          @* TODO: add alt="HTML5" style="width:128px;height:128px" for image *@
+          <img class="content-period__image" src="~/images/Ecar.png" alt="logo"/>
+          <div class="content-period-center">
+            <span class="content-period-center__title">PERSONAL PERFORMANCE OBJECTIVES FOR</span>
+            <select asp-for="ObjectivesDefinition.Period" asp-items="Model.PeriodSelectList"
+                    class="content--styles content-period-center__period">
+            </select>
+            <span class="content-period-center__joinder">OF</span>
+            <input asp-for="ObjectivesDefinition.Year" type="text" class="content--styles content-period-center__year" />
+          </div>
+          <div class="content-period__text">Please complete the form in English</div>
+        </div>
 
-    @*-------------------------- Content - Employee --------------------------*@
-    <div class="content-employee">
-      <label asp-for="ObjectivesDefinition.EmployeeFullName" class="content-employee__column-1">Employee:</label>
-      <div class="content-employee__column-2">
-        <select asp-for="ObjectivesDefinition.EmployeeFullName" asp-items="Model.EmployeeSelectList"
-                class="content--styles">
-        </select>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.IsWpmHox">WPM/HoX:</label>
-          <input asp-for="ObjectivesDefinition.IsWpmHox" type="checkbox" />
+        @*-------------------------- Content - Employee --------------------------*@
+        <div class="content-employee">
+          <label asp-for="ObjectivesDefinition.EmployeeId" class="content-employee__column-1">Employee:</label>
+          <div class="content-employee__column-2">
+            <select asp-for="ObjectivesDefinition.EmployeeId" asp-items="Model.EmployeeSelectList"
+                    class="content--styles">
+            </select>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.IsWpmHox">WPM/HoX:</label>
+              <input asp-for="ObjectivesDefinition.IsWpmHox" type="checkbox" />
+            </div>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.TeamName">Team:</label>
+              <input asp-for="ObjectivesDefinition.TeamName" type="text"  disabled class="content--styles content-employee--styles"/>
+            </div>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.PositionName">Position:</label>
+              <input asp-for="ObjectivesDefinition.PositionName" type="text" disabled class="content--styles content-employee--styles" />
+            </div>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.Pid">PID:</label>
+              <input asp-for="ObjectivesDefinition.Pid" type="text" disabled class="content--styles content-employee--styles" />
+            </div>
+          </div>
+          <label asp-for="ObjectivesDefinition.WorkprojectId" class="content-employee__column-1">WP:</label>
+          <div class="content-employee__column-2">
+            <div class="content-employee__column-2-flex">
+              <select asp-for="ObjectivesDefinition.WorkprojectId" asp-items="Model.WorkprojectSelectList"
+                      class="content--styles" onchange="requestWorkprojectDescription(this)">
+              </select>
+              <input asp-for="ObjectivesDefinition.WorkprojectDescription" type="text" disabled class="content-employee--styles" />
+            </div>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.ManagerId">Direct Manager:</label>
+              <select asp-for="ObjectivesDefinition.ManagerId" asp-items="Model.EmployeeSelectList"
+                      class="content--styles" >
+              </select>
+            </div>
+            <div class="content-employee__column-2-flex">
+              <label asp-for="ObjectivesDefinition.ApproverId">Approver:</label>
+              <select asp-for="ObjectivesDefinition.ApproverId" asp-items="Model.EmployeeSelectList"
+                      class="content--styles">
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.TeamName">Team:</label>
-          <input asp-for="ObjectivesDefinition.TeamName" type="text"  disabled class="content--styles content-employee--styles"/>
-        </div>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.PositionName">Position:</label>
-          <input asp-for="ObjectivesDefinition.PositionName" type="text" disabled class="content--styles content-employee--styles" />
-        </div>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.Pid">PID:</label>
-          <input asp-for="ObjectivesDefinition.Pid" type="text" disabled class="content--styles content-employee--styles" />
-        </div>
-      </div>
-      <label asp-for="ObjectivesDefinition.WorkprojectName" class="content-employee__column-1">WP:</label>
-      <div class="content-employee__column-2">
-        <div class="content-employee__column-2-flex">
-          <select asp-for="ObjectivesDefinition.WorkprojectName" asp-items="Model.WorkprojectSelectList"
-                  class="content--styles" onchange="requestWorkprojectDescription(this)">
-          </select>
-          <input asp-for="ObjectivesDefinition.WorkprojectDescription" type="text" disabled class="content-employee--styles" />
-        </div>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.ManagerFullName">Direct Manager:</label>
-          <select asp-for="ObjectivesDefinition.ManagerFullName" asp-items="Model.EmployeeSelectList"
-                  class="content--styles" >
-          </select>
-        </div>
-        <div class="content-employee__column-2-flex">
-          <label asp-for="ObjectivesDefinition.ApproverFullName">Approver:</label>
-          <select asp-for="ObjectivesDefinition.ApproverFullName" asp-items="Model.EmployeeSelectList"
-                  class="content--styles">
-          </select>
-        </div>
-      </div>
-    </div>
 
-    @*-------------------------- Content - Table --------------------------*@
-    <table class="content-table">
-      <thead class="content-table__header">
-        <tr class="content-table__header-row-1">
-          <th colspan="11"><b>Objectives definition:</b> completed at the beginning of the period</th>
-          <th colspan="3"><b>Results:</b> completed at the end</th>
-        </tr>
-        <tr class="content-table__header-row-2">
-          <th class="content-table--column-nth"><b>#</b></th>
-          <th class="content-table--column-statement"><b>Statement of Objective</b></th>
-          <th class="content-table--column-description"><b>Description (incl. how to measure details)</b></th>
-          <th class="content-table--column-key"><b>Key</b></th>
-          <th class="content-table--column-measur"><b>Measur.</b></th>
-          <th class="content-table--column-units"><b>Units</b></th>
-          <th class="content-table--column-threshold"><b>Threshold</b></th>
-          <th class="content-table--column-target"><b>Target</b></th>
-          <th class="content-table--column-challenge"><b>Challenge</b></th>
-          <th class="content-table--column-wf"><b>WF, %</b></th>
-          <th class="content-table--column-upperlimit"><b>KPI Upper Limit, %</b></th>
-          <th class="content-table--column-keycheck"><b>Key Check</b></th>
-          <th class="content-table--column-achieved"><b>Achieved Value</b></th>
-          <th class="content-table--column-kpi"><b>KPI, %</b></th>
-        </tr>
-      </thead>
-      <tbody class="content-table__body" id="js-table">
-        @for(int i = 0; i < Model.ObjectivesDefinition.ObjectivesResults.Count(); i++)
-        {
-          <tr>
-            @*in ViewModel prepapre for each td a property with background-color : red/blue depending on existing value*@
-            @*ObjectivesDefinition table block*@
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].Row" type="text" disabled /></td>
-            <td><textarea asp-for="ObjectivesDefinition.ObjectivesResults[i].Statement" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><textarea asp-for="ObjectivesDefinition.ObjectivesResults[i].Description" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].IsKey" type="checkbox" /></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].IsMeasurable" type="checkbox" /></td>
-            <td><textarea asp-for="ObjectivesDefinition.ObjectivesResults[i].Unit" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].Threshold" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].Target" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].Challenge" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].WeightFactor" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.ObjectivesResults[i].KpiUpperLimit" type="text" /></td>
-            @*ResultsDefinition table block*@
-            <td><textarea asp-for="ResultsDefinition.ObjectivesResults[i].KeyCheck" style="text-align: center" rows="1" disabled></textarea></td>
-            <td><input asp-for="ResultsDefinition.ObjectivesResults[i].Achieved" type="text" /></td>
-            <td><textarea asp-for="ResultsDefinition.ObjectivesResults[i].Kpi" style="text-align: center" rows="1" disabled></textarea></td>
-          </tr>
-        }
-      </tbody>
-      <tfoot class="content-table__footer">
-        <tr>
-          <td colspan="9" class="content-table__footer--padding content-table__footer-sum"><b>&#8721 =</b></td>
-          <td class="content-table__footer--border"><input id="js-weightFactorSum" type="text" disabled/></td>
-          <td class="content-table__footer--border content-table__footer--position-relative">
-            <input id="js-kpiUpperLimitSum" type="text" disabled/>
-            <div class="content-table__footer--position-absolute"><b>&#129145 Max. possible KPI</b></div>
-          </td>
-          <td colspan="2" class="content-table__footer--padding" ><b>Overall KPI =</b></td>
-          <td class="content-table__footer--border"><input id="js-kpiSum" type="text"
-              value="@Model.ResultsDefinition.OverallKpi" disabled/></td>
-        </tr>
-      </tfoot>
-    </table>
+        @*-------------------------- Content - Table --------------------------*@
+        <table class="content-table">
+          <thead class="content-table__header">
+            <tr class="content-table__header-row-1">
+              <th colspan="11"><b>Objectives definition:</b> completed at the beginning of the period</th>
+              <th colspan="3"><b>Results:</b> completed at the end</th>
+            </tr>
+            <tr class="content-table__header-row-2">
+              <th class="content-table--column-nth"><b>#</b></th>
+              <th class="content-table--column-statement"><b>Statement of Objective</b></th>
+              <th class="content-table--column-description"><b>Description (incl. how to measure details)</b></th>
+              <th class="content-table--column-key"><b>Key</b></th>
+              <th class="content-table--column-measur"><b>Measur.</b></th>
+              <th class="content-table--column-units"><b>Units</b></th>
+              <th class="content-table--column-threshold"><b>Threshold</b></th>
+              <th class="content-table--column-target"><b>Target</b></th>
+              <th class="content-table--column-challenge"><b>Challenge</b></th>
+              <th class="content-table--column-wf"><b>WF, %</b></th>
+              <th class="content-table--column-upperlimit"><b>KPI Upper Limit, %</b></th>
+              <th class="content-table--column-keycheck"><b>Key Check</b></th>
+              <th class="content-table--column-achieved"><b>Achieved Value</b></th>
+              <th class="content-table--column-kpi"><b>KPI, %</b></th>
+            </tr>
+          </thead>
+          <tbody class="content-table__body" id="js-table">
+            @for(int i = 0; i < Model.ObjectivesDefinition.Objectives.Count(); i++)
+            {
+              <tr>
+                @*in ViewModel prepapre for each td a property with background-color : red/blue depending on existing value*@
+                @*ObjectivesDefinition table block*@
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].Row" type="text" readonly /></td>
+                <td> <textarea asp-for="ObjectivesDefinition.Objectives[i].Statement" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+                <td><textarea asp-for="ObjectivesDefinition.Objectives[i].Description" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].IsKey" type="checkbox" /></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].IsMeasurable" type="checkbox" /></td>
+                <td><textarea asp-for="ObjectivesDefinition.Objectives[i].Unit" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].Threshold" type="text" /></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].Target" type="text" /></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].Challenge" type="text" /></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].WeightFactor" type="text" /></td>
+                <td><input asp-for="ObjectivesDefinition.Objectives[i].KpiUpperLimit" type="text"/></td>
+                @*ResultsDefinition table block*@
+                <td><textarea asp-for="ResultsDefinition.Results[i].KeyCheck" style="text-align: center" rows="1" disabled></textarea></td>
+                <td><input asp-for="ResultsDefinition.Results[i].Achieved" type="text" /></td>
+                <td><textarea asp-for="ResultsDefinition.Results[i].Kpi" style="text-align: center" rows="1" disabled></textarea></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot class="content-table__footer">
+            <tr>
+              <td colspan="9" class="content-table__footer--padding content-table__footer-sum"><b>&#8721 =</b></td>
+              <td class="content-table__footer--border"><input id="js-weightFactorSum" type="text" disabled/></td>
+              <td class="content-table__footer--border content-table__footer--position-relative">
+                <input id="js-kpiUpperLimitSum" type="text" disabled/>
+                <div class="content-table__footer--position-absolute"><b>&#129145 Max. possible KPI</b></div>
+              </td>
+              <td colspan="2" class="content-table__footer--padding" ><b>Overall KPI =</b></td>
+              <td class="content-table__footer--border"><input id="js-kpiSum" type="text"
+                  value="@Model.ResultsDefinition.OverallKpi" disabled/></td>
+            </tr>
+          </tfoot>
+        </table>
 
-    @*-------------------------- Content - Advanced --------------------------*@
-    <div class="content-advanced">
-      <div class="content-advanced-proposal">
-        <p><b>Proposal for bonus payment:</b></p>
-        <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="true" id="js-IsProposalForBonusPaymentYes" disabled/>
-        <label for="IsProposalForBonusPaymentYes">Yes</label>
-        <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="false" id="js-IsProposalForBonusPaymentNo" disabled/>
-        <label for="IsProposalForBonusPaymentNo">No</label>
-      </div>
-      <div class="content-advanced-worktime">
-        <p><b>Work time balance, wh:</b></p>
-        <input type="text" value="no data" disabled />
-      </div>
-    </div>
-
-    @*-------------------------- Content - Comments --------------------------*@
-    <div class="content-comments">
-      <p>Comments from Direct Manager (desirable):</p>
-      <textarea asp-for="ResultsDefinition.ManagerComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
-
-      <p>Employee's comments (optional):</p>
-      <textarea asp-for="ResultsDefinition.EmployeeComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
-
-      <p>Any other comments (incl. processing info for HR, optional):</p>
-      <textarea asp-for="ResultsDefinition.OtherComment" rows="1" oninput="ResizeTextArea(this)"></textarea>
-    </div>
-
-    @*-------------------------- Content - Signatures --------------------------*@
-    <div class="content-signatures">
-      <p>Freeze objectives before validation.</p>
-      @* objectives signature process is forbidden if:
-         objectives is not freezed or results is freezed *@
-      <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
-                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
-                             Model.ResultsDefinition.IsResultsFreezed)">
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee">Employee:</label>
-          <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"/>
+        @*-------------------------- Content - Advanced --------------------------*@
+        <div class="content-advanced">
+          <div class="content-advanced-proposal">
+            <p><b>Proposal for bonus payment:</b></p>
+            <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="true" id="js-IsProposalForBonusPaymentYes" disabled/>
+            <label for="IsProposalForBonusPaymentYes">Yes</label>
+            <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="false" id="js-IsProposalForBonusPaymentNo" disabled/>
+            <label for="IsProposalForBonusPaymentNo">No</label>
+          </div>
+          <div class="content-advanced-worktime">
+            <p><b>Work time balance, wh:</b></p>
+            <input type="text" value="no data" disabled />
+          </div>
         </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesEmployeeSignature</span>
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ObjectivesSignature.IsObjectivesSignedByManager">Direct Manager:</label>
-          <input asp-for="ObjectivesSignature.IsObjectivesSignedByManager" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesManagerSignature</span>
 
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ObjectivesSignature.IsObjectivesSignedByApprover">Approved by:</label>
-          <input asp-for="ObjectivesSignature.IsObjectivesSignedByApprover" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesApproverSignature</span>
-        <div class="content-signatures-block__checkbox">
-          <label></label>
-          <input asp-for="ObjectivesSignature.IsObjectivesRejectedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">I do not agree with objectives</span>
-      </fieldset>
+        @*-------------------------- Content - Comments --------------------------*@
+        <div class="content-comments">
+          <p>Comments from Direct Manager (desirable):</p>
+          <textarea asp-for="ResultsDefinition.ManagerComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
 
-      @* results signature process is forbidden if:
-         objectives is not freezed or objectives is not signed or
-         results is not freezed*@
-      <p>Freeze results before validation.</p>
-      <fieldset class="content-signatures-block" id="js-signatureBlockResults"
-                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
-                            !Model.ObjectivesSignature.IsObjectivesSigned ||
-                            !Model.ResultsDefinition.IsResultsFreezed)">
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
-          <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsEmployeeSignature</span>
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ResultsSignature.IsResultsSignedByManager">Direct Manager:</label>
-          <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsManagerSignature</span>
+          <p>Employee's comments (optional):</p>
+          <textarea asp-for="ResultsDefinition.EmployeeComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
 
-        <div class="content-signatures-block__checkbox">
-          <label asp-for="ResultsSignature.IsResultsSignedByApprover">Approved by:</label>
-          <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"/>
+          <p>Any other comments (incl. processing info for HR, optional):</p>
+          <textarea asp-for="ResultsDefinition.OtherComment" rows="1" oninput="ResizeTextArea(this)"></textarea>
         </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsApproverSignature</span>
-        <div class="content-signatures-block__checkbox">
-          <label></label>
-          <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">I do not agree with results</span>
-      </fieldset>
-    </div>
-  </content>
 
+        @*-------------------------- Content - Signatures --------------------------*@
+        <div class="content-signatures">
+          <p>Freeze objectives before validation.</p>
+          @* objectives signature process is forbidden if:
+             objectives is not freezed or results is freezed *@
+          <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
+                    disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                                 Model.ResultsDefinition.IsResultsFreezed)">
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee">Employee:</label>
+              <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesEmployeeSignature</span>
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ObjectivesSignature.IsObjectivesSignedByManager">Direct Manager:</label>
+              <input asp-for="ObjectivesSignature.IsObjectivesSignedByManager" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesManagerSignature</span>
+
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ObjectivesSignature.IsObjectivesSignedByApprover">Approved by:</label>
+              <input asp-for="ObjectivesSignature.IsObjectivesSignedByApprover" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesApproverSignature</span>
+            <div class="content-signatures-block__checkbox">
+              <label></label>
+              <input asp-for="ObjectivesSignature.IsObjectivesRejectedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">I do not agree with objectives</span>
+          </fieldset>
+
+          @* results signature process is forbidden if:
+             objectives is not freezed or objectives is not signed or
+             results is not freezed*@
+          <p>Freeze results before validation.</p>
+          <fieldset class="content-signatures-block" id="js-signatureBlockResults"
+                    disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                                !Model.ObjectivesSignature.IsObjectivesSigned ||
+                                !Model.ResultsDefinition.IsResultsFreezed)">
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
+              <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsEmployeeSignature</span>
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ResultsSignature.IsResultsSignedByManager">Direct Manager:</label>
+              <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsManagerSignature</span>
+
+            <div class="content-signatures-block__checkbox">
+              <label asp-for="ResultsSignature.IsResultsSignedByApprover">Approved by:</label>
+              <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsApproverSignature</span>
+            <div class="content-signatures-block__checkbox">
+              <label></label>
+              <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">I do not agree with results</span>
+          </fieldset>
+        </div>
+      </content>
+  </form>
   <sidebar class="sidebar sidebar--padding">
     <div class="button-group">
         <p class="button-group__title">Objectives:</p>
@@ -279,7 +282,7 @@ BEM convention: Block Elements Modifiers
     </div>
     <div class="button-group">
         <p class="button-group__line"></p>
-        <input type="submit" value="Save" asp-controller="Home" asp-action="SaveForm" class="cmn-button button--width" />
+        <input type="submit" value="Save" form="content-form" asp-controller="Home" asp-action="SaveForm" class="cmn-button button--width" />
         <input type="submit" value="Search" asp-controller="Home" asp-action="Index" class="cmn-button button--width" />
     </div>
   </sidebar>

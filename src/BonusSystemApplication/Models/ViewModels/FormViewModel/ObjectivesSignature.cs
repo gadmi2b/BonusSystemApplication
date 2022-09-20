@@ -23,6 +23,7 @@
             }
         }
 
+        public ObjectivesSignature() { }
         public ObjectivesSignature(Form form)
         {
             if (form.IsObjectivesFreezed)

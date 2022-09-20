@@ -7,8 +7,8 @@ class Table {
 
   static totalRows = 10;
 
-  static baseObjectives = "ObjectivesDefinition_ObjectivesResults";
-  static baseResults = "ResultsDefinition_ObjectivesResults";
+  static baseObjectives = "ObjectivesDefinition_Objectives";
+  static baseResults = "ResultsDefinition_Results";
   static row = "Row";
   static statement = "Statement";
   static description = "Description";

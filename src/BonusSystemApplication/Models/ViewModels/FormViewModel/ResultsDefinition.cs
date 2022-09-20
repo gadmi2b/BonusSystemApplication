@@ -11,8 +11,9 @@
         public string ManagerComment { get; set; } = string.Empty;
         public string EmployeeComment { get; set; } = string.Empty;
         public string OtherComment { get; set; } = string.Empty;
-        public IList<ObjectiveResult> ObjectivesResults { get; set; } = new List<ObjectiveResult>();
+        public IList<Result> Results { get; set; } = new List<Result>();
 
+        public ResultsDefinition() { }
         public ResultsDefinition(Form form)
         {
             if(form.IsObjectivesFreezed &&
@@ -26,12 +27,12 @@
                 ManagerComment = form.ManagerComment;
                 EmployeeComment = form.EmployeeComment;
                 OtherComment = form.OtherComment;
-                ObjectivesResults = form.ObjectivesResults
-                    .Select(x => new ObjectiveResult
+                Results = form.ObjectivesResults
+                    .Select(x => new Result
                     {
-                        KeyCheck = x.KeyCheck,
-                        Achieved = x.Achieved,
-                        Kpi = x.Kpi,
+                        KeyCheck = x.KeyCheck == null ? string.Empty : x.KeyCheck,
+                        Achieved = x.Achieved == null ? string.Empty : x.Achieved,
+                        Kpi = x.Kpi == null ? string.Empty : x.Kpi,
                     })
                     .ToList();
             }
@@ -40,13 +41,13 @@
                 // just keep default values
                 for(int i = 0; i < 10; i++)
                 {
-                    ObjectiveResult result = new ObjectiveResult
+                    Result result = new Result
                     {
                         KeyCheck = string.Empty,
                         Achieved = string.Empty,
-                        Kpi = null,
+                        Kpi = string.Empty,
                     };
-                    ObjectivesResults.Add(result);
+                    Results.Add(result);
                 }
             }
         }

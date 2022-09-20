@@ -20,6 +20,7 @@ $(document).ready(function () {
      *             and only during user interaction, after some data modification recolor cells
      *             see form.cshtml file
      */
+
     Table.ifEmptyThenColorBackground(Table.getCellId(Table.statement, row));
     Table.ifEmptyThenColorBackground(Table.getCellId(Table.description, row));
     Table.ifEmptyThenColorBackground(Table.getCellId(Table.unit, row));

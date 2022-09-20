@@ -337,5 +337,15 @@ namespace BonusSystemApplication.Controllers
             //JsonResult RetVal = new JsonResult();
             return;
         }
+
+        [HttpPost]
+        public IActionResult SaveForm(ObjectivesDefinition objectivesDefinition,
+                                      ObjectivesSignature objectivesSignature,
+                                      ResultsDefinition resultsDefinition,
+                                      ResultsSignature resultsSignature)
+        {
+
+            return RedirectToAction("Form");
+        }
     }
 }
