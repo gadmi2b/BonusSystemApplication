@@ -47,3 +47,12 @@ function enableElement(elem) {
     elem.disabled = false;
   }
 }
+
+
+//$(document).ready(function () {
+  //$('.multiselect-option').on("change", function () {
+    //alert('clicked');
+    //$("#js-selection-submit").click();
+    //HTMLFormElement.prototype.submit.call(document.getElementById('js-content-select'));
+  //});
+//});

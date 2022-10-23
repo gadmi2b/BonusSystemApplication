@@ -28,7 +28,7 @@ namespace BonusSystemApplication.Controllers
             workprojectRepository = workprojectRepo;
             formGlobalAccessRepository = formGlobalAccessRepo;
 
-            UserData.UserId = 5;
+            UserData.UserId = 6;
         }
 
         public IActionResult Index(UserSelections userSelections)
@@ -39,15 +39,15 @@ namespace BonusSystemApplication.Controllers
 
             #region Queries to request available for User forms
 
-                #region Queries for forms where user has Global accesses
+                #region Query for forms where user has Global accesses
                 IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
                 #endregion
 
-                #region Queries for forms where user has Local access
+                #region Query for forms where user has Local access
                 IQueryable<Form> localAccessFormsQuery = formRepository.GetFormsWithLocalAccess(UserData.UserId);
                 #endregion
 
-                #region Queries for forms where user has Participation
+                #region Query for forms where user has Participation
                 IQueryable<Form> participantFormsQuery = formRepository.GetFormsWithParticipation(UserData.UserId);
                 #endregion
 
@@ -101,8 +101,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Prepare TableSelectLists
-            TableSelectLists tableSelectLists = new TableSelectLists();
-            tableSelectLists.PrepareMultiSelectLists(formDataSorted, userSelections);
+            TableSelectLists tableSelectLists = new TableSelectLists(formDataAvailable, formDataSorted, userSelections);
             #endregion
 
             #region Prepare HomeIndexViewModel
@@ -143,7 +142,7 @@ namespace BonusSystemApplication.Controllers
 
             #region Getting formQuery and Form data precisely
             IQueryable<Form> formQuery = formRepository.GetFormQuery(id);
-            Form form = formQuery
+            Form form = formQuery //TODO: add EmployeeId, ManagerId, ApproverId
                 .Select(f => new Form
                 {
                     // ObjectivesDefinition data block
@@ -151,32 +150,36 @@ namespace BonusSystemApplication.Controllers
                     IsObjectivesFreezed = f.IsObjectivesFreezed,
                     Employee = new User
                     {
+                        Id = f.Employee.Id,
                         FirstNameEng = f.Employee.FirstNameEng,
                         LastNameEng = f.Employee.LastNameEng,
                         Pid = f.Employee.Pid,
                         Team = new Team
                         {
-                            Name = f.Employee.Team.Name,
+                            Name = f.Employee.Team == null ? string.Empty : f.Employee.Team.Name,
                         },
                         Position = new Position
                         {
-                            NameEng = f.Employee.Position.NameEng,
+                            NameEng = f.Employee.Position == null ? string.Empty : f.Employee.Position.NameEng,
                         },
                     },
                     Manager = new User
                     {
+                        Id = f.ManagerId == null ? 0 : (long)f.ManagerId,
                         FirstNameEng = f.Employee.FirstNameEng,
                         LastNameEng = f.Employee.LastNameEng,
                     },
                     Approver = new User
                     {
+                        Id = f.ApproverId == null ? 0 : (long)f.ApproverId,
                         FirstNameEng = f.Employee.FirstNameEng,
                         LastNameEng = f.Employee.LastNameEng,
                     },
                     Workproject = new Workproject
                     {
-                        Name = f.Workproject.Name,
-                        Description = f.Workproject.Description,
+                        Id = f.WorkprojectId == null ? 0 : (long)f.WorkprojectId,
+                        Name = f.Workproject == null ? string.Empty : f.Workproject.Name,
+                        Description = f.Workproject == null ? string.Empty : f.Workproject.Description,
                     },
                     Period = f.Period,
                     Year = f.Year,
@@ -344,6 +347,9 @@ namespace BonusSystemApplication.Controllers
                                       ResultsDefinition resultsDefinition,
                                       ResultsSignature resultsSignature)
         {
+            
+            
+
 
             return RedirectToAction("Form");
         }

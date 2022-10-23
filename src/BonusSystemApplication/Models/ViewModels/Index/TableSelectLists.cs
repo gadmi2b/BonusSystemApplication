@@ -7,29 +7,99 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public class TableSelectLists
     {
-        public GenericMultiSelectList<string, SelectEmployee> EmployeeSelectList { get; set; }
+        public List<SelectListItem> EmployeeSelectListItems { get; set; }
+        public List<SelectListItem> PeriodSelectListItems { get; set; }
+        public List<SelectListItem> YearSelectListItems { get; set; }
+        public List<SelectListItem> PermissionSelectListItems { get; set; }
+        public List<SelectListItem> DepartmentSelectListItems { get; set; }
+        public List<SelectListItem> TeamSelectListItems { get; set; }
+        public List<SelectListItem> WorkprojectSelectListItems { get; set; }
 
-        public GenericMultiSelectList<Periods, SelectPeriod> PeriodSelectList { get; set; }
-
-        public GenericMultiSelectList<int, SelectYear> YearSelectList { get; set; }
-
-        public GenericMultiSelectList<Permissions, SelectPermission> PermissionSelectList { get; set; }
-
-        public GenericMultiSelectList<string, SelectDepartment> DepartmentSelectList { get; set; }
-
-        public GenericMultiSelectList<string, SelectTeam> TeamSelectList { get; set; }
-
-        public GenericMultiSelectList<string, SelectWorkproject> WorkprojectSelectList { get; set; }
-
-        public void PrepareMultiSelectLists(FormDataSorted formDataSorted, UserSelections userSelections)
+        public TableSelectLists(FormDataAvailable formDataAvailable,
+                                FormDataSorted formDataSorted,
+                                UserSelections userSelections)
         {
-            EmployeeSelectList = new GenericMultiSelectList<string, SelectEmployee>(formDataSorted.SortedEmployees, userSelections.SelectedEmployees);
-            PeriodSelectList = new GenericMultiSelectList<Periods, SelectPeriod>(formDataSorted.SortedPeriods, userSelections.SelectedPeriods);
-            YearSelectList = new GenericMultiSelectList<int, SelectYear>(formDataSorted.SortedYears, userSelections.SelectedYears);
-            PermissionSelectList = new GenericMultiSelectList<Permissions, SelectPermission>(formDataSorted.SortedPermissions, userSelections.SelectedPermissions);
-            DepartmentSelectList = new GenericMultiSelectList<string, SelectDepartment>(formDataSorted.SortedDepartments, userSelections.SelectedDepartments);
-            TeamSelectList = new GenericMultiSelectList<string, SelectTeam>(formDataSorted.SortedTeams, userSelections.SelectedTeams);
-            WorkprojectSelectList = new GenericMultiSelectList<string, SelectWorkproject>(formDataSorted.SortedWorkprojects, userSelections.SelectedWorkprojects);
+            EmployeeSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableEmployees,
+                                                             formDataSorted.SortedEmployees,
+                                                             userSelections.SelectedEmployees);
+            PeriodSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePeriods,
+                                                             formDataSorted.SortedPeriods,
+                                                             userSelections.SelectedPeriods);
+            YearSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableYears,
+                                                             formDataSorted.SortedYears,
+                                                             userSelections.SelectedYears);
+            PermissionSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePermissions,
+                                                             formDataSorted.SortedPermissions,
+                                                             userSelections.SelectedPermissions);
+            DepartmentSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableDepartments,
+                                                             formDataSorted.SortedDepartments,
+                                                             userSelections.SelectedDepartments);
+            TeamSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableTeams,
+                                                         formDataSorted.SortedTeams,
+                                                         userSelections.SelectedTeams);
+            WorkprojectSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableWorkprojects,
+                                                             formDataSorted.SortedWorkprojects,
+                                                             userSelections.SelectedWorkprojects);
+        }
+
+        private List<SelectListItem> PrepareSelectListItems<T>(List<T> collectionAvailable,
+                                                               List<T> collectionSorted,
+                                                               List<string> selectedValues)
+        {
+            #region Get expression depending on collection type to cast collection item to string
+            Type listType = typeof(T);
+            Func<T, string> expr = (T param) => string.Empty;
+
+            if (listType.IsEnum)
+            {
+                expr = (T param) => Enum.GetName(typeof(T), param);
+            }
+            else if (listType == typeof(int) ||
+                     listType == typeof(long))
+            {
+                expr = (T param) => param.ToString();
+            }
+            else if (listType == typeof(string))
+            {
+                expr = (T param) => param.ToString();
+            }
+            else
+            {
+                throw new Exception($"PrepareSelectListItems error: unexpected type: {typeof(T)}." +
+                                    $"An additional case to operate this type should be added");
+            }
+            #endregion
+
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+
+            #region Prepare selectListItems
+            foreach (T availableItem in collectionAvailable)
+            {
+                string itemName = expr.Invoke(availableItem);
+                SelectListItem selectListItem = new SelectListItem
+                {
+                    Value = itemName,
+                    Text = itemName,
+                    Selected = false,
+                    //Disabled = true,
+                    Disabled = false,
+                };
+
+                if (collectionSorted.Contains(availableItem))
+                {
+                    selectListItem.Disabled = false;
+                }
+
+                if (selectedValues.Contains(itemName))
+                {
+                    selectListItem.Selected = true;
+                }
+
+                selectListItems.Add(selectListItem);
+            }
+            #endregion
+
+            return selectListItems;
         }
 
     }

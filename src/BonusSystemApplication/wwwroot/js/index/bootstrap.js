@@ -7,6 +7,10 @@ $(document).ready(function() {
     buttonWidth: '200px',
     maxHeight: 200,
     numberDisplayed: 1,
-    visibility: true
+    visibility: true,
+
+    //onChange: function () {
+    //  HTMLFormElement.prototype.submit.call(document.getElementById('js-content-select'));
+    //},
   });
 });

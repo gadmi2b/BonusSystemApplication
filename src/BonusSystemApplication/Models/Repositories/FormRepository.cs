@@ -29,6 +29,7 @@ namespace BonusSystemApplication.Models.Repositories
         {
             throw new NotImplementedException();
         }
+
         public void CreateForm(Form form)
         {
             throw new NotImplementedException();
@@ -65,7 +66,7 @@ namespace BonusSystemApplication.Models.Repositories
 
             foreach (var formGA in formGlobalAccesses)
             {
-                IQueryable <Form> query = formsQueryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
+                IQueryable<Form> query = formsQueryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
 
                 if(query == null)
                 {
