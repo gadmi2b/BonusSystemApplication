@@ -96,14 +96,16 @@ BEM convention: Block Elements Modifiers
       <div class="button-group--flex">
         <span class="button-group--margin">
           <div class="button-group__title">Work with empty form:</div>
-          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="cmn-button" />
+          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="Form" class="cmn-button" />
+@*          <input type="hidden" value="@(0)" name="selectedFormIds" />*@
+@*          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="Form" class="cmn-button" />*@
         </span>
         <span class="button-group--margin">
           <div class="button-group__title">Work based on selected form/forms:</div>
           <input type="submit" value="Open" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-open-button" />
           <input type="submit" value="Create" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-create-button" />
-          <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="cmn-button" />
-          <input type="submit" value="Delete" asp-controller="Home" asp-action="Form" class="cmn-button" />
+          <input type="submit" value="Promote" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-promote-button" />
+          <input type="submit" value="Delete" asp-controller="Home" asp-action="Form" class="cmn-button" id="js-delete-button" />
         </span>
       </div>
 

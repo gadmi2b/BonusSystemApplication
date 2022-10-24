@@ -28,7 +28,7 @@ namespace BonusSystemApplication.Controllers
             workprojectRepository = workprojectRepo;
             formGlobalAccessRepository = formGlobalAccessRepo;
 
-            UserData.UserId = 6;
+            UserData.UserId = 7;
         }
 
         public IActionResult Index(UserSelections userSelections)
@@ -118,6 +118,11 @@ namespace BonusSystemApplication.Controllers
         [HttpPost]
         public IActionResult Form(List<long> selectedFormIds)
         {
+            //TODO: selectedFormIds.Count() = 0 means blank form should be opened
+            //                                  empty Form should be created
+            //      selectedFormIds.Count() > 0 means validate selected form ids
+            //                                  formId should be found in the DB
+
             #region Validate selected form ids
             List<long> itemsToRemove = new List<long>();
             foreach (long formId in selectedFormIds)
@@ -283,6 +288,13 @@ namespace BonusSystemApplication.Controllers
             }
             selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
             itemsToRemove.Clear();
+            #endregion
+
+            #region Creation of a new form based on selection
+                //form id should be equal to 0
+                //only Objectives should be included
+                //other fields - default
+
             #endregion
 
             return RedirectToAction("Index");
