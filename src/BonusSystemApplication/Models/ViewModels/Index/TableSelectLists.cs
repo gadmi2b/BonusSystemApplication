@@ -16,34 +16,25 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<SelectListItem> WorkprojectSelectListItems { get; set; }
 
         public TableSelectLists(FormDataAvailable formDataAvailable,
-                                FormDataSorted formDataSorted,
                                 UserSelections userSelections)
         {
             EmployeeSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableEmployees,
-                                                             formDataSorted.SortedEmployees,
                                                              userSelections.SelectedEmployees);
             PeriodSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePeriods,
-                                                             formDataSorted.SortedPeriods,
                                                              userSelections.SelectedPeriods);
             YearSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableYears,
-                                                             formDataSorted.SortedYears,
                                                              userSelections.SelectedYears);
             PermissionSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePermissions,
-                                                             formDataSorted.SortedPermissions,
                                                              userSelections.SelectedPermissions);
             DepartmentSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableDepartments,
-                                                             formDataSorted.SortedDepartments,
                                                              userSelections.SelectedDepartments);
             TeamSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableTeams,
-                                                         formDataSorted.SortedTeams,
                                                          userSelections.SelectedTeams);
             WorkprojectSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableWorkprojects,
-                                                             formDataSorted.SortedWorkprojects,
                                                              userSelections.SelectedWorkprojects);
         }
 
         private List<SelectListItem> PrepareSelectListItems<T>(List<T> collectionAvailable,
-                                                               List<T> collectionSorted,
                                                                List<string> selectedValues)
         {
             #region Get expression depending on collection type to cast collection item to string
@@ -81,14 +72,8 @@ namespace BonusSystemApplication.Models.ViewModels.Index
                     Value = itemName,
                     Text = itemName,
                     Selected = false,
-                    //Disabled = true,
                     Disabled = false,
                 };
-
-                if (collectionSorted.Contains(availableItem))
-                {
-                    selectListItem.Disabled = false;
-                }
 
                 if (selectedValues.Contains(itemName))
                 {

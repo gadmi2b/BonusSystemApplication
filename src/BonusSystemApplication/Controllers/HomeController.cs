@@ -101,7 +101,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Prepare TableSelectLists
-            TableSelectLists tableSelectLists = new TableSelectLists(formDataAvailable, formDataSorted, userSelections);
+            TableSelectLists tableSelectLists = new TableSelectLists(formDataAvailable, userSelections);
             #endregion
 
             #region Prepare HomeIndexViewModel
@@ -115,39 +115,70 @@ namespace BonusSystemApplication.Controllers
             return View(homeIndexViewModel);
         }
 
-        [HttpPost]
-        public IActionResult Form(List<long> selectedFormIds)
+        [Route("Home/Form/{id:long}")]
+        //public IActionResult Form(List<long> selectedFormIds)
+        public IActionResult Form(long id)
         {
-            //TODO: selectedFormIds.Count() = 0 means blank form should be opened
-            //                                  empty Form should be created
-            //      selectedFormIds.Count() > 0 means validate selected form ids
-            //                                  formId should be found in the DB
+            #region Form preparing depending on selected Id
+            Form form = null;
 
-            #region Validate selected form ids
-            List<long> itemsToRemove = new List<long>();
-            foreach (long formId in selectedFormIds)
+            //if (selectedFormIds.Count() == 0)
+            if (id == 0)
             {
-                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                // blank/empty form should be opened
+
+                form = new Form()
                 {
-                    itemsToRemove.Add(formId);
-                }
-            }
-            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            itemsToRemove.Clear();
+                    Id = 0,
+                };
 
-            if(selectedFormIds.Count() == 0)
+                List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
+                for (int i = 0; i < 10; i++)
+                {
+                    ObjectiveResult objectiveResult = new ObjectiveResult()
+                    {
+                        Id = 0,
+                        Row = i + 1,
+                        Form = form,
+                    };
+                    objectivesResults.Add(objectiveResult);
+                }
+
+                form.ObjectivesResults = objectivesResults;
+            }
+            else
             {
-                return RedirectToAction("Index");
+                // means validate selected form ids
+                // form id should be validated before opening
+                // formId should be found in the DB
             }
             #endregion
 
+            #region Validate selected form ids
+            //List<long> itemsToRemove = new List<long>();
+            //foreach (long formId in selectedFormIds)
+            //{
+            //    if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+            //    {
+            //        itemsToRemove.Add(formId);
+            //    }
+            //}
+            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            //itemsToRemove.Clear();
+
+            //if(selectedFormIds.Count() == 0)
+            //{
+            //    return RedirectToAction("Index");
+            //}
+            #endregion
+
             // selection of ONE formId is already controlled on client side
-            // control here - just for double check
-            long id = selectedFormIds.ElementAt(0);
+            // selection of ONE formId here - just for double check
+            // long id = selectedFormIds.ElementAt(0);
 
             #region Getting formQuery and Form data precisely
             IQueryable<Form> formQuery = formRepository.GetFormQuery(id);
-            Form form = formQuery //TODO: add EmployeeId, ManagerId, ApproverId
+            form = formQuery //TODO: add EmployeeId, ManagerId, ApproverId
                 .Select(f => new Form
                 {
                     // ObjectivesDefinition data block
@@ -275,7 +306,45 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
+        public IActionResult OpenBlankForm()
+        {
+            return RedirectToAction("Form", "Home", new {id = 0});
+        }
+        
+        [HttpPost]
         public IActionResult CreateFormBasedOnSelection(List<long> selectedFormIds)
+        {
+            #region Validation of selected form id
+            List<long> itemsToRemove = new List<long>();
+            foreach (long formId in selectedFormIds)
+            {
+                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                {
+                    itemsToRemove.Add(formId);
+                }
+            }
+            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            itemsToRemove.Clear();
+
+            if (selectedFormIds.Count() == 0)
+            {
+                return RedirectToAction("Index");
+            }
+
+            #endregion
+
+            #region Creation of a new form based on selected one
+            //new form id should be equal to 0
+            //only Objectives should be included
+            //other fields = default values
+
+            #endregion
+
+            return RedirectToAction("Form", "Home", new { id = 0 });
+        }
+
+        [HttpPost]
+        public IActionResult PromoteFormsBasedOnSelection(List<long> selectedFormIds)
         {
             #region Validation of selected form ids
             List<long> itemsToRemove = new List<long>();
@@ -290,45 +359,16 @@ namespace BonusSystemApplication.Controllers
             itemsToRemove.Clear();
             #endregion
 
-            #region Creation of a new form based on selection
-                //form id should be equal to 0
-                //only Objectives should be included
-                //other fields - default
-
+            #region Promote selected forms to a new forms
+            // create identical forms with same definition, objectives and next period
+            // 
+            // other fields = default values
             #endregion
 
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public IActionResult OpenBlankForm()
-        {
-            //TODO: create blank form model: necessary ObjectiveResults and other
-            Form form = new Form()
-            {
-                Id = 0,
-            };
-
-            List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
-            for(int i=0; i < 10; i++)
-            {
-                ObjectiveResult objectiveResult = new ObjectiveResult()
-                {
-                    Id = 0,
-                    Row = i + 1,
-                    Form = form,
-                };
-                objectivesResults.Add(objectiveResult);
-            }
-
-            form.ObjectivesResults = objectivesResults;
-
-            return View("Form", form);
-        }
-
-
-        [HttpPost]
-        public IActionResult PromoteFormsBasedOnSelection(List<long> selectedFormIds)
+        public IActionResult DeleteSelectedForms(List<long> selectedFormIds)
         {
             #region Validation of selected form ids
             List<long> itemsToRemove = new List<long>();
