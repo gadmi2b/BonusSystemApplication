@@ -33,7 +33,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public virtual void Delete(long id)
         {
-            context.Remove<T>(Get(id));
+            //context.Remove<T>(Get(id));
             context.SaveChanges();
         }
 

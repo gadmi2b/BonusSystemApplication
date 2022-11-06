@@ -1,11 +1,10 @@
-﻿using System.Linq.Expressions;
-namespace BonusSystemApplication.Models.Repositories
+﻿namespace BonusSystemApplication.Models.Repositories
 {
     public interface IFormRepository
     {
         Form GetForm(long id);
         IEnumerable<Form> GetForms();
-        IQueryable<Form> GetFormQuery(long formId);
+        Form GetFormData(long formId);
         IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses);
         IQueryable<Form> GetFormsWithLocalAccess(long userId);
         IQueryable<Form> GetFormsWithParticipation(long userId);

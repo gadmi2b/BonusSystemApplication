@@ -7,26 +7,40 @@ using Microsoft.Data.SqlClient.Server;
 using BonusSystemApplication.Models.ViewModels;
 using BonusSystemApplication.Models.ViewModels.Index;
 using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using System.Text.Json;
+
+
+//using Newtonsoft.Json.Serialization;
 
 namespace BonusSystemApplication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private IGenericRepository<User> userRepository;
-        private IGenericRepository<Workproject> workprojectRepository;
+        private IGenericRepository<User> userGenRepository;
+        private IGenericRepository<Workproject> workprojectGenRepository;
 
         private IFormGlobalAccessRepository formGlobalAccessRepository;
         private IFormRepository formRepository;
+        private IWorkprojectRepository workprojectRepository;
+        private IUserRepository userRepository;
 
-        public HomeController(ILogger<HomeController> logger, IFormRepository formRepo, IGenericRepository<User> userRepo,
-                              IGenericRepository<Workproject> workprojectRepo, IFormGlobalAccessRepository formGlobalAccessRepo)
+
+        public HomeController(ILogger<HomeController> logger,
+                              IGenericRepository<User> userGenRepo,
+                              IGenericRepository<Workproject> workprojectGenRepo,
+                              IFormGlobalAccessRepository formGlobalAccessRepo,
+                              IFormRepository formRepo,
+                              IWorkprojectRepository workprojectRepo,
+                              IUserRepository userRepo)
         {
             _logger = logger;
             formRepository = formRepo;
-            userRepository = userRepo;
-            workprojectRepository = workprojectRepo;
+            userGenRepository = userGenRepo;
+            workprojectGenRepository = workprojectGenRepo;
             formGlobalAccessRepository = formGlobalAccessRepo;
+            workprojectRepository = workprojectRepo;
+            userRepository = userRepo;
 
             UserData.UserId = 7;
         }
@@ -116,17 +130,13 @@ namespace BonusSystemApplication.Controllers
         }
 
         [Route("Home/Form/{id:long}")]
-        //public IActionResult Form(List<long> selectedFormIds)
         public IActionResult Form(long id)
         {
             #region Form preparing depending on selected Id
             Form form = null;
 
-            //if (selectedFormIds.Count() == 0)
             if (id == 0)
             {
-                // blank/empty form should be opened
-
                 form = new Form()
                 {
                     Id = 0,
@@ -143,117 +153,29 @@ namespace BonusSystemApplication.Controllers
                     };
                     objectivesResults.Add(objectiveResult);
                 }
-
                 form.ObjectivesResults = objectivesResults;
             }
             else
             {
-                // means validate selected form ids
-                // form id should be validated before opening
-                // formId should be found in the DB
+                #region Validate selected form id
+                if (id < 0 || !UserData.availableFormIds.Contains(id))
+                {
+                    // TODO: incorrect formId was requested to be opened
+                    //       to add error page to show it to user
+
+                    RedirectToAction("Index");
+                }
+                #endregion
+
+                #region Getting Form data precisely
+                form = formRepository.GetFormData(id);
+                #endregion
             }
             #endregion
 
-            #region Validate selected form ids
-            //List<long> itemsToRemove = new List<long>();
-            //foreach (long formId in selectedFormIds)
-            //{
-            //    if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
-            //    {
-            //        itemsToRemove.Add(formId);
-            //    }
-            //}
-            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            //itemsToRemove.Clear();
-
-            //if(selectedFormIds.Count() == 0)
-            //{
-            //    return RedirectToAction("Index");
-            //}
-            #endregion
-
-            // selection of ONE formId is already controlled on client side
-            // selection of ONE formId here - just for double check
-            // long id = selectedFormIds.ElementAt(0);
-
-            #region Getting formQuery and Form data precisely
-            IQueryable<Form> formQuery = formRepository.GetFormQuery(id);
-            form = formQuery //TODO: add EmployeeId, ManagerId, ApproverId
-                .Select(f => new Form
-                {
-                    // ObjectivesDefinition data block
-                    Id = f.Id,
-                    IsObjectivesFreezed = f.IsObjectivesFreezed,
-                    Employee = new User
-                    {
-                        Id = f.Employee.Id,
-                        FirstNameEng = f.Employee.FirstNameEng,
-                        LastNameEng = f.Employee.LastNameEng,
-                        Pid = f.Employee.Pid,
-                        Team = new Team
-                        {
-                            Name = f.Employee.Team == null ? string.Empty : f.Employee.Team.Name,
-                        },
-                        Position = new Position
-                        {
-                            NameEng = f.Employee.Position == null ? string.Empty : f.Employee.Position.NameEng,
-                        },
-                    },
-                    Manager = new User
-                    {
-                        Id = f.ManagerId == null ? 0 : (long)f.ManagerId,
-                        FirstNameEng = f.Employee.FirstNameEng,
-                        LastNameEng = f.Employee.LastNameEng,
-                    },
-                    Approver = new User
-                    {
-                        Id = f.ApproverId == null ? 0 : (long)f.ApproverId,
-                        FirstNameEng = f.Employee.FirstNameEng,
-                        LastNameEng = f.Employee.LastNameEng,
-                    },
-                    Workproject = new Workproject
-                    {
-                        Id = f.WorkprojectId == null ? 0 : (long)f.WorkprojectId,
-                        Name = f.Workproject == null ? string.Empty : f.Workproject.Name,
-                        Description = f.Workproject == null ? string.Empty : f.Workproject.Description,
-                    },
-                    Period = f.Period,
-                    Year = f.Year,
-                    IsWpmHox = f.IsWpmHox,
-                    ObjectivesResults = f.ObjectivesResults,
-
-                    // ObjectivesSignature data block
-                    IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
-                    ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
-                    IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
-                    IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
-                    ObjectivesManagerSignature = f.ObjectivesManagerSignature,
-                    IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
-                    ObjectivesApproverSignature = f.ObjectivesApproverSignature,
-
-                    // ResultsDefinition data block
-                    IsResultsFreezed = f.IsResultsFreezed,
-                    OverallKpi = f.OverallKpi,
-                    IsProposalForBonusPayment = f.IsProposalForBonusPayment,
-                    ManagerComment = f.ManagerComment,
-                    EmployeeComment = f.EmployeeComment,
-                    OtherComment = f.OtherComment,
-
-                    // ResultsSignature data block
-                    IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
-                    ResultsEmployeeSignature = f.ResultsEmployeeSignature,
-                    IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
-                    IsResultsSignedByManager = f.IsResultsSignedByManager,
-                    ResultsManagerSignature = f.ResultsManagerSignature,
-                    IsResultsSignedByApprover = f.IsResultsSignedByApprover,
-                    ResultsApproverSignature = f.ResultsApproverSignature,
-                })
-                .First();
-            #endregion
-
             #region Getting queries for Users and Workprojects
-            IQueryable<User> usersQuery = userRepository.GetQueryForAll();
-            IQueryable<Workproject> workprojectsQuery = workprojectRepository.GetQueryForAll();
+            IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+            IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
 
             #region Prepare HomeFormViewModel
@@ -287,20 +209,6 @@ namespace BonusSystemApplication.Controllers
                     .ToList(),
             };
             #endregion
-
-            // TODO: check form status:
-            //       stage#1: only ObjectivesDefinition should be loaded
-            //                only ObjectivesDefinition could be saved
-            //       stage#2: only ObjectivesDefinition and ObjectivesSignature should be loaded
-            //                only ObjectivesSignature could be saved
-            //       stage#3: only ObjectivesDefinition and ObjectivesSignature and ResultsDefinition should be loaded
-            //                only ResultsDefinition could be saved
-            //       stage#4: only ObjectivesDefinition and ObjectivesSignature and ResultsDefinition and ResultsSignature should be loaded
-            //                only ResultsSignature could be saved
-
-
-            //ViewBag.Users = userRepository.GetAll().Select(u => new SelectListItem { Value = u.Id.ToString(), Text = $"{u.LastNameEng} {u.FirstNameEng}" }).ToList();
-            //ViewBag.Workprojects = workprojectRepository.GetAll().Select(w => new SelectListItem { Value = w.Id.ToString(), Text = w.Name }).ToList();
 
             return View(homeFormViewModel);
         }
@@ -357,17 +265,23 @@ namespace BonusSystemApplication.Controllers
             }
             selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
             itemsToRemove.Clear();
+
+            if (selectedFormIds.Count() == 0)
+            {
+                return RedirectToAction("Index");
+            }
             #endregion
 
             #region Promote selected forms to a new forms
             // create identical forms with same definition, objectives and next period
-            // 
             // other fields = default values
+            // save them to DB
             #endregion
 
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteSelectedForms(List<long> selectedFormIds)
         {
             #region Validation of selected form ids
@@ -381,16 +295,41 @@ namespace BonusSystemApplication.Controllers
             }
             selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
             itemsToRemove.Clear();
+
+            if (selectedFormIds.Count() == 0)
+            {
+                return RedirectToAction("Index");
+            }
             #endregion
 
+            // TODO: delete forms with selected ids
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public void GetWorkprojectDescription([FromBody] string selectedData)
+        [HttpGet]
+        public JsonResult GetWorkprojectDescription(long workprojectId)
         {
-            //JsonResult RetVal = new JsonResult();
-            return;
+            #region check requested id
+            if(workprojectId <= 0)
+            {
+                // TODO: to add to log: "Requested Id is less or equal to zero"
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = "Bad id was requested"
+                });
+            }
+            #endregion
+
+            Workproject workproject = workprojectRepository.GetWorkprojectData(workprojectId);
+            string workprojectDescription = workproject?.Description == null ? string.Empty : workproject.Description;
+
+            return new JsonResult(new
+            {
+                status = "success",
+                message = "Operation was complited successfully",
+                workprojectDescription = workprojectDescription,
+            });
         }
 
         [HttpPost]
@@ -399,8 +338,12 @@ namespace BonusSystemApplication.Controllers
                                       ResultsDefinition resultsDefinition,
                                       ResultsSignature resultsSignature)
         {
-            
-            
+            // TODO: check form stage:
+            //       stage#1: only ObjectivesDefinition could be saved
+            //       stage#2: only ObjectivesSignature could be saved
+            //       stage#3: only ResultsDefinition could be saved
+            //       stage#4: only ResultsSignature could be saved
+
 
 
             return RedirectToAction("Form");

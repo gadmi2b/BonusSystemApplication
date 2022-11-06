@@ -16,40 +16,57 @@
         public ResultsDefinition() { }
         public ResultsDefinition(Form form)
         {
-            if(form.IsObjectivesFreezed &&
-               form.IsObjectivesSignedByEmployee &&
-               form.IsObjectivesSignedByManager &&
-               form.IsObjectivesSignedByApprover)
-            {
-                IsResultsFreezed = form.IsResultsFreezed;
-                OverallKpi = form.OverallKpi;
-                IsProposalForBonusPayment = form.IsProposalForBonusPayment;
-                ManagerComment = form.ManagerComment;
-                EmployeeComment = form.EmployeeComment;
-                OtherComment = form.OtherComment;
-                Results = form.ObjectivesResults
-                    .Select(x => new Result
-                    {
-                        KeyCheck = x.KeyCheck == null ? string.Empty : x.KeyCheck,
-                        Achieved = x.Achieved == null ? string.Empty : x.Achieved,
-                        Kpi = x.Kpi == null ? string.Empty : x.Kpi,
-                    })
-                    .ToList();
-            }
-            else
-            {
-                // just keep default values
-                for(int i = 0; i < 10; i++)
+            IsResultsFreezed = form.IsResultsFreezed;
+            OverallKpi = form.OverallKpi;
+            IsProposalForBonusPayment = form.IsProposalForBonusPayment;
+            ManagerComment = form.ManagerComment;
+            EmployeeComment = form.EmployeeComment;
+            OtherComment = form.OtherComment;
+            Results = form.ObjectivesResults
+                .Select(x => new Result
                 {
-                    Result result = new Result
-                    {
-                        KeyCheck = string.Empty,
-                        Achieved = string.Empty,
-                        Kpi = string.Empty,
-                    };
-                    Results.Add(result);
-                }
-            }
+                    KeyCheck = x.KeyCheck == null ? string.Empty : x.KeyCheck,
+                    Achieved = x.Achieved == null ? string.Empty : x.Achieved,
+                    Kpi = x.Kpi == null ? string.Empty : x.Kpi,
+                })
+                .ToList();
+            
+
+            // Initial varian based on separated loading logic
+            //if (form.IsObjectivesFreezed &&
+            //   form.IsObjectivesSignedByEmployee &&
+            //   form.IsObjectivesSignedByManager &&
+            //   form.IsObjectivesSignedByApprover)
+            //{
+            //    IsResultsFreezed = form.IsResultsFreezed;
+            //    OverallKpi = form.OverallKpi;
+            //    IsProposalForBonusPayment = form.IsProposalForBonusPayment;
+            //    ManagerComment = form.ManagerComment;
+            //    EmployeeComment = form.EmployeeComment;
+            //    OtherComment = form.OtherComment;
+            //    Results = form.ObjectivesResults
+            //        .Select(x => new Result
+            //        {
+            //            KeyCheck = x.KeyCheck == null ? string.Empty : x.KeyCheck,
+            //            Achieved = x.Achieved == null ? string.Empty : x.Achieved,
+            //            Kpi = x.Kpi == null ? string.Empty : x.Kpi,
+            //        })
+            //        .ToList();
+            //}
+            //else
+            //{
+            //    // just keep default values
+            //    for(int i = 0; i < 10; i++)
+            //    {
+            //        Result result = new Result
+            //        {
+            //            KeyCheck = string.Empty,
+            //            Achieved = string.Empty,
+            //            Kpi = string.Empty,
+            //        };
+            //        Results.Add(result);
+            //    }
+            //}
         }
     }
 }

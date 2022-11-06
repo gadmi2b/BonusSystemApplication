@@ -4,7 +4,7 @@
     {
         public long Id { get; set; }
         public Periods Period { get; set; }
-        public int Year { get; set; }
+        public int Year { get; set; } = System.DateTime.Now.Year;
         public DateTime? LastSavedDateTime { get; set; }
         public string? LastSavedBy { get; set; }
 

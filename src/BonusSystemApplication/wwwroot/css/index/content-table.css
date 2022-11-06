@@ -9,6 +9,10 @@ table {
     border-spacing: 0;
 }
 
+tr:hover {
+    background: #b1b2b3;
+}
+
 /*------------------ Common styling: header, body, footer ------------------------*/
 
 .content-table {

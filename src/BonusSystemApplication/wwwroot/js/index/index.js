@@ -23,14 +23,11 @@
 $(document).ready(function () {
   $(".js-checkbox").click(function () {
     let checkboxChecked = $('.js-checkbox:checkbox:checked');
-    let openButtonElement = document.getElementById("js-open-button");
     let createButtonElement = document.getElementById("js-create-button");
 
     if (checkboxChecked.length > 1) {
-      disableElement(openButtonElement);
       disableElement(createButtonElement);
     } else {
-      enableElement(openButtonElement);
       enableElement(createButtonElement);
     }
   });
@@ -49,10 +46,27 @@ function enableElement(elem) {
 }
 
 
+$(document).ready(function () {
+  $('.js-unopenable').click(function () {
+    event.stopPropagation();
+  });
+});
+
+
+// cancelled Idea
+// add class active on hovered cell to make it clickable
+
 //$(document).ready(function () {
-  //$('.multiselect-option').on("change", function () {
-    //alert('clicked');
-    //$("#js-selection-submit").click();
-    //HTMLFormElement.prototype.submit.call(document.getElementById('js-content-select'));
-  //});
+//  // add and remove class 'active' just to set on it click event listner
+//  $('.cell').addClass('active');
+//  $('.active').click(function () {
+//    alert("clicked");
+//    console.log('clicked');
+//  });
+//  $('.cell').removeClass('active');
+
+//  // each cell will be clickable
+//  $('.cell').hover(function () {
+//    $(this).toggleClass('active');
+//  });
 //});

@@ -1,24 +1,27 @@
 ﻿function requestWorkprojectDescription(element) {
 
-  let data = {
-    selectedId: element.value,
-  }
-
-  let requestData = JSON.stringify(data);
+  // --- to send an object ---
+  //let data = {
+  //  selectedId: element.value,
+  //}
+  //let requestData = JSON.stringify(data);
 
   $.ajax({
-    type: "POST",
+    type: "Get",
     url: '/Home/GetWorkprojectDescription',
-    data: { selectedData: requestData },
+    data: { workprojectId: element.value },
     dataType: "json",
     contentType: "application/json; charset=utf-8",
-
+    //beforeSend: function () {
+    //  Show(); // Show loader icon  
+    //},
     success: function (response) {
-      if (response.Status !== "OK") {
-        alert("Exception: " + response.Status + " |  " + response.Message);
+      if (response.status !== "success") {
+        alert("Exception: " + response.status + " |  " + response.message);
       }
       else {
         // TODO: change workproject description
+        alert(response.workprojectDescription);
       }
     },
     failure: function (response) {

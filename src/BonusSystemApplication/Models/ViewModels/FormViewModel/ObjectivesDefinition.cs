@@ -29,14 +29,14 @@
             IsObjectivesFreezed = form.IsObjectivesFreezed;
             Period = form.Period.ToString();
             Year = form.Year.ToString();
-            EmployeeId = form.Employee.Id;
+            EmployeeId = form.Employee?.Id == null ? 0 : form.Employee.Id;
             ManagerId = form.Manager?.Id == null ? 0 : form.Manager.Id;
             ApproverId = form.Approver?.Id == null ? 0 : form.Approver.Id;
             WorkprojectId = form.Workproject?.Id == null ? 0 : form.Workproject.Id;
             IsWpmHox = form.IsWpmHox;
-            TeamName = form.Employee.Team?.Name == null ? string.Empty : form.Employee.Team.Name;
-            PositionName = form.Employee.Position?.NameEng == null ? string.Empty : form.Employee.Position.NameEng;
-            Pid = form.Employee.Pid;
+            TeamName = form.Employee?.Team?.Name == null ? string.Empty : form.Employee.Team.Name;
+            PositionName = form.Employee?.Position?.NameEng == null ? string.Empty : form.Employee.Position.NameEng;
+            Pid = form.Employee?.Pid == null ? string.Empty : form.Employee.Pid;
             WorkprojectDescription = form.Workproject?.Description == null ? string.Empty : form.Workproject.Description;
             Objectives = form.ObjectivesResults
                 .Select(x => new Objective

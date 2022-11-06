@@ -45,10 +45,80 @@ namespace BonusSystemApplication.Models.Repositories
             throw new NotImplementedException();
         }
 
-        public IQueryable<Form> GetFormQuery(long formId)
+        public Form GetFormData(long formId)
         {
-            return context.Forms.AsQueryable()
-                    .Where(f => f.Id == formId);
+            return context.Forms
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        // ObjectivesDefinition data block
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        Employee = new User
+                        {
+                            Id = f.Employee.Id,
+                            FirstNameEng = f.Employee.FirstNameEng,
+                            LastNameEng = f.Employee.LastNameEng,
+                            Pid = f.Employee.Pid,
+                            Team = new Team
+                            {
+                                Name = f.Employee.Team == null ? string.Empty : f.Employee.Team.Name,
+                            },
+                            Position = new Position
+                            {
+                                NameEng = f.Employee.Position == null ? string.Empty : f.Employee.Position.NameEng,
+                            },
+                        },
+                        Manager = new User
+                        {
+                            Id = f.ManagerId == null ? 0 : (long)f.ManagerId,
+                            FirstNameEng = f.Employee.FirstNameEng,
+                            LastNameEng = f.Employee.LastNameEng,
+                        },
+                        Approver = new User
+                        {
+                            Id = f.ApproverId == null ? 0 : (long)f.ApproverId,
+                            FirstNameEng = f.Employee.FirstNameEng,
+                            LastNameEng = f.Employee.LastNameEng,
+                        },
+                        Workproject = new Workproject
+                        {
+                            Id = f.WorkprojectId == null ? 0 : (long)f.WorkprojectId,
+                            Name = f.Workproject == null ? string.Empty : f.Workproject.Name,
+                            Description = f.Workproject == null ? string.Empty : f.Workproject.Description,
+                        },
+                        Period = f.Period,
+                        Year = f.Year,
+                        IsWpmHox = f.IsWpmHox,
+                        ObjectivesResults = f.ObjectivesResults,
+
+                        // ObjectivesSignature data block
+                        IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
+                        ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
+                        IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
+                        IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
+                        ObjectivesManagerSignature = f.ObjectivesManagerSignature,
+                        IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
+                        ObjectivesApproverSignature = f.ObjectivesApproverSignature,
+
+                        // ResultsDefinition data block
+                        IsResultsFreezed = f.IsResultsFreezed,
+                        OverallKpi = f.OverallKpi,
+                        IsProposalForBonusPayment = f.IsProposalForBonusPayment,
+                        ManagerComment = f.ManagerComment,
+                        EmployeeComment = f.EmployeeComment,
+                        OtherComment = f.OtherComment,
+
+                        // ResultsSignature data block
+                        IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
+                        ResultsEmployeeSignature = f.ResultsEmployeeSignature,
+                        IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
+                        IsResultsSignedByManager = f.IsResultsSignedByManager,
+                        ResultsManagerSignature = f.ResultsManagerSignature,
+                        IsResultsSignedByApprover = f.IsResultsSignedByApprover,
+                        ResultsApproverSignature = f.ResultsApproverSignature,
+                    })
+                    .First();
         }
 
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)

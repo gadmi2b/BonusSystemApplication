@@ -26,24 +26,33 @@
         public ResultsSignature() { }
         public ResultsSignature(Form form)
         {
-            if (form.IsObjectivesFreezed &&
-                form.IsObjectivesSignedByEmployee &&
-                form.IsObjectivesSignedByManager &&
-                form.IsObjectivesSignedByApprover &&
-                form.IsResultsFreezed)
-            {
-                IsResultsSignedByEmployee = form.IsResultsSignedByEmployee;
-                ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature;
-                IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee;
-                IsResultsSignedByManager = form.IsResultsSignedByManager;
-                ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature;
-                IsResultsSignedByApprover = form.IsResultsSignedByApprover;
-                ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature;
-            }
-            else
-            {
-                // just keep default values
-            }
+            IsResultsSignedByEmployee = form.IsResultsSignedByEmployee;
+            ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature;
+            IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee;
+            IsResultsSignedByManager = form.IsResultsSignedByManager;
+            ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature;
+            IsResultsSignedByApprover = form.IsResultsSignedByApprover;
+            ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature;
+
+            // Initial varian based on separated loading logic
+            //if (form.IsObjectivesFreezed &&
+            //    form.IsObjectivesSignedByEmployee &&
+            //    form.IsObjectivesSignedByManager &&
+            //    form.IsObjectivesSignedByApprover &&
+            //    form.IsResultsFreezed)
+            //{
+            //    IsResultsSignedByEmployee = form.IsResultsSignedByEmployee;
+            //    ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature;
+            //    IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee;
+            //    IsResultsSignedByManager = form.IsResultsSignedByManager;
+            //    ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature;
+            //    IsResultsSignedByApprover = form.IsResultsSignedByApprover;
+            //    ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature;
+            //}
+            //else
+            //{
+            //    // just keep default values
+            //}
         }
     }
 }
