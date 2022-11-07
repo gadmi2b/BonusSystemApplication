@@ -20,8 +20,37 @@
         alert("Exception: " + response.status + " |  " + response.message);
       }
       else {
-        // TODO: change workproject description
-        alert(response.workprojectDescription);
+        $("#js-workprojectDescription").val(response.workprojectDescription);
+      }
+    },
+    failure: function (response) {
+      alert("Failure: " + response.Status + " |  " + response.Message);
+    },
+    error: function (response) {
+      alert("Error: " + response.Status + " |  " + response.Message);
+    }
+  });
+}
+
+
+function requestEmployeeData(element) {
+  $.ajax({
+    type: "Get",
+    url: '/Home/GetEmployeeData',
+    data: { employeeId: element.value },
+    dataType: "json",
+    contentType: "application/json; charset=utf-8",
+    //beforeSend: function () {
+    //  Show(); // Show loader icon  
+    //},
+    success: function (response) {
+      if (response.status !== "success") {
+        alert("Exception: " + response.status + " |  " + response.message);
+      }
+      else {
+        $("#js-teamName").val(response.employeeTeam);
+        $("#js-positionName").val(response.employeePosition);
+        $("#js-pid").val(response.employeePid);
       }
     },
     failure: function (response) {

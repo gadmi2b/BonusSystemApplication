@@ -306,6 +306,11 @@ namespace BonusSystemApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Action for Ajax request method requestWorkprojectDescription
+        /// </summary>
+        /// <param name="workprojectId">selected workproject id</param>
+        /// <returns>status, message and workprojectDescription</returns>
         [HttpGet]
         public JsonResult GetWorkprojectDescription(long workprojectId)
         {
@@ -329,6 +334,40 @@ namespace BonusSystemApplication.Controllers
                 status = "success",
                 message = "Operation was complited successfully",
                 workprojectDescription = workprojectDescription,
+            });
+        }
+
+        /// <summary>
+        /// Action for Ajax request method requestEmployeeData
+        /// </summary>
+        /// <param name="employeeId">selected employee id</param>
+        /// <returns>status, message, teamName, positionName and pid of employee</returns>
+        [HttpGet]
+        public JsonResult GetEmployeeData(long employeeId)
+        {
+            #region check requested id
+            if (employeeId <= 0)
+            {
+                // TODO: to add to log: "Requested Id is less or equal to zero"
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = "Bad id was requested"
+                });
+            }
+            #endregion
+            User user = userRepository.GetUserData(employeeId);
+            string teamName = user?.Team?.Name == null ? string.Empty : user.Team.Name;
+            string positionName = user?.Position?.NameEng == null ? string.Empty : user.Position.NameEng;
+            string pid = user?.Pid == null ? string.Empty : user.Pid;
+
+            return new JsonResult(new
+            {
+                status = "success",
+                message = "Operation was complited successfully",
+                employeeTeam = teamName,
+                employeePosition = positionName,
+                employeePid = pid,
             });
         }
 
