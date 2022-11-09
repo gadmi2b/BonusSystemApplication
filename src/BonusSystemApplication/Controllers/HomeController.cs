@@ -371,6 +371,27 @@ namespace BonusSystemApplication.Controllers
             });
         }
 
+        [HttpGet]
+        public void ChangeState(long formId)
+        {
+            // TODO: get current formId and user from Session
+            //       check that user has permission to modify form
+
+            // form should be saved
+
+            // to find form by id
+            // extract all states and all signatures into new Form object
+            // invert state and remove corrsponding signatues
+            #region Get form object with id, states and signatues
+
+            #endregion
+
+            #region 123
+
+            #endregion
+        }
+
+
         [HttpPost]
         public IActionResult SaveForm(ObjectivesDefinition objectivesDefinition,
                                       ObjectivesSignature objectivesSignature,

@@ -36,6 +36,7 @@ BEM convention: Block Elements Modifiers
   <header class="header">
       <p>You can do it!</p>
   </header>
+  
 
   <content class="content">
    <form method="post" id="content-form">
@@ -211,27 +212,37 @@ BEM convention: Block Elements Modifiers
         <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
                 disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
                                 Model.ResultsDefinition.IsResultsFreezed)">
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee">Employee:</label>
-            <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesEmployeeSignature</span>
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ObjectivesSignature.IsObjectivesSignedByManager">Direct Manager:</label>
-            <input asp-for="ObjectivesSignature.IsObjectivesSignedByManager" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesManagerSignature</span>
+            <div class="content-signatures-block__checkbox js-signature">
+                <label for="@nameof(ObjectivesSignature.IsObjectivesSignedByEmployee)">Employee:</label>
+                <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"
+                       id="@nameof(ObjectivesSignature.IsObjectivesSignedByEmployee)"/>
+            </div>
+            <span class="content-signatures-block__signature" id="@nameof(ObjectivesSignature.ObjectivesEmployeeSignature)">
+                @Model.ObjectivesSignature.ObjectivesEmployeeSignature
+            </span>
+            <div class="content-signatures-block__checkbox js-signature">
+                <label for="@nameof(ObjectivesSignature.IsObjectivesSignedByManager)">Direct Manager:</label>
+                <input asp-for="ObjectivesSignature.IsObjectivesSignedByManager" type="checkbox"
+                       id="@nameof(ObjectivesSignature.IsObjectivesSignedByManager)"/>
+            </div>
+            <span class="content-signatures-block__signature" id="@nameof(ObjectivesSignature.ObjectivesManagerSignature)">
+                @Model.ObjectivesSignature.ObjectivesManagerSignature
+            </span>
 
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ObjectivesSignature.IsObjectivesSignedByApprover">Approved by:</label>
-            <input asp-for="ObjectivesSignature.IsObjectivesSignedByApprover" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ObjectivesSignature.ObjectivesApproverSignature</span>
-        <div class="content-signatures-block__checkbox">
-            <label></label>
-            <input asp-for="ObjectivesSignature.IsObjectivesRejectedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">I do not agree with objectives</span>
+            <div class="content-signatures-block__checkbox js-signature">
+                <label for="@nameof(ObjectivesSignature.IsObjectivesSignedByApprover)">Approved by:</label>
+                <input asp-for="ObjectivesSignature.IsObjectivesSignedByApprover" type="checkbox"
+                       id="@nameof(ObjectivesSignature.IsObjectivesSignedByApprover)"/>
+            </div>
+            <span class="content-signatures-block__signature" id="@nameof(ObjectivesSignature.ObjectivesApproverSignature)">
+                @Model.ObjectivesSignature.ObjectivesApproverSignature
+            </span>
+            <div class="content-signatures-block__checkbox js-signature">
+                <label></label>
+                <input asp-for="ObjectivesSignature.IsObjectivesRejectedByEmployee" type="checkbox"
+                       id="@nameof(ObjectivesSignature.IsObjectivesRejectedByEmployee)"/>
+            </div>
+            <span class="content-signatures-block__signature">I do not agree with objectives</span>
         </fieldset>
 
         @* results signature process is forbidden if:
@@ -242,27 +253,27 @@ BEM convention: Block Elements Modifiers
                 disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
                             !Model.ObjectivesSignature.IsObjectivesSigned ||
                             !Model.ResultsDefinition.IsResultsFreezed)">
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
-            <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsEmployeeSignature</span>
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ResultsSignature.IsResultsSignedByManager">Direct Manager:</label>
-            <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsManagerSignature</span>
+            <div class="content-signatures-block__checkbox">
+                <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
+                <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsEmployeeSignature</span>
+            <div class="content-signatures-block__checkbox">
+                <label asp-for="ResultsSignature.IsResultsSignedByManager">Direct Manager:</label>
+                <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsManagerSignature</span>
 
-        <div class="content-signatures-block__checkbox">
-            <label asp-for="ResultsSignature.IsResultsSignedByApprover">Approved by:</label>
-            <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsApproverSignature</span>
-        <div class="content-signatures-block__checkbox">
-            <label></label>
-            <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"/>
-        </div>
-        <span class="content-signatures-block__signature">I do not agree with results</span>
+            <div class="content-signatures-block__checkbox">
+                <label asp-for="ResultsSignature.IsResultsSignedByApprover">Approved by:</label>
+                <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsApproverSignature</span>
+            <div class="content-signatures-block__checkbox">
+                <label></label>
+                <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"/>
+            </div>
+            <span class="content-signatures-block__signature">I do not agree with results</span>
         </fieldset>
     </div>
    </form>
@@ -270,7 +281,7 @@ BEM convention: Block Elements Modifiers
   <sidebar class="sidebar sidebar--padding">
     <div class="button-group">
         <p class="button-group__title">Objectives:</p>
-        <input type="submit" value="Freeze" asp-controller="Home" asp-action="Freeze" class="cmn-button button--width"
+        <input type="submit" value="Freeze" onclick="changeState()" class="cmn-button button--width"
                 disabled="@(Model.ObjectivesDefinition.IsObjectivesFreezed)" />
         <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
                 disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed)" />
