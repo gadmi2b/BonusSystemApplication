@@ -41,7 +41,7 @@ BEM convention: Block Elements Modifiers
   <content class="content">
    <form method="post" id="content-form">
     <div style="display:none">
-        <input asp-for="ObjectivesDefinition.FormId" type="hidden" readonly />
+        <input asp-for="ObjectivesDefinition.FormId" type="hidden" id="js-formId" readonly />
         <input asp-for="ObjectivesDefinition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
         <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />
         <input asp-for="ResultsDefinition.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
