@@ -121,6 +121,36 @@ namespace BonusSystemApplication.Models.Repositories
                     .First();
         }
 
+        public Form GetFormSignatureData(long formId)
+        {
+            Form form = context.Forms
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+
+                        IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
+                        ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
+                        IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
+                        IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
+                        ObjectivesManagerSignature = f.ObjectivesManagerSignature,
+                        IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
+                        ObjectivesApproverSignature = f.ObjectivesApproverSignature,
+
+                        IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
+                        ResultsEmployeeSignature = f.ResultsEmployeeSignature,
+                        IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
+                        IsResultsSignedByManager = f.IsResultsSignedByManager,
+                        ResultsManagerSignature = f.ResultsManagerSignature,
+                        IsResultsSignedByApprover = f.IsResultsSignedByApprover,
+                        ResultsApproverSignature = f.ResultsApproverSignature,
+                    })
+                    .First();
+            return form;
+        }
+
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()

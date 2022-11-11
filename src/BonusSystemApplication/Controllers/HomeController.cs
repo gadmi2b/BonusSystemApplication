@@ -394,40 +394,16 @@ namespace BonusSystemApplication.Controllers
         [HttpGet]
         public JsonResult SignatureProcess(long formId, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {
-            // TODO: 
-            /* objectives or results signature?
-             * get original form data: isFreezed for both and all signatures for determined
-             * - if objectives is freezed and results is not freezed
-             *   IsObjectivesSignedByEmployee: if(isSignatureCheckboxChecked)  { IsObjectivesSignedByEmployee = true and 
-             *                                                                 ObjectivesEmployeeSignature = signature }
-             *   IsObjectivesSignedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
-             *                                                                 ObjectivesEmployeeSignature = string.Empty
-             *                                                                 IsObjectivesRejectedByEmployee = false }
-             * 
-             * 
-             */
-            switch (signatureCheckboxId)
+            Form form = formRepository.GetFormSignatureData(formId);
+            
+            if(!Checker.IsSignaturePossible(form, signatureCheckboxId))
             {
-                // Objectives signature process
-                case nameof(Models.Form.IsObjectivesSignedByEmployee):
-                case nameof(Models.Form.IsObjectivesSignedByManager):
-                case nameof(Models.Form.IsObjectivesSignedByApprover):
-                case nameof(Models.Form.IsObjectivesRejectedByEmployee):
-
-                    break;
-
-                // Results signature process
-                case nameof(Models.Form.IsResultsSignedByEmployee):
-                case nameof(Models.Form.IsResultsSignedByManager):
-                case nameof(Models.Form.IsResultsSignedByApprover):
-                case nameof(Models.Form.IsResultsRejectedByEmployee):
-
-                    break;
-
-                default:
-                    // TODO: add error status and message
-                    break;
+                // TODO: signature process is not possible
+                return new JsonResult("");
             }
+
+            // TODO: use reflection to set form property by its name
+
             return new JsonResult("");
         }
 
