@@ -6,16 +6,20 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
     {
         public static void SaveSignature(Form form, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {
-            /*
-             *   IsObjectivesSignedByEmployee: if(isSignatureCheckboxChecked)  { IsObjectivesSignedByEmployee = true and 
-             *                                                                 ObjectivesEmployeeSignature = signature }
+            /*   Signed / Rejected pairs:
              *   IsObjectivesSignedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
              *                                                                 ObjectivesEmployeeSignature = string.Empty
              *                                                                 IsObjectivesRejectedByEmployee = false }
+             *   IsObjectivesRejectedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
+             *                                                                 ObjectivesEmployeeSignature = string.Empty
+             *                                                                 IsObjectivesRejectedByEmployee = false }                                                              
+             *   Other variants:
+             *   IsObjectivesSignedByXXX: if(isSignatureCheckboxChecked)  { IsObjectivesSignedByXXX = true and 
+             *                                                              ObjectivesXXXSignature = signature }
             */
         }
 
-        private static void SetPropertyValueByName(Form form, string propertyName, object propertyValue)
+        private static void SetFormPropertyValueByName(Form form, string propertyName, object propertyValue)
         {
             PropertyInfo propertyInfo = form.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
             if(propertyInfo != null && propertyInfo.CanWrite)
