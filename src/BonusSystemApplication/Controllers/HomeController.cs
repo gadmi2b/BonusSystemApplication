@@ -395,15 +395,24 @@ namespace BonusSystemApplication.Controllers
         public JsonResult SignatureProcess(long formId, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {
             Form form = formRepository.GetFormSignatureData(formId);
-            
-            if(!Checker.IsSignaturePossible(form, signatureCheckboxId))
+
+            ObjectivesSignaturePropertyLinker objectivesSignaturePropertyLinker = new ObjectivesSignaturePropertyLinker();
+            ResultsSignaturePropertyLinker resultsSignaturePropertyLinker = new ResultsSignaturePropertyLinker();
+
+
+            if (Checker.IsSignaturePossible(form, signatureCheckboxId, objectivesSignaturePropertyLinker))
             {
-                // TODO: signature process is not possible
+                // TODO: use reflection to set form property by its name
                 return new JsonResult("");
             }
 
-            // TODO: use reflection to set form property by its name
+            if (Checker.IsSignaturePossible(form, signatureCheckboxId, resultsSignaturePropertyLinker))
+            {
+                // TODO: use reflection to set form property by its name
+                return new JsonResult("");
+            }
 
+            // TODO: error - no signature process is allowed
             return new JsonResult("");
         }
 

@@ -2,61 +2,39 @@
 {
     public static class Checker
     {
-        public static Dictionary<string, string?> ObjectivesIsSignedIsRejectedPropNamesPairs = new Dictionary<string, string?>()
-            {
-                { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.IsObjectivesRejectedByEmployee)},
-                { nameof(Form.IsObjectivesSignedByManager), null},
-                { nameof(Form.IsObjectivesSignedByApprover), null},
-            };
-        public static Dictionary<string, string?> ResultsIsSignedIsRejectedPropNamesPairs = new Dictionary<string, string?>()
-            {
-                { nameof(Form.IsResultsSignedByEmployee), nameof(Form.IsResultsRejectedByEmployee) },
-                { nameof(Form.IsResultsSignedByManager), null },
-                { nameof(Form.IsResultsSignedByApprover), null },
-            };
-
-        public static bool IsSignaturePossible(Form form, string signatureCheckboxId)
+        public static bool IsSignaturePossible(Form form, string signatureCheckboxId, IPropertyLinker propertyLinker)
         {
-            // no check of situation with signing/dropping already signed/dropped positions
+            // signing/dropping already signed/dropped positions will not be checked
 
-            if(form.IsObjectivesFreezed)
+            // objectives signing is allowed only
+            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
             {
-                if (!form.IsResultsFreezed)
-                {
-                    // objectives signature is allowed only
-                    return IsObjectivesAffected(signatureCheckboxId);
-                }
-                else
-                {
-                    // results signature is allowed only
-                    return IsResultsAffected(signatureCheckboxId);
-                }
+                if (propertyLinker.GetType() == typeof(ObjectivesSignaturePropertyLinker))
+                    return IsPropertyAffected(signatureCheckboxId, propertyLinker);
             }
+
+            // results signing is allowed only
+            if (form.IsObjectivesFreezed && form.IsResultsFreezed)
+            {
+                if (propertyLinker.GetType() == typeof(ResultsSignaturePropertyLinker))
+                    return IsPropertyAffected(signatureCheckboxId, propertyLinker);
+            }
+
             return false;
         }
-        private static bool IsObjectivesAffected(string signatureCheckboxId)
+        private static bool IsPropertyAffected(string signatureCheckboxId, IPropertyLinker propertyLinker)
         {
-            if (ObjectivesIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId) ||
-                ObjectivesIsSignedIsRejectedPropNamesPairs.Values.Contains(signatureCheckboxId))
+            if (propertyLinker.IsSignedIsRejectedPairs.Keys.Contains(signatureCheckboxId) ||
+                propertyLinker.IsSignedIsRejectedPairs.Values.Contains(signatureCheckboxId))
             {
                 return true;
             }
             return false;
         }
-        private static bool IsResultsAffected(string signatureCheckboxId)
-        {
-            if (ResultsIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId) ||
-                ResultsIsSignedIsRejectedPropNamesPairs.Values.Contains(signatureCheckboxId))
-            {
-                return true;
-            }
 
-            return false;
-        }
-
-        public static Dictionary<string, object> SignatureClassificator(Form form,
-                                                  string signatureCheckboxId,
-                                                  bool isSignatureCheckboxChecked)
+        public static List<Dictionary<string, object>> GetFormPropertiesValuesToSet(Form form,
+                                                                          string signatureCheckboxId,
+                                                                          bool isSignatureCheckboxChecked)
         {
             /*   Signed / Rejected pairs:
              *   IsObjectivesSignedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
@@ -69,6 +47,7 @@
              *   IsObjectivesSignedByXXX: if(isSignatureCheckboxChecked)  { IsObjectivesSignedByXXX = true and 
              *                                                              ObjectivesXXXSignature = signature }
             */
+            List<Dictionary<string, object>> formPropsNamesValues = new List<Dictionary<string, object>>();
             Dictionary<string, object> formPropNameValue = new Dictionary<string, object>();
 
             // if signatureCheckboxId in IsSignedIsRejectedPairs in Keys:
@@ -79,8 +58,14 @@
             // if signatureCheckboxId in IsSignedIsRejectedPairs in Values:
             // => logic applied for all SignedBy properties: sign/drop, but without signature
 
+            //if (ObjectivesIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId) ||
+            //    ResultsIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId))
+            //{
+            //    formPropNameValue.Add(signatureCheckboxId, isSignatureCheckboxChecked);
+            //}
 
-            return formPropNameValue;
+
+            return formPropsNamesValues;
 
         }
     }
