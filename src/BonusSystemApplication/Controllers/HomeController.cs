@@ -396,20 +396,23 @@ namespace BonusSystemApplication.Controllers
         {
             Form form = formRepository.GetFormSignatureData(formId);
 
-            ObjectivesSignaturePropertyLinker objectivesSignaturePropertyLinker = new ObjectivesSignaturePropertyLinker();
-            ResultsSignaturePropertyLinker resultsSignaturePropertyLinker = new ResultsSignaturePropertyLinker();
-
-
-            if (Checker.IsSignaturePossible(form, signatureCheckboxId, objectivesSignaturePropertyLinker))
+            List<IPropertyLinker> signaturePropertyLinkers = new List<IPropertyLinker>()
             {
-                // TODO: use reflection to set form property by its name
-                return new JsonResult("");
-            }
+                new ObjectivesSignaturePropertyLinker(),
+                new ResultsSignaturePropertyLinker(),
+            };
 
-            if (Checker.IsSignaturePossible(form, signatureCheckboxId, resultsSignaturePropertyLinker))
+            SignaturePropertiesAnalyser signaturePropertiesAnalyser =
+                new SignaturePropertiesAnalyser(signaturePropertyLinkers, signatureCheckboxId);
+
+
+            List<Dictionary<string, object?>> propertiesValuesToSet =
+                signaturePropertiesAnalyser.GetPropertiesValuesToSet(form, signatureCheckboxId, isSignatureCheckboxChecked);
+
+            if(propertiesValuesToSet.Count > 0)
             {
-                // TODO: use reflection to set form property by its name
-                return new JsonResult("");
+                // TODO: save data
+                return new JsonResult("data to set");
             }
 
             // TODO: error - no signature process is allowed
