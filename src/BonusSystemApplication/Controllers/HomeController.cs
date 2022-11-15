@@ -394,6 +394,24 @@ namespace BonusSystemApplication.Controllers
         [HttpGet]
         public JsonResult SignatureProcess(long formId, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {
+            // TODO: I dont need a separate ObjectivesSignaturePropertyLinker and ResultsSignaturePropertyLinker
+            //       instead of them I need only one PropertyLinkerFactory which will take a parameter ("objectives") or ("results")
+            //       and return an instance of PropertyLinker : IPropertyLinker.
+
+            // TODO: ? rename SignaturePropertiesAnalyser to SignaturePropertiesHandler
+            //       ? it should take only signatureCheckboxId and isSignatureCheckboxChecked
+            //       ? and provide with info about which PropertyLinker was affected and
+
+            // TODO: IPropertyLinker should prepare List<Dictionary<string, object?>> propertiesValuesToSet
+            //       depending on signatureCheckboxId and isSignatureCheckboxChecked independent from IsFreezed values
+
+            // TODO: create class FormChecker, which will operate on client form data OR database form data only
+            //       maybe I need common method to determine combination of isObjectivesFreezed and isResultsFreezed
+            //       to determine available operations on form (stage)
+
+            // TODO: in action: if "objectives" PropertyLinker.IsAffected and FormChecker.isObjectivesStage => we can save data
+
+
             Form form = formRepository.GetFormSignatureData(formId);
 
             List<IPropertyLinker> signaturePropertyLinkers = new List<IPropertyLinker>()
