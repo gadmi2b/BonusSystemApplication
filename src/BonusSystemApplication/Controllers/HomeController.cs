@@ -411,29 +411,36 @@ namespace BonusSystemApplication.Controllers
 
             // TODO: in action: if "objectives" PropertyLinker.IsAffected and FormChecker.isObjectivesStage => we can save data
 
-
             Form form = formRepository.GetFormSignatureData(formId);
 
-            List<IPropertyLinker> signaturePropertyLinkers = new List<IPropertyLinker>()
+            foreach(var type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
             {
-                new ObjectivesSignaturePropertyLinker(),
-                new ResultsSignaturePropertyLinker(),
-            };
-
-            SignaturePropertiesAnalyser signaturePropertiesAnalyser =
-                new SignaturePropertiesAnalyser(signaturePropertyLinkers, signatureCheckboxId);
-
-
-            List<Dictionary<string, object?>> propertiesValuesToSet =
-                signaturePropertiesAnalyser.GetPropertiesValuesToSet(form, signatureCheckboxId, isSignatureCheckboxChecked);
-
-            if(propertiesValuesToSet.Count > 0)
-            {
-                // TODO: save data
-                return new JsonResult("data to set");
+                IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
+                if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, signatureCheckboxId))
+                {
+                    break;
+                }
             }
 
-            // TODO: error - no signature process is allowed
+            if(PropertyLinkerHandler.AffectedPropertyLinker == null)
+            {
+                // TODO: error - no signature process is allowed
+                return new JsonResult("error message");
+            }
+
+            List<Dictionary<string, object?>> propertiesValuesToSet =
+                PropertyLinkerHandler.GetPropertiesValues(signatureCheckboxId, isSignatureCheckboxChecked);
+
+            if(propertiesValuesToSet.Count == 0)
+            {
+                // TODO: error - no signature process is allowed
+                return new JsonResult("error message");
+            }
+
+            // PropertyLinkerHandler contains IPropertyLinker and its type inside it.
+
+
+
             return new JsonResult("");
         }
 

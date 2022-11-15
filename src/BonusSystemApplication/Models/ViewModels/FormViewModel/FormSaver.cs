@@ -2,7 +2,7 @@
 
 namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
-    public static class Saver
+    public static class FormSaver
     {
         public static void SaveSignature(Form form, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {

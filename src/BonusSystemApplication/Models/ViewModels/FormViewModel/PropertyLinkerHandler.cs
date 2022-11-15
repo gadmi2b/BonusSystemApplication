@@ -1,26 +1,28 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
-    public class SignaturePropertiesAnalyser
+    public static class PropertyLinkerHandler
     {
-        private IPropertyLinker AffectedPropertyLinker { get; } = null;
+        public static IPropertyLinker AffectedPropertyLinker { get; set; } = null;
 
-        public SignaturePropertiesAnalyser(List<IPropertyLinker> signaturePropertyLinkers,
-                                                          string signatureCheckboxId)
+        public static bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
+                                                             string signatureCheckboxId)
         {
-            foreach(IPropertyLinker pLinker in signaturePropertyLinkers)
+            if(propertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
             {
-                if (pLinker.IsSignedIsRejectedPairs.Keys.Contains(signatureCheckboxId) ||
-                    pLinker.IsSignedIsRejectedPairs.Values.Contains(signatureCheckboxId))
-                {
-                    AffectedPropertyLinker = pLinker;
-                    break;
-                }
+                return false;
             }
+
+            if (propertyLinker.IsSignedIsRejectedPairs.Keys.Contains(signatureCheckboxId) ||
+                propertyLinker.IsSignedIsRejectedPairs.Values.Contains(signatureCheckboxId))
+            {
+                AffectedPropertyLinker = propertyLinker;
+                return true;
+            }
+            return false;
         }
 
-        public List<Dictionary<string, object?>> GetPropertiesValuesToSet(Form form,
-                                                                          string signatureCheckboxId,
-                                                                          bool isSignatureCheckboxChecked)
+        public static List<Dictionary<string, object?>> GetPropertiesValues(string signatureCheckboxId,
+                                                                            bool isSignatureCheckboxChecked)
         {
             /*   Signed / Rejected pairs:
              *   IsObjectivesSignedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
@@ -49,7 +51,7 @@
             //}
 
             List<Dictionary<string, object?>> propertiesValuesToSet = new List<Dictionary<string, object?>>();
-            if (IsSignatureImpossible(form))
+            if(AffectedPropertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
             {
                 return propertiesValuesToSet;
             }
@@ -61,25 +63,25 @@
             return propertiesValuesToSet;
 
         }
-        private bool IsSignatureImpossible(Form form)
-        {
-            // signing/dropping already signed/dropped positions will not be checked
+        //private bool IsSignatureImpossible(Form form)
+        //{
+        //    // signing/dropping already signed/dropped positions will not be checked
 
-            // objectives signing is allowed only
-            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
-            {
-                if (AffectedPropertyLinker!.GetType() == typeof(ObjectivesSignaturePropertyLinker))
-                    return true;
-            }
+        //    // objectives signing is allowed only
+        //    if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
+        //    {
+        //        if (AffectedPropertyLinker!.GetType() == typeof(ObjectivesSignaturePropertyLinker))
+        //            return true;
+        //    }
 
-            // results signing is allowed only
-            if (form.IsObjectivesFreezed && form.IsResultsFreezed)
-            {
-                if (AffectedPropertyLinker!.GetType() == typeof(ResultsSignaturePropertyLinker))
-                    return true;
-            }
+        //    // results signing is allowed only
+        //    if (form.IsObjectivesFreezed && form.IsResultsFreezed)
+        //    {
+        //        if (AffectedPropertyLinker!.GetType() == typeof(ResultsSignaturePropertyLinker))
+        //            return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
     }
 }
