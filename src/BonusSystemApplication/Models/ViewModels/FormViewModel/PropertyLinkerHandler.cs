@@ -56,9 +56,34 @@
                 return propertiesValuesToSet;
             }
 
-            // TODO: write code here
-            Dictionary<string, object?> propertyValue = new Dictionary<string, object?>();
+            // logic:
+            // if checkbox for signing was affected then we have to add key-value pair to List
+            // in this case if this checkbox has a reject pair then
+            // if signature was dropped => we have to drop reject checkbox also => add key-value pair to List
 
+
+            if (AffectedPropertyLinker.IsSignedIsRejectedPairs.ContainsKey(signatureCheckboxId))
+            {
+                propertiesValuesToSet.Add(new Dictionary<string, object?> { { signatureCheckboxId, isSignatureCheckboxChecked } });
+
+                if(AffectedPropertyLinker.IsSignedIsRejectedPairs.TryGetValue(signatureCheckboxId, out string rejectedById))
+                {
+                    if (!isSignatureCheckboxChecked)
+                    {
+                        propertiesValuesToSet.Add(new Dictionary<string, object?> { { rejectedById, isSignatureCheckboxChecked } });
+                    }
+                }
+            }
+
+            // TODO: logic:
+            // if checkbox for reject was affected then add key-value pair
+            // in this case if(isSignatureCheckboxChecked) and
+            // there is no signature then we have to put it also => add key-value pair to List
+
+            if (AffectedPropertyLinker.IsSignedIsRejectedPairs.ContainsValue(signatureCheckboxId))
+            {
+                propertiesValuesToSet.Add(new Dictionary<string, object?> { { signatureCheckboxId, isSignatureCheckboxChecked } });
+            }
 
             return propertiesValuesToSet;
 

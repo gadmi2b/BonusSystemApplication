@@ -399,7 +399,7 @@ namespace BonusSystemApplication.Controllers
             //       add signatureCheckboxId / isSignatureCheckboxChecked checking
 
             #region Determine which peoperties were affected. Getting affected PropertyLinker
-            foreach (var type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
+            foreach (PropertyTypes type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
             {
                 IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
                 if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, signatureCheckboxId))
