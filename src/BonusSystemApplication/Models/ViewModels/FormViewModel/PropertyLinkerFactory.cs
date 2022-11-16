@@ -2,14 +2,14 @@
 {
     public static class PropertyLinkerFactory
     {
-        public static IPropertyLinker CreatePropertyLinker(PropertyType propertyType)
+        public static IPropertyLinker CreatePropertyLinker(PropertyTypes propertyType)
         {
             switch (propertyType)
             {
-                case PropertyType.Objectives:
+                case PropertyTypes.Objectives:
                     return GetObjectivesSignaturePropertyLinker();
 
-                case PropertyType.Results:
+                case PropertyTypes.Results:
                     return GetResultsSignaturePropertyLinker();
 
                 default: throw new ArgumentException("Unknown type of property");
@@ -20,7 +20,7 @@
         {
             return new PropertyLinker()
             {
-                PropertyType = PropertyType.Objectives,
+                PropertyType = PropertyTypes.Objectives,
                 IsSignedIsRejectedPairs = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.IsObjectivesRejectedByEmployee)},
@@ -40,7 +40,7 @@
         {
             return new PropertyLinker()
             {
-                PropertyType = PropertyType.Results,
+                PropertyType = PropertyTypes.Results,
                 IsSignedIsRejectedPairs = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsResultsSignedByEmployee), nameof(Form.IsResultsRejectedByEmployee)},

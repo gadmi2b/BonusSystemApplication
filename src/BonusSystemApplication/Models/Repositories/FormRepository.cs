@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace BonusSystemApplication.Models.Repositories
 {
@@ -211,6 +212,16 @@ namespace BonusSystemApplication.Models.Repositories
                 .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
                 .AsNoTracking();
             return forms;
+        }
+
+
+        private void SetFormPropertyValueByName(Form form, string propertyName, object propertyValue)
+        {
+            PropertyInfo propertyInfo = form.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            if (propertyInfo != null && propertyInfo.CanWrite)
+            {
+                propertyInfo.SetValue(form, propertyValue);
+            }
         }
     }
 }

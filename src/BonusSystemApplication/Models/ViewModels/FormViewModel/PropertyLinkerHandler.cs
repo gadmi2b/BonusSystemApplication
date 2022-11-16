@@ -63,25 +63,5 @@
             return propertiesValuesToSet;
 
         }
-        //private bool IsSignatureImpossible(Form form)
-        //{
-        //    // signing/dropping already signed/dropped positions will not be checked
-
-        //    // objectives signing is allowed only
-        //    if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
-        //    {
-        //        if (AffectedPropertyLinker!.GetType() == typeof(ObjectivesSignaturePropertyLinker))
-        //            return true;
-        //    }
-
-        //    // results signing is allowed only
-        //    if (form.IsObjectivesFreezed && form.IsResultsFreezed)
-        //    {
-        //        if (AffectedPropertyLinker!.GetType() == typeof(ResultsSignaturePropertyLinker))
-        //            return true;
-        //    }
-
-        //    return false;
-        //}
     }
 }

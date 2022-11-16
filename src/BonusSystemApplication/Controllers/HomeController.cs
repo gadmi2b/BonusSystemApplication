@@ -394,26 +394,12 @@ namespace BonusSystemApplication.Controllers
         [HttpGet]
         public JsonResult SignatureProcess(long formId, string signatureCheckboxId, bool isSignatureCheckboxChecked)
         {
-            // TODO: I dont need a separate ObjectivesSignaturePropertyLinker and ResultsSignaturePropertyLinker
-            //       instead of them I need only one PropertyLinkerFactory which will take a parameter ("objectives") or ("results")
-            //       and return an instance of PropertyLinker : IPropertyLinker.
+            // TODO: add user checking
+            //       add formId checking
+            //       add signatureCheckboxId / isSignatureCheckboxChecked checking
 
-            // TODO: ? rename SignaturePropertiesAnalyser to SignaturePropertiesHandler
-            //       ? it should take only signatureCheckboxId and isSignatureCheckboxChecked
-            //       ? and provide with info about which PropertyLinker was affected and
-
-            // TODO: IPropertyLinker should prepare List<Dictionary<string, object?>> propertiesValuesToSet
-            //       depending on signatureCheckboxId and isSignatureCheckboxChecked independent from IsFreezed values
-
-            // TODO: create class FormChecker, which will operate on client form data OR database form data only
-            //       maybe I need common method to determine combination of isObjectivesFreezed and isResultsFreezed
-            //       to determine available operations on form (stage)
-
-            // TODO: in action: if "objectives" PropertyLinker.IsAffected and FormChecker.isObjectivesStage => we can save data
-
-            Form form = formRepository.GetFormSignatureData(formId);
-
-            foreach(var type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
+            #region Determine which peoperties were affected. Getting affected PropertyLinker
+            foreach (var type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
             {
                 IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
                 if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, signatureCheckboxId))
@@ -427,7 +413,9 @@ namespace BonusSystemApplication.Controllers
                 // TODO: error - no signature process is allowed
                 return new JsonResult("error message");
             }
+            #endregion
 
+            #region Get property-value pairs which should be saved in Database
             List<Dictionary<string, object?>> propertiesValuesToSet =
                 PropertyLinkerHandler.GetPropertiesValues(signatureCheckboxId, isSignatureCheckboxChecked);
 
@@ -436,10 +424,33 @@ namespace BonusSystemApplication.Controllers
                 // TODO: error - no signature process is allowed
                 return new JsonResult("error message");
             }
+            #endregion
 
-            // PropertyLinkerHandler contains IPropertyLinker and its type inside it.
+            #region Get form from database and check signature possibility
+            Form form = formRepository.GetFormSignatureData(formId);
+            if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Objectives &&
+               !FormChecker.IsObjectivesSignaturePossible(form))
+            {
+                // TODO: error - no signature process is allowed
+                return new JsonResult("error message");
+            }
 
+            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Results &&
+               !FormChecker.IsResultsSignaturePossible(form))
+            {
+                // TODO: error - no signature process is allowed
+                return new JsonResult("error message");
+            }
+            #endregion
 
+            #region Set property-values to form and update it
+            // TODO: to check how updating process works
+            //       and create it in FormRepository as common or separated
+
+            #endregion
+
+            // TODO: >maybe< in <JsonResponceFactory> create methods to generate responce by type (success/error)
+            //       generate JSON sesponce with affected ids and properties
 
             return new JsonResult("");
         }
