@@ -21,13 +21,13 @@
             return new PropertyLinker()
             {
                 PropertyType = PropertyTypes.Objectives,
-                IsSignedIsRejectedPairs = new Dictionary<string, string?>()
+                IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.IsObjectivesRejectedByEmployee)},
                     { nameof(Form.IsObjectivesSignedByManager), null},
                     { nameof(Form.IsObjectivesSignedByApprover), null},
                 },
-                IsSignedSignaturePairs = new Dictionary<string, string?>()
+                IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.ObjectivesEmployeeSignature)},
                     { nameof(Form.IsObjectivesSignedByManager), nameof(Form.ObjectivesManagerSignature)},
@@ -41,13 +41,13 @@
             return new PropertyLinker()
             {
                 PropertyType = PropertyTypes.Results,
-                IsSignedIsRejectedPairs = new Dictionary<string, string?>()
+                IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsResultsSignedByEmployee), nameof(Form.IsResultsRejectedByEmployee)},
                     { nameof(Form.IsResultsSignedByManager), null},
                     { nameof(Form.IsResultsSignedByApprover), null},
                 },
-                IsSignedSignaturePairs = new Dictionary<string, string?>()
+                IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
                     { nameof(Form.IsResultsSignedByEmployee), nameof(Form.ResultsEmployeeSignature)},
                     { nameof(Form.IsResultsSignedByManager), nameof(Form.ResultsManagerSignature)},

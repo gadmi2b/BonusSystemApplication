@@ -416,7 +416,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Get property-value pairs which should be saved in Database
-            List<Dictionary<string, object?>> propertiesValuesToSet =
+            Dictionary<string, object?> propertiesValuesToSet =
                 PropertyLinkerHandler.GetPropertiesValues(signatureCheckboxId, isSignatureCheckboxChecked);
 
             if(propertiesValuesToSet.Count == 0)

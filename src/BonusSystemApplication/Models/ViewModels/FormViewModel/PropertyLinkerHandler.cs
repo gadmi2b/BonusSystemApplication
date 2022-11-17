@@ -7,13 +7,13 @@
         public static bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
                                                              string signatureCheckboxId)
         {
-            if(propertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
+            if (propertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
             {
                 return false;
             }
 
-            if (propertyLinker.IsSignedIsRejectedPairs.Keys.Contains(signatureCheckboxId) ||
-                propertyLinker.IsSignedIsRejectedPairs.Values.Contains(signatureCheckboxId))
+            if (propertyLinker.IdPairsIsSignedIsRejected.ContainsKey(signatureCheckboxId) ||
+                propertyLinker.IdPairsIsSignedIsRejected.ContainsValue(signatureCheckboxId))
             {
                 AffectedPropertyLinker = propertyLinker;
                 return true;
@@ -21,72 +21,70 @@
             return false;
         }
 
-        public static List<Dictionary<string, object?>> GetPropertiesValues(string signatureCheckboxId,
-                                                                            bool isSignatureCheckboxChecked)
+        public static Dictionary<string, object?> GetPropertiesValues(string signatureCheckboxId,
+                                                                      bool isSignatureCheckboxChecked)
         {
-            /*   Signed / Rejected pairs:
-             *   IsObjectivesSignedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
-             *                                                                 ObjectivesEmployeeSignature = string.Empty
-             *                                                                 IsObjectivesRejectedByEmployee = false }
-             *   IsObjectivesRejectedByEmployee: if(!isSignatureCheckboxChecked) { IsObjectivesSignedByEmployee = false and 
-             *                                                                 ObjectivesEmployeeSignature = string.Empty
-             *                                                                 IsObjectivesRejectedByEmployee = false }                                                              
-             *   Other variants:
-             *   IsObjectivesSignedByXXX: if(isSignatureCheckboxChecked)  { IsObjectivesSignedByXXX = true and 
-             *                                                              ObjectivesXXXSignature = signature }
-            */
-
-            // if signatureCheckboxId in IsSignedIsRejectedPairs in Keys:
-            // => logic applied for all SignedBy properties: sign/drop with signature
-            // if for this Key exists Value and
-            // if(!isSignatureCheckboxChecked) => we have to drop IsRejected property also
-
-            // if signatureCheckboxId in IsSignedIsRejectedPairs in Values:
-            // => logic applied for all SignedBy properties: sign/drop, but without signature
-
-            //if (ObjectivesIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId) ||
-            //    ResultsIsSignedIsRejectedPropNamesPairs.Keys.Contains(signatureCheckboxId))
-            //{
-            //    formPropNameValue.Add(signatureCheckboxId, isSignatureCheckboxChecked);
-            //}
-
-            List<Dictionary<string, object?>> propertiesValuesToSet = new List<Dictionary<string, object?>>();
-            if(AffectedPropertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
+            Dictionary<string, object?> propertiesValuesToSet = new Dictionary<string, object?>();
+            if (AffectedPropertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
             {
                 return propertiesValuesToSet;
             }
 
             // logic:
-            // if checkbox for signing was affected then we have to add key-value pair to List
-            // in this case if this checkbox has a reject pair then
-            // if signature was dropped => we have to drop reject checkbox also => add key-value pair to List
+            // if checkbox for signing was clicked then we have to add:
+            // - isSigned  key-value pair to dictionary (id and value)
+            // - signature key-value pair to dictionary (id and just empty.string)
+            // in this case:
+            //      if this checkbox has a pair with rejectId then
+            //      if signature was dropped => we have to drop reject checkbox also => add:
+            //      - IsRejected key-value pair to dictionary (id and value)
 
 
-            if (AffectedPropertyLinker.IsSignedIsRejectedPairs.ContainsKey(signatureCheckboxId))
+            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(signatureCheckboxId))
             {
-                propertiesValuesToSet.Add(new Dictionary<string, object?> { { signatureCheckboxId, isSignatureCheckboxChecked } });
+                propertiesValuesToSet.Add(signatureCheckboxId, isSignatureCheckboxChecked);
+                if (AffectedPropertyLinker.IdPairsIsSignedSignature
+                    .TryGetValue(signatureCheckboxId, out string signatureId)){
+                    propertiesValuesToSet.Add(signatureId, string.Empty);
+                }
 
-                if(AffectedPropertyLinker.IsSignedIsRejectedPairs.TryGetValue(signatureCheckboxId, out string rejectedById))
+                if (!isSignatureCheckboxChecked &&
+                    AffectedPropertyLinker.IdPairsIsSignedIsRejected
+                    .TryGetValue(signatureCheckboxId, out string isRejectedId))
                 {
-                    if (!isSignatureCheckboxChecked)
+                    propertiesValuesToSet.Add(isRejectedId, isSignatureCheckboxChecked);
+                }
+            }
+
+            // logic:
+            // if checkbox for rejecting was clicked then we have to add:
+            // - isRejected key-value pair to dictionary (id and value)
+            // in this case:
+            //      if reject was initiated (true) then we have also change IsSigned => add
+            //      - IsSigned key-value pair to dictionary (id and value)
+            //      - signature key-value pair to dictionary (id and just empty.string) 
+
+            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsValue(signatureCheckboxId))
+            {
+                propertiesValuesToSet.Add(signatureCheckboxId, isSignatureCheckboxChecked);
+                if (isSignatureCheckboxChecked)
+                {
+                    string isSignedId = AffectedPropertyLinker.IdPairsIsSignedIsRejected
+                                            .First(e => e.Value == signatureCheckboxId).Key;
+
+                    if (!string.IsNullOrEmpty(isSignedId))
                     {
-                        propertiesValuesToSet.Add(new Dictionary<string, object?> { { rejectedById, isSignatureCheckboxChecked } });
+                        propertiesValuesToSet.Add(isSignedId, isSignatureCheckboxChecked);
+                        if (AffectedPropertyLinker.IdPairsIsSignedSignature
+                            .TryGetValue(isSignedId, out string signatureId))
+                        {
+                            propertiesValuesToSet.Add(signatureId, string.Empty);
+                        }
                     }
                 }
             }
 
-            // TODO: logic:
-            // if checkbox for reject was affected then add key-value pair
-            // in this case if(isSignatureCheckboxChecked) and
-            // there is no signature then we have to put it also => add key-value pair to List
-
-            if (AffectedPropertyLinker.IsSignedIsRejectedPairs.ContainsValue(signatureCheckboxId))
-            {
-                propertiesValuesToSet.Add(new Dictionary<string, object?> { { signatureCheckboxId, isSignatureCheckboxChecked } });
-            }
-
             return propertiesValuesToSet;
-
         }
     }
 }
