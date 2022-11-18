@@ -6,6 +6,7 @@
         IEnumerable<Form> GetForms();
         Form GetFormData(long formId);
         Form GetFormSignatureData(long formId);
+        Form GetFormIsFreezedStates(long formId);
         IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses);
         IQueryable<Form> GetFormsWithLocalAccess(long userId);
         IQueryable<Form> GetFormsWithParticipation(long userId);

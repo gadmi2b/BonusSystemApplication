@@ -22,7 +22,7 @@
         }
 
         public static Dictionary<string, object> GetPropertiesValues(string checkboxId,
-                                                                      bool isCheckboxChecked)
+                                                                     bool isCheckboxChecked)
         {
             Dictionary<string, object> propertiesValues = new Dictionary<string, object>();
             if (AffectedPropertyLinker == null || string.IsNullOrEmpty(checkboxId))
@@ -50,7 +50,7 @@
 
                 if (!isCheckboxChecked &&
                     AffectedPropertyLinker.IdPairsIsSignedIsRejected
-                    .TryGetValue(checkboxId, out string isRejectedId))
+                    .TryGetValue(checkboxId, out string isRejectedId)) // return null to string and true in TryGetValue - to check
                 {
                     propertiesValues.Add(isRejectedId, isCheckboxChecked);
                 }

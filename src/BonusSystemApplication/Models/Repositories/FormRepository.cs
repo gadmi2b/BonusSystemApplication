@@ -36,9 +36,30 @@ namespace BonusSystemApplication.Models.Repositories
             throw new NotImplementedException();
         }
 
-        public void UpdateForm(Form form)
+        public void UpdateForm(Form changedForm)
         {
-            throw new NotImplementedException();
+            Form originalForm = context.Forms.Find(changedForm.Id);
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+
+            originalForm.IsObjectivesSignedByEmployee = changedForm.IsObjectivesSignedByEmployee;
+            originalForm.ObjectivesEmployeeSignature = changedForm.ObjectivesEmployeeSignature;
+            originalForm.IsObjectivesRejectedByEmployee = changedForm.IsObjectivesRejectedByEmployee;
+            originalForm.IsObjectivesSignedByManager = changedForm.IsObjectivesSignedByManager;
+            originalForm.ObjectivesManagerSignature = changedForm.ObjectivesManagerSignature;
+            originalForm.IsObjectivesSignedByApprover = changedForm.IsObjectivesSignedByApprover;
+            originalForm.ObjectivesApproverSignature = changedForm.ObjectivesApproverSignature;
+
+            originalForm.IsResultsSignedByEmployee = changedForm.IsResultsSignedByEmployee;
+            originalForm.ResultsEmployeeSignature = changedForm.ResultsEmployeeSignature;
+            originalForm.IsResultsRejectedByEmployee = changedForm.IsResultsRejectedByEmployee;
+            originalForm.IsResultsSignedByManager = changedForm.IsResultsSignedByManager;
+            originalForm.ResultsManagerSignature = changedForm.ResultsManagerSignature;
+            originalForm.IsResultsSignedByApprover = changedForm.IsResultsSignedByApprover;
+            originalForm.ResultsApproverSignature = changedForm.ResultsApproverSignature;
+
+            context.SaveChanges();
         }
 
         public void DeleteForm(long id)
@@ -153,7 +174,18 @@ namespace BonusSystemApplication.Models.Repositories
                     .First();
             return form;
         }
-
+        public Form GetFormIsFreezedStates(long formId)
+        {
+            return context.Forms
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form()
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                    })
+                    .First();
+        }
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
@@ -214,16 +246,6 @@ namespace BonusSystemApplication.Models.Repositories
                 .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
                 .AsNoTracking();
             return forms;
-        }
-
-
-        private void SetFormPropertyValueByName(Form form, string propertyName, object propertyValue)
-        {
-            PropertyInfo propertyInfo = form.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
-            if (propertyInfo != null && propertyInfo.CanWrite)
-            {
-                propertyInfo.SetValue(form, propertyValue);
-            }
         }
     }
 }

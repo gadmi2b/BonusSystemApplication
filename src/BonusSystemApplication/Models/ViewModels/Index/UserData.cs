@@ -23,7 +23,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
         public static string GetUserSignature()
         {
-            return $"{UserName} {DateTime.Now.ToString()}";
+            return $"{UserName} {DateTime.Now}";
         }
 
         public static string GetUserName()

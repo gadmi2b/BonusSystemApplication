@@ -1,4 +1,5 @@
 ﻿using BonusSystemApplication.Models.ViewModels.Index;
+using System.Reflection;
 
 namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
@@ -61,6 +62,24 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
                     }
                 }
             }
+        }
+    
+        public static void UpdateSignatureFormData(Form form, Dictionary<string, object> propertiesValues)
+        {
+            foreach(string property in propertiesValues.Keys)
+            {
+                var value = propertiesValues[property];
+                PropertyInfo propertyInfo = form.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo != null && propertyInfo.CanWrite)
+                {
+                    propertyInfo.SetValue(form, value);
+                }
+            }
+        }
+        public static void UpdateLastSavedFormData(Form form)
+        {
+            form.LastSavedBy = UserData.GetUserName();
+            form.LastSavedDateTime = DateTime.Now;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace BonusSystemApplication.Controllers
             workprojectRepository = workprojectRepo;
             userRepository = userRepo;
 
-            UserData.UserId = 8;
+            UserData.UserId = 9;
         }
 
         public IActionResult Index(UserSelections userSelections)
@@ -444,10 +444,10 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Fill property-value pair with User signature and Update Form data
-            // TODO: to check how updating process works
-            //       and create it in FormRepository as common or separated
             FormDataHandler.PrepareSignatureData(ref propertiesValues);
-
+            FormDataHandler.UpdateSignatureFormData(form, propertiesValues);
+            FormDataHandler.UpdateLastSavedFormData(form);
+            formRepository.UpdateForm(form);
             #endregion
 
             // TODO: >maybe< in <JsonResponceFactory> create methods to generate responce by type (success/error)
