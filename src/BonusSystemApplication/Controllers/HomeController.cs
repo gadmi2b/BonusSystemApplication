@@ -42,7 +42,7 @@ namespace BonusSystemApplication.Controllers
             workprojectRepository = workprojectRepo;
             userRepository = userRepo;
 
-            UserData.UserId = 7;
+            UserData.UserId = 8;
         }
 
         public IActionResult Index(UserSelections userSelections)
@@ -392,17 +392,17 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpGet]
-        public JsonResult SignatureProcess(long formId, string signatureCheckboxId, bool isSignatureCheckboxChecked)
+        public JsonResult SignatureProcess(long formId, string checkboxId, bool isCheckboxChecked)
         {
             // TODO: add user checking
             //       add formId checking
             //       add signatureCheckboxId / isSignatureCheckboxChecked checking
 
-            #region Determine which peoperties were affected. Getting affected PropertyLinker
+            #region Determine which properties were affected. Getting affected PropertyLinker
             foreach (PropertyTypes type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
             {
                 IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
-                if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, signatureCheckboxId))
+                if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, checkboxId))
                 {
                     break;
                 }
@@ -416,10 +416,10 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Get property-value pairs which should be saved in Database
-            Dictionary<string, object?> propertiesValuesToSet =
-                PropertyLinkerHandler.GetPropertiesValues(signatureCheckboxId, isSignatureCheckboxChecked);
+            Dictionary<string, object> propertiesValues =
+                PropertyLinkerHandler.GetPropertiesValues(checkboxId, isCheckboxChecked);
 
-            if(propertiesValuesToSet.Count == 0)
+            if(propertiesValues.Count == 0)
             {
                 // TODO: error - no signature process is allowed
                 return new JsonResult("error message");
@@ -429,23 +429,24 @@ namespace BonusSystemApplication.Controllers
             #region Get form from database and check signature possibility
             Form form = formRepository.GetFormSignatureData(formId);
             if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Objectives &&
-               !FormChecker.IsObjectivesSignaturePossible(form))
+               !FormDataHandler.IsObjectivesSignaturePossible(form))
             {
                 // TODO: error - no signature process is allowed
                 return new JsonResult("error message");
             }
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Results &&
-               !FormChecker.IsResultsSignaturePossible(form))
+               !FormDataHandler.IsResultsSignaturePossible(form))
             {
                 // TODO: error - no signature process is allowed
                 return new JsonResult("error message");
             }
             #endregion
 
-            #region Set property-values to form and update it
+            #region Fill property-value pair with User signature and Update Form data
             // TODO: to check how updating process works
             //       and create it in FormRepository as common or separated
+            FormDataHandler.PrepareSignatureData(ref propertiesValues);
 
             #endregion
 

@@ -5,6 +5,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
     public static class UserData
     {
         public static long UserId { get; set; }
+        static string UserName { get; set; } = "Current ApplicationUser";
         public static List<long> availableFormIds { get; private set; } = new List<long>();
 
         public static void SetAvailableFormIds(List<Form> availableForms)
@@ -18,6 +19,16 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             {
                 availableFormIds.Add(form.Id);
             }
+        }
+
+        public static string GetUserSignature()
+        {
+            return $"{UserName} {DateTime.Now.ToString()}";
+        }
+
+        public static string GetUserName()
+        {
+            return UserName;
         }
     }
 }

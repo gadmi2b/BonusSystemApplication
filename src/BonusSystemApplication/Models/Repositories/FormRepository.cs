@@ -131,6 +131,8 @@ namespace BonusSystemApplication.Models.Repositories
                         Id = f.Id,
                         IsObjectivesFreezed = f.IsObjectivesFreezed,
                         IsResultsFreezed = f.IsResultsFreezed,
+                        LastSavedBy = f.LastSavedBy,
+                        LastSavedDateTime = f.LastSavedDateTime,
 
                         IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
                         ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,

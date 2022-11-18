@@ -5,15 +5,15 @@
         public static IPropertyLinker AffectedPropertyLinker { get; set; } = null;
 
         public static bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
-                                                             string signatureCheckboxId)
+                                                             string checkboxId)
         {
-            if (propertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
+            if (propertyLinker == null || string.IsNullOrEmpty(checkboxId))
             {
                 return false;
             }
 
-            if (propertyLinker.IdPairsIsSignedIsRejected.ContainsKey(signatureCheckboxId) ||
-                propertyLinker.IdPairsIsSignedIsRejected.ContainsValue(signatureCheckboxId))
+            if (propertyLinker.IdPairsIsSignedIsRejected.ContainsKey(checkboxId) ||
+                propertyLinker.IdPairsIsSignedIsRejected.ContainsValue(checkboxId))
             {
                 AffectedPropertyLinker = propertyLinker;
                 return true;
@@ -21,13 +21,13 @@
             return false;
         }
 
-        public static Dictionary<string, object?> GetPropertiesValues(string signatureCheckboxId,
-                                                                      bool isSignatureCheckboxChecked)
+        public static Dictionary<string, object> GetPropertiesValues(string checkboxId,
+                                                                      bool isCheckboxChecked)
         {
-            Dictionary<string, object?> propertiesValuesToSet = new Dictionary<string, object?>();
-            if (AffectedPropertyLinker == null || string.IsNullOrEmpty(signatureCheckboxId))
+            Dictionary<string, object> propertiesValues = new Dictionary<string, object>();
+            if (AffectedPropertyLinker == null || string.IsNullOrEmpty(checkboxId))
             {
-                return propertiesValuesToSet;
+                return propertiesValues;
             }
 
             // logic:
@@ -40,19 +40,19 @@
             //      - IsRejected key-value pair to dictionary (id and value)
 
 
-            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(signatureCheckboxId))
+            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(checkboxId))
             {
-                propertiesValuesToSet.Add(signatureCheckboxId, isSignatureCheckboxChecked);
+                propertiesValues.Add(checkboxId, isCheckboxChecked);
                 if (AffectedPropertyLinker.IdPairsIsSignedSignature
-                    .TryGetValue(signatureCheckboxId, out string signatureId)){
-                    propertiesValuesToSet.Add(signatureId, string.Empty);
+                    .TryGetValue(checkboxId, out string signatureId)){
+                    propertiesValues.Add(signatureId, string.Empty);
                 }
 
-                if (!isSignatureCheckboxChecked &&
+                if (!isCheckboxChecked &&
                     AffectedPropertyLinker.IdPairsIsSignedIsRejected
-                    .TryGetValue(signatureCheckboxId, out string isRejectedId))
+                    .TryGetValue(checkboxId, out string isRejectedId))
                 {
-                    propertiesValuesToSet.Add(isRejectedId, isSignatureCheckboxChecked);
+                    propertiesValues.Add(isRejectedId, isCheckboxChecked);
                 }
             }
 
@@ -64,27 +64,27 @@
             //      - IsSigned key-value pair to dictionary (id and value)
             //      - signature key-value pair to dictionary (id and just empty.string) 
 
-            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsValue(signatureCheckboxId))
+            if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsValue(checkboxId))
             {
-                propertiesValuesToSet.Add(signatureCheckboxId, isSignatureCheckboxChecked);
-                if (isSignatureCheckboxChecked)
+                propertiesValues.Add(checkboxId, isCheckboxChecked);
+                if (isCheckboxChecked)
                 {
                     string isSignedId = AffectedPropertyLinker.IdPairsIsSignedIsRejected
-                                            .First(e => e.Value == signatureCheckboxId).Key;
+                                            .First(e => e.Value == checkboxId).Key;
 
                     if (!string.IsNullOrEmpty(isSignedId))
                     {
-                        propertiesValuesToSet.Add(isSignedId, isSignatureCheckboxChecked);
+                        propertiesValues.Add(isSignedId, isCheckboxChecked);
                         if (AffectedPropertyLinker.IdPairsIsSignedSignature
                             .TryGetValue(isSignedId, out string signatureId))
                         {
-                            propertiesValuesToSet.Add(signatureId, string.Empty);
+                            propertiesValues.Add(signatureId, string.Empty);
                         }
                     }
                 }
             }
 
-            return propertiesValuesToSet;
+            return propertiesValues;
         }
     }
 }

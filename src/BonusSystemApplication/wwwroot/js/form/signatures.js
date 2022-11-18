@@ -25,8 +25,8 @@
       url: "/Home/SignatureProcess",
       data: {
         formId: formId,
-        signatureCheckboxId: signatureCheckboxId,
-        isSignatureCheckboxChecked: isSignatureCheckboxChecked,
+        checkboxId: signatureCheckboxId,
+        ischeckboxChecked: isSignatureCheckboxChecked,
       },
       dataType: "json",
       contentType: "application/json; charset=utf-8",
