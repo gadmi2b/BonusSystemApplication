@@ -29,9 +29,14 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
                 throw new ArgumentNullException(nameof(propertiesValues));
             }
 
-            // LOGIC: find the first bool and and get its value inside of all values
-            //        there are could be max two bools with same values (isSignedId and isRejectedId)
-            //        and one string value (signatureId)
+            #region Description of logic
+            /*
+             * LOGIC: find the first bool and and get its value inside of all values
+             *        there are could be max two bools with same values (isSignedId and isRejectedId)
+             *        and one string value (signatureId)
+             */
+            #endregion
+
             bool isSigned = false;
             foreach(var value in propertiesValues.Values)
             {
@@ -49,8 +54,13 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
                 userSignature = UserData.GetUserSignature();
             }
 
-            // LOGIC: find the first string value inside all values
-            //        and assign a User signature to it
+            #region Description of logic
+            /*
+             * LOGIC: find the first string value inside all values
+             *        and assign a User signature to it
+             */
+            #endregion
+
             foreach (string key in propertiesValues.Keys)
             {
                 if(propertiesValues.TryGetValue(key, out var value))

@@ -39,6 +39,10 @@ namespace BonusSystemApplication.Models.Repositories
         public void UpdateForm(Form changedForm)
         {
             Form originalForm = context.Forms.Find(changedForm.Id);
+            if(originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
             originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;

@@ -4,7 +4,7 @@
     //event.target.id - id of changed checkbox
     //event.target.checked - new value of changed checkbox
 
-    // TODO: call ajax request and send: id and initial value of checkbox
+    // TODO: call ajax request and send: id and value of checkbox
     //       all signature block should be locked until server responce
     //       responce should contain: success, id of affected signature block, signature (if target.value == false)
     //                                         id and string.empty signature             (if target.value == true) --- !need to drop reject also!
@@ -31,16 +31,24 @@
       dataType: "json",
       contentType: "application/json; charset=utf-8",
 
-      success: function(responce) {
+      success: function(response) {
         if (response.status !== "success") {
-          alert("Exception: " + response.status + " |  " + response.message);
-        }
-        else {
-          // TODO: response should contain pairs: id and value. Array of arrays or array of objects
-          //       put in any id its value
+          document.getElementById(signatureCheckboxId).checked = !isSignatureCheckboxChecked
+          alert(response.status + " |  " + response.message);
+        } else {
+          for (let property in response.propertiesValues) {
+            let propertyID = '#' + property;
+            let propertyValue = response.propertiesValues[property];
+
+            if (typeof propertyValue === "boolean") {
+              $(propertyID).prop("checked", propertyValue);
+            } else if (typeof propertyValue === "string") {
+              $(propertyID).text(propertyValue);
+            }
+          }
         }
       },
-      failure: function (responce) {
+      failure: function (response) {
         alert("Failure: " + response.status + " |  " + response.message);
       },
       error: function() {

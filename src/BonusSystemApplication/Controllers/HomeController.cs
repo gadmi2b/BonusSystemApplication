@@ -410,8 +410,13 @@ namespace BonusSystemApplication.Controllers
 
             if(PropertyLinkerHandler.AffectedPropertyLinker == null)
             {
-                // TODO: error - no signature process is allowed
-                return new JsonResult("error message");
+                JsonResult errorResponse = new JsonResult(new
+                {
+                    status = "error",
+                    message = $"{DateTime.Now}: Signature process is not possible." +
+                              $"Neither objectives nor results are involved into signature process.",
+                });
+                return errorResponse;
             }
             #endregion
 
@@ -421,8 +426,13 @@ namespace BonusSystemApplication.Controllers
 
             if(propertiesValues.Count == 0)
             {
-                // TODO: error - no signature process is allowed
-                return new JsonResult("error message");
+                JsonResult errorResponse = new JsonResult(new
+                {
+                    status = "error",
+                    message = $"{DateTime.Now}: Signature process is not possible." +
+                              $"No signature data are affected.",
+                });
+                return errorResponse;
             }
             #endregion
 
@@ -431,15 +441,23 @@ namespace BonusSystemApplication.Controllers
             if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Objectives &&
                !FormDataHandler.IsObjectivesSignaturePossible(form))
             {
-                // TODO: error - no signature process is allowed
-                return new JsonResult("error message");
+                JsonResult errorResponse = new JsonResult(new
+                {
+                    status = "error",
+                    message = $"{DateTime.Now}: Signature process is not possible. Objectives should be freezed at first.",
+                });
+                return errorResponse;
             }
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Results &&
                !FormDataHandler.IsResultsSignaturePossible(form))
             {
-                // TODO: error - no signature process is allowed
-                return new JsonResult("error message");
+                JsonResult errorResponse = new JsonResult(new
+                {
+                    status = "error",
+                    message = $"{DateTime.Now}: Signature process is not possible. Results should be freezed at first.",
+                });
+                return errorResponse;
             }
             #endregion
 
@@ -450,10 +468,14 @@ namespace BonusSystemApplication.Controllers
             formRepository.UpdateForm(form);
             #endregion
 
-            // TODO: >maybe< in <JsonResponceFactory> create methods to generate responce by type (success/error)
-            //       generate JSON sesponce with affected ids and properties
+            JsonResult response = new JsonResult(new
+            {
+                status = "success",
+                message = $"{DateTime.Now}: Signature data were successfully updated.",
+                propertiesValues = propertiesValues,
+            });
 
-            return new JsonResult("");
+            return response;
         }
 
         [HttpPost]

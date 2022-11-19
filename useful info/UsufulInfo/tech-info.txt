@@ -80,3 +80,9 @@ Views are responsible for presenting content through the user interface. They us
 
 Controller Responsibilities
 Controllers are the components that handle user interaction, work with the model, and ultimately select a view to render. In an MVC application, the view only displays information; the controller handles and responds to user input and interaction. In the MVC pattern, the controller is the initial entry point, and is responsible for selecting which model types to work with and which view to render (hence its name - it controls how the app responds to a given request).
+
+
+
+input type="checkbox" if doesn't has an checked=checked property will not be affected by .prop method...
+There's a difference between "properties" and "attributes". A "property" is something available directly on the DOM node; things like "id", "name", "tagName", etc are properties.
+Attributes that the HTML parser doesn't recognize as standard attributes for a particular tag are not available as properties on the DOM node. Instead, they have to be accessed via .setAttribute() and .getAttribute(). In jQuery terms, that means using .attr() instead of .prop().
