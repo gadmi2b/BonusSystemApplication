@@ -1,4 +1,5 @@
 ﻿using BonusSystemApplication.Models.Repositories;
+using BonusSystemApplication.UserIdentiry;
 
 namespace BonusSystemApplication.Models.ViewModels.Index
 {

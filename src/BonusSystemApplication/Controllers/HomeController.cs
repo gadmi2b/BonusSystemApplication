@@ -7,7 +7,10 @@ using Microsoft.Data.SqlClient.Server;
 using BonusSystemApplication.Models.ViewModels;
 using BonusSystemApplication.Models.ViewModels.Index;
 using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using BonusSystemApplication.UserIdentiry;
 using System.Text.Json;
+using BonusSystemApplication.Models.BusinessLogic;
+using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 
 
 //using Newtonsoft.Json.Serialization;
@@ -471,7 +474,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Fill property-value pair with User signature and Update Form data
-            FormDataHandler.PrepareSignatureData(ref propertiesValues);
+            FormDataHandler.PutUserSignature(ref propertiesValues);
             FormDataHandler.UpdateSignatureFormData(form, propertiesValues);
             FormDataHandler.UpdateLastSavedFormData(form);
             formRepository.UpdateForm(form);
@@ -488,10 +491,10 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveForm(ObjectivesDefinition objectivesDefinition,
-                                      ObjectivesSignature objectivesSignature,
-                                      ResultsDefinition resultsDefinition,
-                                      ResultsSignature resultsSignature)
+        public IActionResult SaveProcess(ObjectivesDefinition objectivesDefinition,
+                                         ObjectivesSignature objectivesSignature,
+                                         ResultsDefinition resultsDefinition,
+                                         ResultsSignature resultsSignature)
         {
             // TODO: check form stage:
             //       stage#1: [IsObjectivesFreezed == false && IsObjectivesSigned == false] &&
@@ -500,7 +503,7 @@ namespace BonusSystemApplication.Controllers
 
             //       stage#2: [IsObjectivesFreezed == true && IsObjectivesSigned == false] &&
             //                [IsResultsFreezed == false   && IsResultsSigned == false]
-            //                --> objectivesSignature and resultsDefinition could be saved
+            //                --> resultsDefinition could be saved
 
             //       stage#3: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
             //                [IsResultsFreezed == false   && IsResultsSigned == false]
@@ -508,7 +511,7 @@ namespace BonusSystemApplication.Controllers
 
             //       stage#4: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
             //                [IsResultsFreezed == true    && IsResultsSigned == false]
-            //                --> resultsSignature could be saved
+            //                --> nothing could be saved
 
             //       stage#5: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
             //                [IsResultsFreezed == true    && IsResultsSigned == true]
@@ -516,6 +519,21 @@ namespace BonusSystemApplication.Controllers
 
             // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
 
+            long formId = objectivesDefinition.FormId;
+
+            // TODO: add user checking
+            //       add formId checking
+
+            if(formId == 0)
+            {
+                // TODO: save new Form
+                //       --> objectivesDefinition and resultsDefinition could be saved
+            }
+
+            #region Get form from database
+            Form form = formRepository.GetFormSignatureData(formId);
+
+            #endregion
 
             return RedirectToAction("Form");
         }

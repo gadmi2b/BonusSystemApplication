@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\BusinessLogic\SaveProcess\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
   </ItemGroup>
 

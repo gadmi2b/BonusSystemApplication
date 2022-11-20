@@ -1,6 +1,7 @@
-﻿using BonusSystemApplication.Models.Repositories;
+﻿using BonusSystemApplication.Models;
+using BonusSystemApplication.Models.Repositories;
 
-namespace BonusSystemApplication.Models.ViewModels.Index
+namespace BonusSystemApplication.UserIdentiry
 {
     public static class UserData
     {
@@ -10,12 +11,12 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
         public static void SetAvailableFormIds(List<Form> availableForms)
         {
-            if(availableFormIds.Count > 0)
+            if (availableFormIds.Count > 0)
             {
                 availableFormIds.Clear();
             }
 
-            foreach(Form form in availableForms)
+            foreach (Form form in availableForms)
             {
                 availableFormIds.Add(form.Id);
             }

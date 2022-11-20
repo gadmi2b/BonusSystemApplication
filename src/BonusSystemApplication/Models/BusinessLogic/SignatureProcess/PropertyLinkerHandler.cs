@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+﻿namespace BonusSystemApplication.Models.BusinessLogic.SignatureProcess
 {
     public static class PropertyLinkerHandler
     {
@@ -46,8 +46,8 @@
             if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(checkboxId))
             {
                 propertiesValues.Add(checkboxId, isCheckboxChecked);
-                
-                if(IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
+
+                if (IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
                                     checkboxId, out string signatureId))
                 {
                     propertiesValues.Add(signatureId, string.Empty);
@@ -107,7 +107,7 @@
             // check existing value member be key
             if (dict.TryGetValue(keyOrValue, out member))
             {
-                if(string.IsNullOrEmpty(member)) { return false; }
+                if (string.IsNullOrEmpty(member)) { return false; }
             }
             else
             {

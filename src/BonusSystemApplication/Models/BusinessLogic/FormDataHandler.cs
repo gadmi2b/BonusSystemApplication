@@ -1,13 +1,13 @@
-﻿using BonusSystemApplication.Models.ViewModels.Index;
+﻿using BonusSystemApplication.UserIdentiry;
 using System.Reflection;
 
-namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+namespace BonusSystemApplication.Models.BusinessLogic
 {
     public static class FormDataHandler
     {
         public static bool IsObjectivesSignaturePossible(Form form)
         {
-            if(form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
             {
                 return true;
             }
@@ -21,10 +21,10 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
             }
             return false;
         }
-    
-        public static void PrepareSignatureData(ref Dictionary<string, object> propertiesValues)
+
+        public static void PutUserSignature(ref Dictionary<string, object> propertiesValues)
         {
-            if(propertiesValues == null)
+            if (propertiesValues == null)
             {
                 throw new ArgumentNullException(nameof(propertiesValues));
             }
@@ -38,9 +38,9 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
             #endregion
 
             bool isSigned = false;
-            foreach(var value in propertiesValues.Values)
+            foreach (var value in propertiesValues.Values)
             {
-                if(value != null &&
+                if (value != null &&
                    value.GetType() == typeof(bool))
                 {
                     isSigned = (bool)value;
@@ -49,7 +49,7 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
             }
 
             string userSignature = string.Empty;
-            if(isSigned)
+            if (isSigned)
             {
                 userSignature = UserData.GetUserSignature();
             }
@@ -63,7 +63,7 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 
             foreach (string key in propertiesValues.Keys)
             {
-                if(propertiesValues.TryGetValue(key, out var value))
+                if (propertiesValues.TryGetValue(key, out var value))
                 {
                     if (value.GetType() == typeof(string))
                     {
@@ -73,10 +73,10 @@ namespace BonusSystemApplication.Models.ViewModels.FormViewModel
                 }
             }
         }
-    
+
         public static void UpdateSignatureFormData(Form form, Dictionary<string, object> propertiesValues)
         {
-            foreach(string property in propertiesValues.Keys)
+            foreach (string property in propertiesValues.Keys)
             {
                 var value = propertiesValues[property];
                 PropertyInfo propertyInfo = form.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);

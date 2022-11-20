@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+﻿namespace BonusSystemApplication.Models.BusinessLogic.SignatureProcess
 {
     public interface IPropertyLinker
     {
