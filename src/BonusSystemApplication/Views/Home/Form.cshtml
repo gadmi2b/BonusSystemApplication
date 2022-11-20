@@ -253,25 +253,35 @@ BEM convention: Block Elements Modifiers
                 disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
                             !Model.ObjectivesSignature.IsObjectivesSigned ||
                             !Model.ResultsDefinition.IsResultsFreezed)">
-            <div class="content-signatures-block__checkbox">
+            <div class="content-signatures-block__checkbox" js-signature>
                 <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
-                <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"/>
+                <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"
+                       id="@nameof(ResultsSignature.IsResultsSignedByEmployee)"/>
             </div>
-            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsEmployeeSignature</span>
+            <span class="content-signatures-block__signature" id="@nameof(ResultsSignature.ResultsEmployeeSignature)">
+                @Model.ResultsSignature.ResultsEmployeeSignature
+            </span>
             <div class="content-signatures-block__checkbox">
                 <label asp-for="ResultsSignature.IsResultsSignedByManager">Direct Manager:</label>
-                <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"/>
+                <input asp-for="ResultsSignature.IsResultsSignedByManager" type="checkbox"
+                       id="@nameof(ResultsSignature.IsResultsSignedByManager)"/>
             </div>
-            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsManagerSignature</span>
+            <span class="content-signatures-block__signature" js-signature>
+                @Model.ResultsSignature.ResultsManagerSignature
+            </span>
 
             <div class="content-signatures-block__checkbox">
                 <label asp-for="ResultsSignature.IsResultsSignedByApprover">Approved by:</label>
-                <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"/>
+                <input asp-for="ResultsSignature.IsResultsSignedByApprover" type="checkbox"
+                       id="@nameof(ResultsSignature.IsResultsSignedByApprover)"/>
             </div>
-            <span class="content-signatures-block__signature">@Model.ResultsSignature.ResultsApproverSignature</span>
-            <div class="content-signatures-block__checkbox">
+            <span class="content-signatures-block__signature" js-signature>
+                @Model.ResultsSignature.ResultsApproverSignature
+            </span>
+            <div class="content-signatures-block__checkbox" js-signature>
                 <label></label>
-                <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"/>
+                <input asp-for="ResultsSignature.IsResultsRejectedByEmployee" type="checkbox"
+                       id="@nameof(ResultsSignature.IsResultsRejectedByEmployee)"/>
             </div>
             <span class="content-signatures-block__signature">I do not agree with results</span>
         </fieldset>

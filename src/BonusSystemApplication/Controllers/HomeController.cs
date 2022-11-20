@@ -391,12 +391,21 @@ namespace BonusSystemApplication.Controllers
             #endregion
         }
 
-        [HttpGet]
         public JsonResult SignatureProcess(long formId, string checkboxId, bool isCheckboxChecked)
         {
             // TODO: add user checking
             //       add formId checking
-            //       add signatureCheckboxId / isSignatureCheckboxChecked checking
+
+            if (string.IsNullOrEmpty(checkboxId))
+            {
+                JsonResult errorResponse = new JsonResult(new
+                {
+                    status = "error",
+                    message = $"{DateTime.Now}: Signature process is not possible." +
+                              $"Signature data is not affected.",
+                });
+                return errorResponse;
+            }
 
             #region Determine which properties were affected. Getting affected PropertyLinker
             foreach (PropertyTypes type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
@@ -430,7 +439,7 @@ namespace BonusSystemApplication.Controllers
                 {
                     status = "error",
                     message = $"{DateTime.Now}: Signature process is not possible." +
-                              $"No signature data are affected.",
+                              $"Signature data is not affected.",
                 });
                 return errorResponse;
             }
@@ -485,11 +494,27 @@ namespace BonusSystemApplication.Controllers
                                       ResultsSignature resultsSignature)
         {
             // TODO: check form stage:
-            //       stage#1: only ObjectivesDefinition could be saved
-            //       stage#2: only ObjectivesSignature could be saved
-            //       stage#3: only ResultsDefinition could be saved
-            //       stage#4: only ResultsSignature could be saved
+            //       stage#1: [IsObjectivesFreezed == false && IsObjectivesSigned == false] &&
+            //                [IsResultsFreezed == false    && IsResultsSigned == false]
+            //                --> objectivesDefinition and resultsDefinition could be saved
 
+            //       stage#2: [IsObjectivesFreezed == true && IsObjectivesSigned == false] &&
+            //                [IsResultsFreezed == false   && IsResultsSigned == false]
+            //                --> objectivesSignature and resultsDefinition could be saved
+
+            //       stage#3: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
+            //                [IsResultsFreezed == false   && IsResultsSigned == false]
+            //                --> resultsDefinition could be saved
+
+            //       stage#4: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
+            //                [IsResultsFreezed == true    && IsResultsSigned == false]
+            //                --> resultsSignature could be saved
+
+            //       stage#5: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
+            //                [IsResultsFreezed == true    && IsResultsSigned == true]
+            //                --> nothing could be saved
+
+            // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
 
 
             return RedirectToAction("Form");
