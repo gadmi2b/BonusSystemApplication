@@ -477,7 +477,7 @@ namespace BonusSystemApplication.Controllers
             FormDataHandler.PutUserSignature(ref propertiesValues);
             FormDataHandler.UpdateSignatureFormData(form, propertiesValues);
             FormDataHandler.UpdateLastSavedFormData(form);
-            formRepository.UpdateForm(form);
+            formRepository.UpdateFormSignatures(form);
             #endregion
 
             JsonResult response = new JsonResult(new
@@ -531,7 +531,7 @@ namespace BonusSystemApplication.Controllers
             }
 
             #region Get form from database
-            Form form = formRepository.GetFormSignatureData(formId);
+            Form form = formRepository.GetFormObjectivesResultsData(formId);
 
             #endregion
 

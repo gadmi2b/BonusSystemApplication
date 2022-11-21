@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -36,7 +37,7 @@ namespace BonusSystemApplication.Models.Repositories
             throw new NotImplementedException();
         }
 
-        public void UpdateForm(Form changedForm)
+        public void UpdateFormSignatures(Form changedForm)
         {
             Form originalForm = context.Forms.Find(changedForm.Id);
             if(originalForm == null)
@@ -64,6 +65,17 @@ namespace BonusSystemApplication.Models.Repositories
             originalForm.ResultsApproverSignature = changedForm.ResultsApproverSignature;
 
             context.SaveChanges();
+        }
+
+        public void UpdateFormObjectivesResults(long formId,
+                                                ObjectivesDefinition objectivesDefinition,
+                                                ResultsDefinition? resultsDefinition = null)
+        {
+            Form originalForm = context.Forms.Find(formId);
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
         }
 
         public void DeleteForm(long id)
@@ -189,6 +201,23 @@ namespace BonusSystemApplication.Models.Repositories
                         IsResultsFreezed = f.IsResultsFreezed,
                     })
                     .First();
+        }
+        public Form GetFormObjectivesResultsData(long formId)
+        {
+            Form form = context.Forms
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                        LastSavedBy = f.LastSavedBy,
+                        LastSavedDateTime = f.LastSavedDateTime,
+
+                        ObjectivesResults = f.ObjectivesResults,
+                    })
+                    .First();
+            return form;
         }
         public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
         {

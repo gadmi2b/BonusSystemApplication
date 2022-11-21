@@ -1,5 +1,8 @@
-﻿using BonusSystemApplication.UserIdentiry;
+﻿using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using BonusSystemApplication.UserIdentiry;
+using Microsoft.Data.SqlClient.Server;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace BonusSystemApplication.Models.BusinessLogic
 {
@@ -90,6 +93,119 @@ namespace BonusSystemApplication.Models.BusinessLogic
         {
             form.LastSavedBy = UserData.GetUserName();
             form.LastSavedDateTime = DateTime.Now;
+        }
+
+
+
+        public static void UpdateObjectivesResultsFormData(Form form,
+                                                           ObjectivesDefinition objectivesDefinition,
+                                                           ResultsDefinition resultsDefinition)
+        {
+            if (IsObjectivesResultsSavePossible(form))
+            {
+                // Objectives updating
+                if (Enum.TryParse(objectivesDefinition.Period, out Periods period))
+                {
+                    form.Period = period;
+                }
+                else
+                {
+                    throw new ArgumentException("Unknown value of period. Form save is impossible");
+                }
+
+                if (Int32.TryParse(objectivesDefinition.Year, out int year))
+                {
+                    form.Year = year;
+                }
+                else
+                {
+                    throw new ArgumentException("Unknown value of year. Form save is impossible");
+                }
+
+                form.EmployeeId = objectivesDefinition.EmployeeId;
+                form.ManagerId = objectivesDefinition.ManagerId;
+                form.ApproverId = objectivesDefinition.ApproverId;
+                form.WorkprojectId = objectivesDefinition.WorkprojectId;
+                form.IsWpmHox = objectivesDefinition.IsWpmHox;
+
+                // TODO: !!! Rows in Objectives and in Results must be the same
+                //       !!! incorrect just copy data from obj to objRes
+                foreach (Objective obj in objectivesDefinition.Objectives)
+                {
+                    foreach(ObjectiveResult objRes in form.ObjectivesResults)
+                    {
+                        objRes.Row = obj.Row;
+                        objRes.Statement = obj.Statement;
+                        objRes.Description = obj.Description;
+                        objRes.IsKey = obj.IsKey;
+                        objRes.IsMeasurable = obj.IsMeasurable;
+                        objRes.Unit = obj.Unit;
+                        objRes.Threshold = obj.Threshold;
+                        objRes.Target = obj.Target;
+                        objRes.Challenge = obj.Challenge;
+                        objRes.WeightFactor = obj.WeightFactor;
+                        objRes.KpiUpperLimit = obj.KpiUpperLimit;
+                    }
+                }
+
+                // Results updating
+
+                form.ManagerComment = resultsDefinition.ManagerComment;
+                form.EmployeeComment = resultsDefinition.EmployeeComment;
+                form.OtherComment = resultsDefinition.OtherComment;
+
+                // TODO: !!! Rows in Objectives and in Results must be the same
+                //       !!! incorrect just copy data from res to objRes
+                foreach (Result res in resultsDefinition.Results)
+                {
+                    foreach (ObjectiveResult objRes in form.ObjectivesResults)
+                    {
+                        objRes.KeyCheck = res.KeyCheck;
+                        objRes.Achieved = res.Achieved;
+                        objRes.Kpi = res.Kpi;
+                    }
+                }
+            }
+            else if (IsResultsSavePossible(form))
+            {
+                // Results updating
+                form.IsProposalForBonusPayment = resultsDefinition.IsProposalForBonusPayment;
+
+                form.ManagerComment = resultsDefinition.ManagerComment;
+                form.EmployeeComment = resultsDefinition.EmployeeComment;
+                form.OtherComment = resultsDefinition.OtherComment;
+
+                // TODO: !!! Rows in Objectives and in Results must be the same
+                //       !!! incorrect just copy data from res to objRes
+                foreach (Result res in resultsDefinition.Results)
+                {
+                    foreach (ObjectiveResult objRes in form.ObjectivesResults)
+                    {
+                        objRes.KeyCheck = res.KeyCheck;
+                        objRes.Achieved = res.Achieved;
+                        objRes.Kpi = res.Kpi;
+                    }
+                }
+
+                // TODO: calculate OverallKpi = form.OverallKpi
+                //       provide values with the same checks as at client side
+            }
+        }
+        private static bool IsObjectivesResultsSavePossible(Form form)
+        {
+            if(!form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            {
+                return true;
+            }
+            return false;
+        }
+        private static bool IsResultsSavePossible(Form form)
+        {
+            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
