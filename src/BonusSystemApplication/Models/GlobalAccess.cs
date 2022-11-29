@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models
 {
-    public class FormGlobalAccess
+    public class GlobalAccess
     {
         public long Id { get; set; }
         public long UserId { get; set; }

@@ -5,35 +5,35 @@ namespace BonusSystemApplication.Models.Repositories
 {
     public static class ExpressionBuilder
     {
-        public static Expression<Func<Form, bool>> GetExpressionForGlobalAccess(FormGlobalAccess formGlobalAccess)
+        public static Expression<Func<Form, bool>> GetExpressionForGlobalAccess(GlobalAccess globalAccess)
         {
             Expression<Func<Form, bool>> expr = (Form f) => false;
 
-            if (formGlobalAccess.DepartmentId == null)
+            if (globalAccess.DepartmentId == null)
             {
                 expr = (Form f) => true;
             }
-            else if (formGlobalAccess.TeamId == null)
+            else if (globalAccess.TeamId == null)
             {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId;
+                expr = (Form f) => f.Employee.DepartmentId == globalAccess.DepartmentId;
             }
-            else if (formGlobalAccess.WorkprojectId == null)
+            else if (globalAccess.WorkprojectId == null)
             {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
-                                   f.Employee.TeamId == formGlobalAccess.TeamId;
+                expr = (Form f) => f.Employee.DepartmentId == globalAccess.DepartmentId &&
+                                   f.Employee.TeamId == globalAccess.TeamId;
             }
             else
             {
-                expr = (Form f) => f.Employee.DepartmentId == formGlobalAccess.DepartmentId &&
-                                   f.Employee.TeamId == formGlobalAccess.TeamId &&
-                                   f.WorkprojectId == formGlobalAccess.WorkprojectId;
+                expr = (Form f) => f.Employee.DepartmentId == globalAccess.DepartmentId &&
+                                   f.Employee.TeamId == globalAccess.TeamId &&
+                                   f.WorkprojectId == globalAccess.WorkprojectId;
             }
 
             return expr;
         }
         public static Expression<Func<Form, bool>> GetExpressionForLocalAccess(long userId)
         {
-            Expression<Func<Form, bool>> expr = (Form f) => f.FormLocalAccess.Any(fla => fla.UserId == userId);
+            Expression<Func<Form, bool>> expr = (Form f) => f.LocalAccesses.Any(la => la.UserId == userId);
             return expr;
         }
 

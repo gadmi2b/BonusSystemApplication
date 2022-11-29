@@ -67,11 +67,9 @@ namespace BonusSystemApplication.Models.Repositories
             context.SaveChanges();
         }
 
-        public void UpdateFormObjectivesResults(long formId,
-                                                ObjectivesDefinition objectivesDefinition,
-                                                ResultsDefinition? resultsDefinition = null)
+        public void UpdateFormObjectivesResults(Form changedForm)
         {
-            Form originalForm = context.Forms.Find(formId);
+            Form originalForm = context.Forms.Find(changedForm.Id);
             if (originalForm == null)
             {
                 throw new ArgumentNullException();
@@ -89,7 +87,7 @@ namespace BonusSystemApplication.Models.Repositories
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
-                        // ObjectivesDefinition data block
+                        // Definition data block
                         Id = f.Id,
                         IsObjectivesFreezed = f.IsObjectivesFreezed,
                         Employee = new User
@@ -139,7 +137,7 @@ namespace BonusSystemApplication.Models.Repositories
                         IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
                         ObjectivesApproverSignature = f.ObjectivesApproverSignature,
 
-                        // ResultsDefinition data block
+                        // Conclusion data block
                         IsResultsFreezed = f.IsResultsFreezed,
                         OverallKpi = f.OverallKpi,
                         IsProposalForBonusPayment = f.IsProposalForBonusPayment,
@@ -219,7 +217,7 @@ namespace BonusSystemApplication.Models.Repositories
                     .First();
             return form;
         }
-        public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses)
+        public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<GlobalAccess> globalAccesses)
         {
             IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
                 .Include(f => f.Employee)
@@ -227,12 +225,12 @@ namespace BonusSystemApplication.Models.Repositories
                 .Include(f => f.Employee)
                     .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
-                .Include(f => f.FormLocalAccess)
+                .Include(f => f.LocalAccesses)
                 .AsNoTracking();
 
             IQueryable<Form> formsQuery = null;
 
-            foreach (var formGA in formGlobalAccesses)
+            foreach (var formGA in globalAccesses)
             {
                 IQueryable<Form> query = formsQueryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
 
@@ -262,7 +260,7 @@ namespace BonusSystemApplication.Models.Repositories
                 .Include(f => f.Employee)
                     .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
-                .Include(f => f.FormLocalAccess)
+                .Include(f => f.LocalAccesses)
                 .Where(ExpressionBuilder.GetExpressionForLocalAccess(userId))
                 .AsNoTracking();
             return forms;
@@ -275,7 +273,7 @@ namespace BonusSystemApplication.Models.Repositories
                 .Include(f => f.Employee)
                     .ThenInclude(e => e.Team)
                 .Include(f => f.Workproject)
-                .Include(f => f.FormLocalAccess)
+                .Include(f => f.LocalAccesses)
                 .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
                 .AsNoTracking();
             return forms;

@@ -15,7 +15,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conne
 builder.Services.AddTransient<IGenericRepository<User>, GenericRepository<User>>();
 builder.Services.AddTransient<IGenericRepository<Workproject>, GenericRepository<Workproject>>();
 
-builder.Services.AddTransient<IFormGlobalAccessRepository, FormGlobalAccessRepository>();
+builder.Services.AddTransient<IGlobalAccessRepository, GlobalAccessRepository>();
 builder.Services.AddTransient<IFormRepository, FormRepository>();
 builder.Services.AddTransient<IWorkprojectRepository, WorkprojectRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();

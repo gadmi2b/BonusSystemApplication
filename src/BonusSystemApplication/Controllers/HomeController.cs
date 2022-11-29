@@ -23,7 +23,7 @@ namespace BonusSystemApplication.Controllers
         private IGenericRepository<User> userGenRepository;
         private IGenericRepository<Workproject> workprojectGenRepository;
 
-        private IFormGlobalAccessRepository formGlobalAccessRepository;
+        private IGlobalAccessRepository globalAccessRepository;
         private IFormRepository formRepository;
         private IWorkprojectRepository workprojectRepository;
         private IUserRepository userRepository;
@@ -32,7 +32,7 @@ namespace BonusSystemApplication.Controllers
         public HomeController(ILogger<HomeController> logger,
                               IGenericRepository<User> userGenRepo,
                               IGenericRepository<Workproject> workprojectGenRepo,
-                              IFormGlobalAccessRepository formGlobalAccessRepo,
+                              IGlobalAccessRepository globalAccessRepo,
                               IFormRepository formRepo,
                               IWorkprojectRepository workprojectRepo,
                               IUserRepository userRepo)
@@ -41,7 +41,7 @@ namespace BonusSystemApplication.Controllers
             formRepository = formRepo;
             userGenRepository = userGenRepo;
             workprojectGenRepository = workprojectGenRepo;
-            formGlobalAccessRepository = formGlobalAccessRepo;
+            globalAccessRepository = globalAccessRepo;
             workprojectRepository = workprojectRepo;
             userRepository = userRepo;
 
@@ -51,20 +51,20 @@ namespace BonusSystemApplication.Controllers
         public IActionResult Index(UserSelections userSelections)
         {
             #region Global accesses for user
-            IEnumerable<FormGlobalAccess> formGlobalAccesses = formGlobalAccessRepository.GetFormGlobalAccessByUserId(UserData.UserId);
+            IEnumerable<GlobalAccess> globalAccesses = globalAccessRepository.GetGlobalAccessesByUserId(UserData.UserId);
             #endregion
 
             #region Queries to request available for User forms
 
                 #region Query for forms where user has Global accesses
-                IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(formGlobalAccesses);
+                IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(globalAccesses);
                 #endregion
 
                 #region Query for forms where user has Local access
                 IQueryable<Form> localAccessFormsQuery = formRepository.GetFormsWithLocalAccess(UserData.UserId);
                 #endregion
 
-                #region Query for forms where user has Participation
+                #region Query for forms where user has any Participation
                 IQueryable<Form> participantFormsQuery = formRepository.GetFormsWithParticipation(UserData.UserId);
                 #endregion
 
@@ -84,7 +84,7 @@ namespace BonusSystemApplication.Controllers
                     Id = f.Id,
                     Employee = f.Employee,
                     Workproject = f.Workproject,
-                    FormLocalAccess = f.FormLocalAccess,
+                    LocalAccesses = f.LocalAccesses,
                     ApproverId = f.ApproverId,
                     ManagerId = f.ManagerId,
                     WorkprojectId = f.WorkprojectId,
@@ -96,9 +96,9 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             UserData.SetAvailableFormIds(availableForms);
-            FormDataAvailable formDataAvailable = new FormDataAvailable(availableForms, UserData.UserId, formGlobalAccesses);
+            FormDataAvailable formDataAvailable = new FormDataAvailable(availableForms, UserData.UserId, globalAccesses);
             userSelections.PrepareSelections(formDataAvailable);
-            FormDataSorted formDataSorted = new FormDataSorted(availableForms, UserData.UserId, formGlobalAccesses, userSelections);
+            FormDataSorted formDataSorted = new FormDataSorted(availableForms, UserData.UserId, globalAccesses, userSelections);
 
             #region Prepare TableRows
             List<TableRow> tableRows = formDataSorted.FormAndPermissions
@@ -184,10 +184,11 @@ namespace BonusSystemApplication.Controllers
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
-                ObjectivesDefinition = new ObjectivesDefinition(form),
+                Definition = new Definition(form),
                 ObjectivesSignature = new ObjectivesSignature(form),
-                ResultsDefinition = new ResultsDefinition(form),
+                Conclusion = new Conclusion(form),
                 ResultsSignature = new ResultsSignature(form),
+                ObjectivesResults = form.ObjectivesResults,
 
                 PeriodSelectList = Enum.GetNames(typeof(Periods))
                     .Select(s => new SelectListItem
@@ -491,23 +492,23 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveProcess(ObjectivesDefinition objectivesDefinition,
+        public IActionResult SaveProcess(Definition definition,
                                          ObjectivesSignature objectivesSignature,
-                                         ResultsDefinition resultsDefinition,
+                                         Conclusion conclusion,
                                          ResultsSignature resultsSignature)
         {
             // TODO: check form stage:
             //       stage#1: [IsObjectivesFreezed == false && IsObjectivesSigned == false] &&
             //                [IsResultsFreezed == false    && IsResultsSigned == false]
-            //                --> objectivesDefinition and resultsDefinition could be saved
+            //                --> definition and conclusion could be saved
 
             //       stage#2: [IsObjectivesFreezed == true && IsObjectivesSigned == false] &&
             //                [IsResultsFreezed == false   && IsResultsSigned == false]
-            //                --> resultsDefinition could be saved
+            //                --> conclusion could be saved
 
             //       stage#3: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
             //                [IsResultsFreezed == false   && IsResultsSigned == false]
-            //                --> resultsDefinition could be saved
+            //                --> conclusion could be saved
 
             //       stage#4: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
             //                [IsResultsFreezed == true    && IsResultsSigned == false]
@@ -519,7 +520,7 @@ namespace BonusSystemApplication.Controllers
 
             // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
 
-            long formId = objectivesDefinition.FormId;
+            long formId = definition.FormId;
 
             // TODO: add user checking
             //       add formId checking
@@ -527,7 +528,7 @@ namespace BonusSystemApplication.Controllers
             if(formId == 0)
             {
                 // TODO: save new Form
-                //       --> objectivesDefinition and resultsDefinition could be saved
+                //       --> definition and conclusion could be saved
             }
 
             #region Get form from database

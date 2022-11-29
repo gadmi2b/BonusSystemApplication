@@ -41,10 +41,10 @@ BEM convention: Block Elements Modifiers
   <content class="content">
    <form method="post" id="content-form">
     <div style="display:none">
-        <input asp-for="ObjectivesDefinition.FormId" type="hidden" id="js-formId" readonly />
-        <input asp-for="ObjectivesDefinition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
+        <input asp-for="Definition.FormId" type="hidden" id="js-formId" readonly />
+        <input asp-for="Definition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
         <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />
-        <input asp-for="ResultsDefinition.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
+        <input asp-for="Conclusion.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
         <input asp-for="ResultsSignature.IsResultsSigned" type="hidden" readonly />
     </div>
 
@@ -54,60 +54,60 @@ BEM convention: Block Elements Modifiers
         <img class="content-period__image" src="~/images/Ecar.png" alt="logo"/>
         <div class="content-period-center">
         <span class="content-period-center__title">PERSONAL PERFORMANCE OBJECTIVES FOR</span>
-        <select asp-for="ObjectivesDefinition.Period" asp-items="Model.PeriodSelectList"
+        <select asp-for="Definition.Period" asp-items="Model.PeriodSelectList"
                 class="content--styles content-period-center__period">
         </select>
         <span class="content-period-center__joinder">OF</span>
-        <input asp-for="ObjectivesDefinition.Year" type="text" class="content--styles content-period-center__year" />
+        <input asp-for="Definition.Year" type="text" class="content--styles content-period-center__year" />
         </div>
         <div class="content-period__text">Please complete the form in English</div>
     </div>
 
     @*-------------------------- Content - Employee --------------------------*@
     <div class="content-employee">
-        <label asp-for="ObjectivesDefinition.EmployeeId" class="content-employee__column-1">Employee:</label>
+        <label asp-for="Definition.EmployeeId" class="content-employee__column-1">Employee:</label>
         <div class="content-employee__column-2">
-        <select asp-for="ObjectivesDefinition.EmployeeId" asp-items="Model.EmployeeSelectList"
+        <select asp-for="Definition.EmployeeId" asp-items="Model.EmployeeSelectList"
                 class="content--styles" onchange="requestEmployeeData(this)">
         </select>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.IsWpmHox">WPM/HoX:</label>
-            <input asp-for="ObjectivesDefinition.IsWpmHox" type="checkbox" />
+            <label asp-for="Definition.IsWpmHox">WPM/HoX:</label>
+            <input asp-for="Definition.IsWpmHox" type="checkbox" />
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.TeamName">Team:</label>
-            <input asp-for="ObjectivesDefinition.TeamName" type="text"  disabled
+            <label asp-for="Definition.TeamName">Team:</label>
+            <input asp-for="Definition.TeamName" type="text"  disabled
                     class="content--styles content-employee--styles" id="js-teamName"/>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.PositionName">Position:</label>
-            <input asp-for="ObjectivesDefinition.PositionName" type="text" disabled
+            <label asp-for="Definition.PositionName">Position:</label>
+            <input asp-for="Definition.PositionName" type="text" disabled
                     class="content--styles content-employee--styles" id="js-positionName"/>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.Pid">PID:</label>
-            <input asp-for="ObjectivesDefinition.Pid" type="text" disabled
+            <label asp-for="Definition.Pid">PID:</label>
+            <input asp-for="Definition.Pid" type="text" disabled
                     class="content--styles content-employee--styles" id="js-pid"/>
         </div>
         </div>
-        <label asp-for="ObjectivesDefinition.WorkprojectId" class="content-employee__column-1">WP:</label>
+        <label asp-for="Definition.WorkprojectId" class="content-employee__column-1">WP:</label>
         <div class="content-employee__column-2">
         <div class="content-employee__column-2-flex">
-            <select asp-for="ObjectivesDefinition.WorkprojectId" asp-items="Model.WorkprojectSelectList"
+            <select asp-for="Definition.WorkprojectId" asp-items="Model.WorkprojectSelectList"
                     class="content--styles" onchange="requestWorkprojectDescription(this)">
             </select>
-            <input asp-for="ObjectivesDefinition.WorkprojectDescription" type="text" disabled
+            <input asp-for="Definition.WorkprojectDescription" type="text" disabled
                     class="content-employee--styles" id="js-workprojectDescription"/>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.ManagerId">Direct Manager:</label>
-            <select asp-for="ObjectivesDefinition.ManagerId" asp-items="Model.EmployeeSelectList"
+            <label asp-for="Definition.ManagerId">Direct Manager:</label>
+            <select asp-for="Definition.ManagerId" asp-items="Model.EmployeeSelectList"
                     class="content--styles" >
             </select>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="ObjectivesDefinition.ApproverId">Approver:</label>
-            <select asp-for="ObjectivesDefinition.ApproverId" asp-items="Model.EmployeeSelectList"
+            <label asp-for="Definition.ApproverId">Approver:</label>
+            <select asp-for="Definition.ApproverId" asp-items="Model.EmployeeSelectList"
                     class="content--styles">
             </select>
         </div>
@@ -139,26 +139,26 @@ BEM convention: Block Elements Modifiers
         </tr>
         </thead>
         <tbody class="content-table__body" id="js-table">
-        @for(int i = 0; i < Model.ObjectivesDefinition.Objectives.Count(); i++)
+        @for(int i = 0; i < Model.ObjectivesResults.Count(); i++)
         {
             <tr>
             @*in ViewModel prepapre for each td a property with background-color : red/blue depending on existing value*@
-            @*ObjectivesDefinition table block*@
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].Row" type="text" readonly /></td>
-            <td> <textarea asp-for="ObjectivesDefinition.Objectives[i].Statement" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><textarea asp-for="ObjectivesDefinition.Objectives[i].Description" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].IsKey" type="checkbox" /></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].IsMeasurable" type="checkbox" /></td>
-            <td><textarea asp-for="ObjectivesDefinition.Objectives[i].Unit" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].Threshold" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].Target" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].Challenge" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].WeightFactor" type="text" /></td>
-            <td><input asp-for="ObjectivesDefinition.Objectives[i].KpiUpperLimit" type="text"/></td>
-            @*ResultsDefinition table block*@
-            <td><textarea asp-for="ResultsDefinition.Results[i].KeyCheck" style="text-align: center" rows="1" disabled></textarea></td>
-            <td><input asp-for="ResultsDefinition.Results[i].Achieved" type="text" /></td>
-            <td><textarea asp-for="ResultsDefinition.Results[i].Kpi" style="text-align: center" rows="1" disabled></textarea></td>
+            @*Definition table block*@
+            <td><input asp-for="ObjectivesResults[i].Row" type="text" readonly /></td>
+              <td> <textarea asp-for="ObjectivesResults[i].Objective.Statement" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+              <td><textarea asp-for="ObjectivesResults[i].Objective.Description" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.IsKey" type="checkbox" /></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.IsMeasurable" type="checkbox" /></td>
+              <td><textarea asp-for="ObjectivesResults[i].Objective.Unit" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.Threshold" type="text" /></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.Target" type="text" /></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.Challenge" type="text" /></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.WeightFactor" type="text" /></td>
+              <td><input asp-for="ObjectivesResults[i].Objective.KpiUpperLimit" type="text" /></td>
+            @*Conclusion table block*@
+            <td><textarea asp-for="ObjectivesResults[i].Result.KeyCheck" style="text-align: center" rows="1" disabled></textarea></td>
+            <td><input asp-for="ObjectivesResults[i].Result.Achieved" type="text" /></td>
+            <td><textarea asp-for="ObjectivesResults[i].Result.Kpi" style="text-align: center" rows="1" disabled></textarea></td>
             </tr>
         }
         </tbody>
@@ -172,7 +172,7 @@ BEM convention: Block Elements Modifiers
             </td>
             <td colspan="2" class="content-table__footer--padding" ><b>Overall KPI =</b></td>
             <td class="content-table__footer--border"><input id="js-kpiSum" type="text"
-                value="@Model.ResultsDefinition.OverallKpi" disabled/></td>
+                value="@Model.Conclusion.OverallKpi" disabled/></td>
         </tr>
         </tfoot>
     </table>
@@ -181,9 +181,9 @@ BEM convention: Block Elements Modifiers
     <div class="content-advanced">
         <div class="content-advanced-proposal">
         <p><b>Proposal for bonus payment:</b></p>
-        <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="true" id="js-IsProposalForBonusPaymentYes" disabled/>
+        <input asp-for="Conclusion.IsProposalForBonusPayment" type="radio" value="true" id="js-IsProposalForBonusPaymentYes" disabled/>
         <label for="IsProposalForBonusPaymentYes">Yes</label>
-        <input asp-for="ResultsDefinition.IsProposalForBonusPayment" type="radio" value="false" id="js-IsProposalForBonusPaymentNo" disabled/>
+        <input asp-for="Conclusion.IsProposalForBonusPayment" type="radio" value="false" id="js-IsProposalForBonusPaymentNo" disabled/>
         <label for="IsProposalForBonusPaymentNo">No</label>
         </div>
         <div class="content-advanced-worktime">
@@ -195,13 +195,13 @@ BEM convention: Block Elements Modifiers
     @*-------------------------- Content - Comments --------------------------*@
     <div class="content-comments">
         <p>Comments from Direct Manager (desirable):</p>
-        <textarea asp-for="ResultsDefinition.ManagerComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
+        <textarea asp-for="Conclusion.ManagerComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
 
         <p>Employee's comments (optional):</p>
-        <textarea asp-for="ResultsDefinition.EmployeeComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
+        <textarea asp-for="Conclusion.EmployeeComment" rows="1" oninput="ResizeTextArea(this)" class="content-comments--margin"></textarea>
 
         <p>Any other comments (incl. processing info for HR, optional):</p>
-        <textarea asp-for="ResultsDefinition.OtherComment" rows="1" oninput="ResizeTextArea(this)"></textarea>
+        <textarea asp-for="Conclusion.OtherComment" rows="1" oninput="ResizeTextArea(this)"></textarea>
     </div>
 
     @*-------------------------- Content - Signatures --------------------------*@
@@ -210,8 +210,8 @@ BEM convention: Block Elements Modifiers
         @* objectives signature process is forbidden if:
             objectives is not freezed or results is freezed *@
         <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
-                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
-                                Model.ResultsDefinition.IsResultsFreezed)">
+                disabled="@(!Model.Definition.IsObjectivesFreezed ||
+                                Model.Conclusion.IsResultsFreezed)">
             <div class="content-signatures-block__checkbox js-signature">
                 <label for="@nameof(ObjectivesSignature.IsObjectivesSignedByEmployee)">Employee:</label>
                 <input asp-for="ObjectivesSignature.IsObjectivesSignedByEmployee" type="checkbox"
@@ -250,9 +250,9 @@ BEM convention: Block Elements Modifiers
             results is not freezed*@
         <p>Freeze results before validation.</p>
         <fieldset class="content-signatures-block" id="js-signatureBlockResults"
-                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
+                disabled="@(!Model.Definition.IsObjectivesFreezed ||
                             !Model.ObjectivesSignature.IsObjectivesSigned ||
-                            !Model.ResultsDefinition.IsResultsFreezed)">
+                            !Model.Conclusion.IsResultsFreezed)">
             <div class="content-signatures-block__checkbox" js-signature>
                 <label asp-for="ResultsSignature.IsResultsSignedByEmployee">Employee:</label>
                 <input asp-for="ResultsSignature.IsResultsSignedByEmployee" type="checkbox"
@@ -292,18 +292,18 @@ BEM convention: Block Elements Modifiers
     <div class="button-group">
         <p class="button-group__title">Objectives:</p>
         <input type="submit" value="Freeze" onclick="changeState()" class="cmn-button button--width"
-                disabled="@(Model.ObjectivesDefinition.IsObjectivesFreezed)" />
+                disabled="@(Model.Definition.IsObjectivesFreezed)" />
         <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
-                disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed)" />
+                disabled="@(!Model.Definition.IsObjectivesFreezed)" />
     </div>
     <div class="button-group">
         <p class="button-group__title">Results:</p>
         <input type="submit" value="Freeze" asp-controller="Home" asp-action="Freeze" class="cmn-button button--width"
-               disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
-                            Model.ResultsDefinition.IsResultsFreezed)" />
+               disabled="@(!Model.Definition.IsObjectivesFreezed ||
+                            Model.Conclusion.IsResultsFreezed)" />
         <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
-               disabled="@(!Model.ObjectivesDefinition.IsObjectivesFreezed ||
-                           !Model.ResultsDefinition.IsResultsFreezed)"/>
+               disabled="@(!Model.Definition.IsObjectivesFreezed ||
+                           !Model.Conclusion.IsResultsFreezed)"/>
     </div>
     <div class="button-group">
         <p class="button-group__line"></p>

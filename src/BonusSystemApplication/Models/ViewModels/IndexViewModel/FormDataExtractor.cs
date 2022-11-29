@@ -64,9 +64,9 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableWorkprojects;
         }
-        public List<Permissions> GetAvailablePermissions(List<Form> forms, long userId, IEnumerable<FormGlobalAccess> formGlobalAccesses)
+        public List<Permissions> GetAvailablePermissions(List<Form> forms, long userId, IEnumerable<GlobalAccess> globalAccesses)
         {
-            List<long> formIdsWithGlobalAccess = GetFormIdsWithGlobalAccess(forms, formGlobalAccesses);
+            List<long> formIdsWithGlobalAccess = GetFormIdsWithGlobalAccess(forms, globalAccesses);
             List<long> formIdsWithLocalAccess = GetFormIdsWithLocalAccess(forms, userId);
             List<long> formIdsWithEmployeeParticipation = GetFormIdsWithEmployeeParticipation(forms, userId);
             List<long> formIdsWithManagerParticipation = GetFormIdsWithManagerParticipation(forms, userId);
@@ -97,11 +97,11 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             return availablePermissions;
         }
 
-        private List<long> GetFormIdsWithGlobalAccess(List<Form> forms, IEnumerable<FormGlobalAccess> formGlobalAccesses)
+        private List<long> GetFormIdsWithGlobalAccess(List<Form> forms, IEnumerable<GlobalAccess> globalAccesses)
         {
             List<long> formIdsWithGlobalAccess = new List<long>();
 
-            foreach (FormGlobalAccess formGA in formGlobalAccesses)
+            foreach (GlobalAccess formGA in globalAccesses)
             {
                 Func<Form, bool> delegateGA = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
                 formIdsWithGlobalAccess = forms

@@ -5,10 +5,11 @@ namespace BonusSystemApplication.Models.ViewModels
 {
     public class HomeFormViewModel //Controller name | Action name | ViewModel
     {
-        public ObjectivesDefinition ObjectivesDefinition;
+        public Definition Definition;
         public ObjectivesSignature ObjectivesSignature;
-        public ResultsDefinition ResultsDefinition;
+        public Conclusion Conclusion;
         public ResultsSignature ResultsSignature;
+        public IList<ObjectiveResult> ObjectivesResults;
 
         public List<SelectListItem> PeriodSelectList { get; set; }
         public List<SelectListItem> EmployeeSelectList { get; set; }

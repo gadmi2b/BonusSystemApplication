@@ -20,7 +20,7 @@
         public long? PositionId { get; set; }
         public Position? Position { get; set; }
 
-        public ICollection<FormLocalAccess>? FormLocalAccess { get; set; }
+        public ICollection<LocalAccess>? LocalAccesses { get; set; }
         public ICollection<Form>? EmployeeForms { get; set; }
         public ICollection<Form>? ManagerForms { get; set; }
         public ICollection<Form>? ApproverForms { get; set; }

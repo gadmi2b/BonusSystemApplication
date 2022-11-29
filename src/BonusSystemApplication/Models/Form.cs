@@ -35,7 +35,7 @@
         public bool IsResultsSignedByApprover { get; set; }
 
         public IList<ObjectiveResult> ObjectivesResults { get; set; }
-        public ICollection<FormLocalAccess> FormLocalAccess { get; set; }
+        public ICollection<LocalAccess> LocalAccesses { get; set; }
 
         public long EmployeeId { get; set; }
         public User Employee { get; set; }

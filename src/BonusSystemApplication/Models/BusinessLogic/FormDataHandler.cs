@@ -97,100 +97,100 @@ namespace BonusSystemApplication.Models.BusinessLogic
 
 
 
-        public static void UpdateObjectivesResultsFormData(Form form,
-                                                           ObjectivesDefinition objectivesDefinition,
-                                                           ResultsDefinition resultsDefinition)
-        {
-            if (IsObjectivesResultsSavePossible(form))
-            {
-                // Objectives updating
-                if (Enum.TryParse(objectivesDefinition.Period, out Periods period))
-                {
-                    form.Period = period;
-                }
-                else
-                {
-                    throw new ArgumentException("Unknown value of period. Form save is impossible");
-                }
+        //public static void UpdateObjectivesResultsFormData(Form form,
+        //                                                   Definition definition,
+        //                                                   Conclusion conclusion)
+        //{
+        //    if (IsObjectivesResultsSavePossible(form))
+        //    {
+        //        // Objectives updating
+        //        if (Enum.TryParse(definition.Period, out Periods period))
+        //        {
+        //            form.Period = period;
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException("Unknown value of period. Form save is impossible");
+        //        }
 
-                if (Int32.TryParse(objectivesDefinition.Year, out int year))
-                {
-                    form.Year = year;
-                }
-                else
-                {
-                    throw new ArgumentException("Unknown value of year. Form save is impossible");
-                }
+        //        if (Int32.TryParse(definition.Year, out int year))
+        //        {
+        //            form.Year = year;
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException("Unknown value of year. Form save is impossible");
+        //        }
 
-                form.EmployeeId = objectivesDefinition.EmployeeId;
-                form.ManagerId = objectivesDefinition.ManagerId;
-                form.ApproverId = objectivesDefinition.ApproverId;
-                form.WorkprojectId = objectivesDefinition.WorkprojectId;
-                form.IsWpmHox = objectivesDefinition.IsWpmHox;
+        //        form.EmployeeId = definition.EmployeeId;
+        //        form.ManagerId = definition.ManagerId;
+        //        form.ApproverId = definition.ApproverId;
+        //        form.WorkprojectId = definition.WorkprojectId;
+        //        form.IsWpmHox = definition.IsWpmHox;
 
-                // TODO: !!! Rows in Objectives and in Results must be the same
-                //       !!! incorrect just copy data from obj to objRes
-                foreach (Objective obj in objectivesDefinition.Objectives)
-                {
-                    foreach(ObjectiveResult objRes in form.ObjectivesResults)
-                    {
-                        objRes.Row = obj.Row;
-                        objRes.Statement = obj.Statement;
-                        objRes.Description = obj.Description;
-                        objRes.IsKey = obj.IsKey;
-                        objRes.IsMeasurable = obj.IsMeasurable;
-                        objRes.Unit = obj.Unit;
-                        objRes.Threshold = obj.Threshold;
-                        objRes.Target = obj.Target;
-                        objRes.Challenge = obj.Challenge;
-                        objRes.WeightFactor = obj.WeightFactor;
-                        objRes.KpiUpperLimit = obj.KpiUpperLimit;
-                    }
-                }
+        //        // TODO: !!! Rows in Objectives and in Results must be the same
+        //        //       !!! incorrect just copy data from obj to objRes
+        //        foreach (Objective obj in definition.Objectives)
+        //        {
+        //            foreach(ObjectiveResult objRes in form.ObjectivesResults)
+        //            {
+        //                objRes.Row = obj.Row;
+        //                objRes.Statement = obj.Statement;
+        //                objRes.Description = obj.Description;
+        //                objRes.IsKey = obj.IsKey;
+        //                objRes.IsMeasurable = obj.IsMeasurable;
+        //                objRes.Unit = obj.Unit;
+        //                objRes.Threshold = obj.Threshold;
+        //                objRes.Target = obj.Target;
+        //                objRes.Challenge = obj.Challenge;
+        //                objRes.WeightFactor = obj.WeightFactor;
+        //                objRes.KpiUpperLimit = obj.KpiUpperLimit;
+        //            }
+        //        }
 
-                // Results updating
+        //        // Results updating
 
-                form.ManagerComment = resultsDefinition.ManagerComment;
-                form.EmployeeComment = resultsDefinition.EmployeeComment;
-                form.OtherComment = resultsDefinition.OtherComment;
+        //        form.ManagerComment = conclusion.ManagerComment;
+        //        form.EmployeeComment = conclusion.EmployeeComment;
+        //        form.OtherComment = conclusion.OtherComment;
 
-                // TODO: !!! Rows in Objectives and in Results must be the same
-                //       !!! incorrect just copy data from res to objRes
-                foreach (Result res in resultsDefinition.Results)
-                {
-                    foreach (ObjectiveResult objRes in form.ObjectivesResults)
-                    {
-                        objRes.KeyCheck = res.KeyCheck;
-                        objRes.Achieved = res.Achieved;
-                        objRes.Kpi = res.Kpi;
-                    }
-                }
-            }
-            else if (IsResultsSavePossible(form))
-            {
-                // Results updating
-                form.IsProposalForBonusPayment = resultsDefinition.IsProposalForBonusPayment;
+        //        // TODO: !!! Rows in Objectives and in Results must be the same
+        //        //       !!! incorrect just copy data from res to objRes
+        //        foreach (Result res in conclusion.Results)
+        //        {
+        //            foreach (ObjectiveResult objRes in form.ObjectivesResults)
+        //            {
+        //                objRes.KeyCheck = res.KeyCheck;
+        //                objRes.Achieved = res.Achieved;
+        //                objRes.Kpi = res.Kpi;
+        //            }
+        //        }
+        //    }
+        //    else if (IsResultsSavePossible(form))
+        //    {
+        //        // Results updating
+        //        form.IsProposalForBonusPayment = conclusion.IsProposalForBonusPayment;
 
-                form.ManagerComment = resultsDefinition.ManagerComment;
-                form.EmployeeComment = resultsDefinition.EmployeeComment;
-                form.OtherComment = resultsDefinition.OtherComment;
+        //        form.ManagerComment = conclusion.ManagerComment;
+        //        form.EmployeeComment = conclusion.EmployeeComment;
+        //        form.OtherComment = conclusion.OtherComment;
 
-                // TODO: !!! Rows in Objectives and in Results must be the same
-                //       !!! incorrect just copy data from res to objRes
-                foreach (Result res in resultsDefinition.Results)
-                {
-                    foreach (ObjectiveResult objRes in form.ObjectivesResults)
-                    {
-                        objRes.KeyCheck = res.KeyCheck;
-                        objRes.Achieved = res.Achieved;
-                        objRes.Kpi = res.Kpi;
-                    }
-                }
+        //        // TODO: !!! Rows in Objectives and in Results must be the same
+        //        //       !!! incorrect just copy data from res to objRes
+        //        foreach (Result res in conclusion.Results)
+        //        {
+        //            foreach (ObjectiveResult objRes in form.ObjectivesResults)
+        //            {
+        //                objRes.KeyCheck = res.KeyCheck;
+        //                objRes.Achieved = res.Achieved;
+        //                objRes.Kpi = res.Kpi;
+        //            }
+        //        }
 
-                // TODO: calculate OverallKpi = form.OverallKpi
-                //       provide values with the same checks as at client side
-            }
-        }
+        //        // TODO: calculate OverallKpi = form.OverallKpi
+        //        //       provide values with the same checks as at client side
+        //    }
+        //}
         private static bool IsObjectivesResultsSavePossible(Form form)
         {
             if(!form.IsObjectivesFreezed && !form.IsResultsFreezed)

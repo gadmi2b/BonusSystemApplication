@@ -13,11 +13,11 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<string> AvailableTeams { get; set; }
         public List<string> AvailableWorkprojects { get; set; }
 
-        public FormDataAvailable(List<Form> availableForms, long userId, IEnumerable<FormGlobalAccess> formGlobalAccesses)
+        public FormDataAvailable(List<Form> availableForms, long userId, IEnumerable<GlobalAccess> globalAccesses)
         {
             IFormDataExtractor formDataExtractor = new FormDataExtractor();
 
-            AvailablePermissions = formDataExtractor.GetAvailablePermissions(availableForms, userId, formGlobalAccesses);
+            AvailablePermissions = formDataExtractor.GetAvailablePermissions(availableForms, userId, globalAccesses);
             AvailableEmployees = formDataExtractor.GetAvailableEmployees(availableForms);
             AvailablePeriods = formDataExtractor.GetAvailablePeriods(availableForms);
             AvailableYears = formDataExtractor.GetAvailableYears(availableForms);

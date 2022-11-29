@@ -1,9 +1,7 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+﻿namespace BonusSystemApplication.Models
 {
     public class Objective
     {
-        public long Id { get; set; } = 0;
-        public int Row { get; set; } = 0;
         public string Statement { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public bool IsKey { get; set; } = true;

@@ -15,12 +15,12 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<string> SortedTeams { get; set; }
         public List<string> SortedWorkprojects { get; set; }
 
-        public FormDataSorted(List<Form> availableForms, long userId, IEnumerable<FormGlobalAccess> formGlobalAccesses, UserSelections userSelections)
+        public FormDataSorted(List<Form> availableForms, long userId, IEnumerable<GlobalAccess> globalAccesses, UserSelections userSelections)
         {
             List<string> permissionNames = new List<string>();
             foreach(Form f in availableForms)
             {
-                if(IsFormHasPermissions(f, formGlobalAccesses, out permissionNames) &&
+                if(IsFormHasPermissions(f, globalAccesses, out permissionNames) &&
                    IsFormCanBeShown(f, permissionNames, userSelections))
                 {
                     FormAndPermissions.Add(f, permissionNames);
@@ -30,7 +30,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             IFormDataExtractor formDataExtractor = new FormDataExtractor();
             List<Form> sortedForms = FormAndPermissions.Keys.ToList();
 
-            SortedPermissions = formDataExtractor.GetAvailablePermissions(sortedForms, userId, formGlobalAccesses);
+            SortedPermissions = formDataExtractor.GetAvailablePermissions(sortedForms, userId, globalAccesses);
             SortedEmployees = formDataExtractor.GetAvailableEmployees(sortedForms);
             SortedPeriods = formDataExtractor.GetAvailablePeriods(sortedForms);
             SortedYears = formDataExtractor.GetAvailableYears(sortedForms);
@@ -38,14 +38,14 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             SortedTeams = formDataExtractor.GetAvailableTeams(sortedForms);
             SortedWorkprojects = formDataExtractor.GetAvailableWorkprojects(sortedForms);
         }
-        private bool IsFormHasPermissions(Form form, IEnumerable<FormGlobalAccess> formGlobalAccesses, out List<string> permissionNames)
+        private bool IsFormHasPermissions(Form form, IEnumerable<GlobalAccess> globalAccesses, out List<string> permissionNames)
         {
             long userId = UserData.UserId;
 
             List<Permissions> permissionsTemp = new List<Permissions>();
             Func<Form, bool> delegatePermission;
 
-            foreach (var formGA in formGlobalAccesses)
+            foreach (var formGA in globalAccesses)
             {
                 delegatePermission = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
                 if (delegatePermission.Invoke(form))

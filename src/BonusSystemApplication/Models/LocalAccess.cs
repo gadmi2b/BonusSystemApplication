@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models
 {
-    public class FormLocalAccess
+    public class LocalAccess
     {
         public long FormId { get; set; }
         public Form Form { get; set; }

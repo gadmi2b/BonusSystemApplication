@@ -10,7 +10,7 @@ namespace BonusSystemApplication.Models.Repositories
         Form GetFormSignatureData(long formId);
         Form GetFormObjectivesResultsData(long formId);
         Form GetFormIsFreezedStates(long formId);
-        IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<FormGlobalAccess> formGlobalAccesses);
+        IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<GlobalAccess> globalAccesses);
         IQueryable<Form> GetFormsWithLocalAccess(long userId);
         IQueryable<Form> GetFormsWithParticipation(long userId);
         void CreateForm(Form form);

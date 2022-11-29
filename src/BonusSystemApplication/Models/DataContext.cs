@@ -6,8 +6,8 @@ namespace BonusSystemApplication.Models
     {
         public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
         public DbSet<Form> Forms { get; set; }
-        public DbSet<FormLocalAccess> FormLocalAccess { get; set; }
-        public DbSet<FormGlobalAccess> FormGlobalAccess { get; set; }
+        public DbSet<LocalAccess> LocalAccess { get; set; }
+        public DbSet<GlobalAccess> GlobalAccess { get; set; }
         public DbSet<ObjectiveResult> ObjectivesResults { get; set; }
         public DbSet<Workproject> Workprojects { get; set; }
         public DbSet<User> Users { get; set; }
@@ -76,31 +76,36 @@ namespace BonusSystemApplication.Models
 
             #endregion
 
-            #region FormLocalAccess configuring
+            #region LocalAccess configuring
 
             //defines composite key for many to many
-            modelBuilder.Entity<FormLocalAccess>().HasKey(la => new { la.FormId, la.UserId });
+            modelBuilder.Entity<LocalAccess>().HasKey(la => new { la.FormId, la.UserId });
 
             //potentially to delete because we already following naming convention for ids: FormId and UserId
-            modelBuilder.Entity<FormLocalAccess>()
-                .HasOne<Form>(la => la.Form)
-                .WithMany(f => f.FormLocalAccess)
+            modelBuilder.Entity<LocalAccess>()
+                .HasOne(la => la.Form)
+                .WithMany(f => f.LocalAccesses)
                 .HasForeignKey(la => la.FormId);
 
-            modelBuilder.Entity<FormLocalAccess>()
-                .HasOne<User>(la => la.User)
-                .WithMany(u => u.FormLocalAccess)
+            modelBuilder.Entity<LocalAccess>()
+                .HasOne(la => la.User)
+                .WithMany(u => u.LocalAccesses)
                 .HasForeignKey(la => la.UserId);
 
             #endregion
 
             #region ObjectiveResult configuring
+            modelBuilder.Entity<ObjectiveResult>().OwnsOne(
+                or => or.Objective, o =>
+                {
+                    o.Property(o => o.IsKey).HasDefaultValue(true);
+                    o.Property(o => o.IsMeasurable).HasDefaultValue(true);
+                }).Property(or => or.Objective).IsRequired();
+
+            modelBuilder.Entity<ObjectiveResult>().OwnsOne(or => or.Result);
+            modelBuilder.Entity<ObjectiveResult>().Property(or => or.Result).IsRequired();
 
             modelBuilder.Entity<ObjectiveResult>().HasIndex(o => new { o.FormId, o.Row }).IsUnique();
-
-            modelBuilder.Entity<ObjectiveResult>().Property(o => o.IsKey).HasDefaultValue(true);
-            modelBuilder.Entity<ObjectiveResult>().Property(o => o.IsMeasurable).HasDefaultValue(true);
-
             #endregion
 
             #region Workproject configuring

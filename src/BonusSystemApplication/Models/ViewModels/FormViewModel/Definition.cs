@@ -3,7 +3,7 @@
     /// <summary>
     /// Stage #1 of form definition: form header, participants and objectives 
     /// </summary>
-    public class ObjectivesDefinition
+    public class Definition
     {
         public long FormId { get; set; } = 0;
         public bool IsObjectivesFreezed { get; set; } = false;
@@ -14,7 +14,6 @@
         public long ApproverId { get; set; } = 0;
         public long WorkprojectId { get; set; } = 0;
         public bool IsWpmHox { get; set; } = false;
-        public IList<Objective> Objectives { get; set; }
 
         //readonly values
         public string TeamName { get; set; } = string.Empty;
@@ -22,8 +21,8 @@
         public string Pid { get; set; } = string.Empty;
         public string WorkprojectDescription { get; set; } = string.Empty;
 
-        public ObjectivesDefinition() { }
-        public ObjectivesDefinition(Form form)
+        public Definition() { }
+        public Definition(Form form)
         {
             FormId = form.Id;
             IsObjectivesFreezed = form.IsObjectivesFreezed;
@@ -38,23 +37,6 @@
             PositionName = form.Employee?.Position?.NameEng == null ? string.Empty : form.Employee.Position.NameEng;
             Pid = form.Employee?.Pid == null ? string.Empty : form.Employee.Pid;
             WorkprojectDescription = form.Workproject?.Description == null ? string.Empty : form.Workproject.Description;
-            Objectives = form.ObjectivesResults
-                .Select(x => new Objective
-                {
-                    Id = x.Id,
-                    Row = x.Row,
-                    Statement = x.Statement == null ? string.Empty : x.Statement,
-                    Description = x.Description == null ? string.Empty : x.Description,
-                    IsKey = x.IsKey,
-                    IsMeasurable = x.IsMeasurable,
-                    Unit = x.Unit == null ? string.Empty : x.Unit,
-                    Threshold = x.Threshold == null ? string.Empty : x.Threshold,
-                    Target = x.Target == null ? string.Empty : x.Target,
-                    Challenge = x.Challenge == null ? string.Empty : x.Challenge,
-                    WeightFactor = x.WeightFactor == null ? string.Empty : x.WeightFactor,
-                    KpiUpperLimit = x.KpiUpperLimit == null ? string.Empty : x.KpiUpperLimit,
-                })
-                .ToList();
         }
     }
 }
