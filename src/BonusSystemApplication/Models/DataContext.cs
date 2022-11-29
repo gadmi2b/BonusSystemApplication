@@ -95,17 +95,20 @@ namespace BonusSystemApplication.Models
             #endregion
 
             #region ObjectiveResult configuring
-            modelBuilder.Entity<ObjectiveResult>().OwnsOne(
-                or => or.Objective, o =>
+            modelBuilder.Entity<ObjectiveResult>(or =>
+            {
+                or.OwnsOne(or => or.Objective, o =>
                 {
                     o.Property(o => o.IsKey).HasDefaultValue(true);
                     o.Property(o => o.IsMeasurable).HasDefaultValue(true);
-                }).Property(or => or.Objective).IsRequired();
+                });
+                or.Navigation(or => or.Objective).IsRequired();
 
-            modelBuilder.Entity<ObjectiveResult>().OwnsOne(or => or.Result);
-            modelBuilder.Entity<ObjectiveResult>().Property(or => or.Result).IsRequired();
+                or.OwnsOne(or => or.Result);
+                or.Navigation(or => or.Result).IsRequired();
 
-            modelBuilder.Entity<ObjectiveResult>().HasIndex(o => new { o.FormId, o.Row }).IsUnique();
+                or.HasIndex(o => new { o.FormId, o.Row }).IsUnique();
+            });
             #endregion
 
             #region Workproject configuring
