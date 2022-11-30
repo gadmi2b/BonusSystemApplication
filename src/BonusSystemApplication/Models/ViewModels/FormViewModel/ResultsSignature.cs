@@ -26,13 +26,13 @@
         public ResultsSignature() { }
         public ResultsSignature(Form form)
         {
-            IsResultsSignedByEmployee = form.IsResultsSignedByEmployee;
-            ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature;
-            IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee;
-            IsResultsSignedByManager = form.IsResultsSignedByManager;
-            ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature;
-            IsResultsSignedByApprover = form.IsResultsSignedByApprover;
-            ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature;
+            //IsResultsSignedByEmployee = form.IsResultsSignedByEmployee;
+            //ResultsEmployeeSignature = form.ResultsEmployeeSignature == null ? string.Empty : form.ResultsEmployeeSignature;
+            //IsResultsRejectedByEmployee = form.IsResultsRejectedByEmployee;
+            //IsResultsSignedByManager = form.IsResultsSignedByManager;
+            //ResultsManagerSignature = form.ResultsManagerSignature == null ? string.Empty : form.ResultsManagerSignature;
+            //IsResultsSignedByApprover = form.IsResultsSignedByApprover;
+            //ResultsApproverSignature = form.ResultsApproverSignature == null ? string.Empty : form.ResultsApproverSignature;
         }
     }
 }

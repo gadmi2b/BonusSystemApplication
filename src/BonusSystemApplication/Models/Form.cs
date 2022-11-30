@@ -17,23 +17,9 @@
         public string? OtherComment { get; set; }
 
         public bool IsObjectivesFreezed { get; set; }
-        public string? ObjectivesEmployeeSignature { get; set; }
-        public bool IsObjectivesSignedByEmployee { get; set; }
-        public bool IsObjectivesRejectedByEmployee { get; set; }
-        public string? ObjectivesManagerSignature { get; set; }
-        public bool IsObjectivesSignedByManager { get; set; }
-        public string? ObjectivesApproverSignature { get; set; }
-        public bool IsObjectivesSignedByApprover { get; set; }
-
         public bool IsResultsFreezed { get; set; }
-        public string? ResultsEmployeeSignature { get; set; }
-        public bool IsResultsSignedByEmployee { get; set; }
-        public bool IsResultsRejectedByEmployee { get; set; }
-        public string? ResultsManagerSignature { get; set; }
-        public bool IsResultsSignedByManager { get; set; }
-        public string? ResultsApproverSignature { get; set; }
-        public bool IsResultsSignedByApprover { get; set; }
 
+        public Signatures Signatures { get; set; }
         public IList<ObjectiveResult> ObjectivesResults { get; set; }
         public ICollection<LocalAccess> LocalAccesses { get; set; }
 

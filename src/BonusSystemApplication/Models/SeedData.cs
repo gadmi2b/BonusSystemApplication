@@ -172,15 +172,25 @@ namespace BonusSystemApplication.Models
             new Workproject { Name = "T50", Description = "Software development - trainings" }
         };
 
+        private static Signatures[] Signatures =
+        {
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+        };
+
         private static Form[] Forms =
         {
-            new Form { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
-            new Form { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2021 },
-            new Form { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
-            new Form { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2021 },
+            new Form { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2021, Signatures = Signatures[0] },
+            new Form { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[1] },
+            new Form { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2021, Signatures = Signatures[2] },
+            new Form { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[3] },
 
-            new Form { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
-            new Form { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
+            new Form { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[4], IsWpmHox = true },
+            new Form { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2021, Signatures = Signatures[5], IsWpmHox = true },
         };
 
         private static ObjectiveResult[] ObjectivesResults =

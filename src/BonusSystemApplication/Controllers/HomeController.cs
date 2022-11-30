@@ -185,10 +185,12 @@ namespace BonusSystemApplication.Controllers
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
                 Definition = new Definition(form),
-                ObjectivesSignature = new ObjectivesSignature(form),
                 Conclusion = new Conclusion(form),
-                ResultsSignature = new ResultsSignature(form),
+                Signatures = form.Signatures,
                 ObjectivesResults = form.ObjectivesResults,
+
+                //ObjectivesSignature = new ObjectivesSignature(form),
+                //ResultsSignature = new ResultsSignature(form),
 
                 PeriodSelectList = Enum.GetNames(typeof(Periods))
                     .Select(s => new SelectListItem

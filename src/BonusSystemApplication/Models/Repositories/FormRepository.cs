@@ -48,21 +48,21 @@ namespace BonusSystemApplication.Models.Repositories
             originalForm.LastSavedBy = changedForm.LastSavedBy;
             originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
 
-            originalForm.IsObjectivesSignedByEmployee = changedForm.IsObjectivesSignedByEmployee;
-            originalForm.ObjectivesEmployeeSignature = changedForm.ObjectivesEmployeeSignature;
-            originalForm.IsObjectivesRejectedByEmployee = changedForm.IsObjectivesRejectedByEmployee;
-            originalForm.IsObjectivesSignedByManager = changedForm.IsObjectivesSignedByManager;
-            originalForm.ObjectivesManagerSignature = changedForm.ObjectivesManagerSignature;
-            originalForm.IsObjectivesSignedByApprover = changedForm.IsObjectivesSignedByApprover;
-            originalForm.ObjectivesApproverSignature = changedForm.ObjectivesApproverSignature;
+            //originalForm.IsObjectivesSignedByEmployee = changedForm.IsObjectivesSignedByEmployee;
+            //originalForm.ObjectivesEmployeeSignature = changedForm.ObjectivesEmployeeSignature;
+            //originalForm.IsObjectivesRejectedByEmployee = changedForm.IsObjectivesRejectedByEmployee;
+            //originalForm.IsObjectivesSignedByManager = changedForm.IsObjectivesSignedByManager;
+            //originalForm.ObjectivesManagerSignature = changedForm.ObjectivesManagerSignature;
+            //originalForm.IsObjectivesSignedByApprover = changedForm.IsObjectivesSignedByApprover;
+            //originalForm.ObjectivesApproverSignature = changedForm.ObjectivesApproverSignature;
 
-            originalForm.IsResultsSignedByEmployee = changedForm.IsResultsSignedByEmployee;
-            originalForm.ResultsEmployeeSignature = changedForm.ResultsEmployeeSignature;
-            originalForm.IsResultsRejectedByEmployee = changedForm.IsResultsRejectedByEmployee;
-            originalForm.IsResultsSignedByManager = changedForm.IsResultsSignedByManager;
-            originalForm.ResultsManagerSignature = changedForm.ResultsManagerSignature;
-            originalForm.IsResultsSignedByApprover = changedForm.IsResultsSignedByApprover;
-            originalForm.ResultsApproverSignature = changedForm.ResultsApproverSignature;
+            //originalForm.IsResultsSignedByEmployee = changedForm.IsResultsSignedByEmployee;
+            //originalForm.ResultsEmployeeSignature = changedForm.ResultsEmployeeSignature;
+            //originalForm.IsResultsRejectedByEmployee = changedForm.IsResultsRejectedByEmployee;
+            //originalForm.IsResultsSignedByManager = changedForm.IsResultsSignedByManager;
+            //originalForm.ResultsManagerSignature = changedForm.ResultsManagerSignature;
+            //originalForm.IsResultsSignedByApprover = changedForm.IsResultsSignedByApprover;
+            //originalForm.ResultsApproverSignature = changedForm.ResultsApproverSignature;
 
             context.SaveChanges();
         }
@@ -87,9 +87,11 @@ namespace BonusSystemApplication.Models.Repositories
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
-                        // Definition data block
                         Id = f.Id,
                         IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+
+                        // Definition data block
                         Employee = new User
                         {
                             Id = f.Employee.Id,
@@ -126,33 +128,38 @@ namespace BonusSystemApplication.Models.Repositories
                         Period = f.Period,
                         Year = f.Year,
                         IsWpmHox = f.IsWpmHox,
-                        ObjectivesResults = f.ObjectivesResults,
-
-                        // ObjectivesSignature data block
-                        IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
-                        ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
-                        IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
-                        IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
-                        ObjectivesManagerSignature = f.ObjectivesManagerSignature,
-                        IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
-                        ObjectivesApproverSignature = f.ObjectivesApproverSignature,
 
                         // Conclusion data block
-                        IsResultsFreezed = f.IsResultsFreezed,
                         OverallKpi = f.OverallKpi,
                         IsProposalForBonusPayment = f.IsProposalForBonusPayment,
                         ManagerComment = f.ManagerComment,
                         EmployeeComment = f.EmployeeComment,
                         OtherComment = f.OtherComment,
 
+                        // Objectives and Results data block
+                        ObjectivesResults = f.ObjectivesResults,
+
+                        // Signatures data block
+                        Signatures = f.Signatures,
+
+                        // ObjectivesSignature data block
+                        //IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
+                        //ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
+                        //IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
+                        //IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
+                        //ObjectivesManagerSignature = f.ObjectivesManagerSignature,
+                        //IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
+                        //ObjectivesApproverSignature = f.ObjectivesApproverSignature,
+
+
                         // ResultsSignature data block
-                        IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
-                        ResultsEmployeeSignature = f.ResultsEmployeeSignature,
-                        IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
-                        IsResultsSignedByManager = f.IsResultsSignedByManager,
-                        ResultsManagerSignature = f.ResultsManagerSignature,
-                        IsResultsSignedByApprover = f.IsResultsSignedByApprover,
-                        ResultsApproverSignature = f.ResultsApproverSignature,
+                        //IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
+                        //ResultsEmployeeSignature = f.ResultsEmployeeSignature,
+                        //IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
+                        //IsResultsSignedByManager = f.IsResultsSignedByManager,
+                        //ResultsManagerSignature = f.ResultsManagerSignature,
+                        //IsResultsSignedByApprover = f.IsResultsSignedByApprover,
+                        //ResultsApproverSignature = f.ResultsApproverSignature,
                     })
                     .First();
         }
@@ -168,22 +175,23 @@ namespace BonusSystemApplication.Models.Repositories
                         IsResultsFreezed = f.IsResultsFreezed,
                         LastSavedBy = f.LastSavedBy,
                         LastSavedDateTime = f.LastSavedDateTime,
+                        Signatures = f.Signatures,
 
-                        IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
-                        ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
-                        IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
-                        IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
-                        ObjectivesManagerSignature = f.ObjectivesManagerSignature,
-                        IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
-                        ObjectivesApproverSignature = f.ObjectivesApproverSignature,
+                        //IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
+                        //ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
+                        //IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
+                        //IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
+                        //ObjectivesManagerSignature = f.ObjectivesManagerSignature,
+                        //IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
+                        //ObjectivesApproverSignature = f.ObjectivesApproverSignature,
 
-                        IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
-                        ResultsEmployeeSignature = f.ResultsEmployeeSignature,
-                        IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
-                        IsResultsSignedByManager = f.IsResultsSignedByManager,
-                        ResultsManagerSignature = f.ResultsManagerSignature,
-                        IsResultsSignedByApprover = f.IsResultsSignedByApprover,
-                        ResultsApproverSignature = f.ResultsApproverSignature,
+                        //IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
+                        //ResultsEmployeeSignature = f.ResultsEmployeeSignature,
+                        //IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
+                        //IsResultsSignedByManager = f.IsResultsSignedByManager,
+                        //ResultsManagerSignature = f.ResultsManagerSignature,
+                        //IsResultsSignedByApprover = f.IsResultsSignedByApprover,
+                        //ResultsApproverSignature = f.ResultsApproverSignature,
                     })
                     .First();
             return form;

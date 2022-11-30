@@ -26,13 +26,13 @@
         public ObjectivesSignature() { }
         public ObjectivesSignature(Form form)
         {
-            IsObjectivesSignedByEmployee = form.IsObjectivesSignedByEmployee;
-            ObjectivesEmployeeSignature = form.ObjectivesEmployeeSignature == null ? string.Empty : form.ObjectivesEmployeeSignature;
-            IsObjectivesRejectedByEmployee = form.IsObjectivesRejectedByEmployee;
-            IsObjectivesSignedByManager = form.IsObjectivesSignedByManager;
-            ObjectivesManagerSignature = form.ObjectivesManagerSignature == null ? string.Empty : form.ObjectivesManagerSignature;
-            IsObjectivesSignedByApprover = form.IsObjectivesSignedByApprover;
-            ObjectivesApproverSignature = form.ObjectivesApproverSignature == null ? string.Empty : form.ObjectivesApproverSignature;
+            //IsObjectivesSignedByEmployee = form.IsObjectivesSignedByEmployee;
+            //ObjectivesEmployeeSignature = form.ObjectivesEmployeeSignature == null ? string.Empty : form.ObjectivesEmployeeSignature;
+            //IsObjectivesRejectedByEmployee = form.IsObjectivesRejectedByEmployee;
+            //IsObjectivesSignedByManager = form.IsObjectivesSignedByManager;
+            //ObjectivesManagerSignature = form.ObjectivesManagerSignature == null ? string.Empty : form.ObjectivesManagerSignature;
+            //IsObjectivesSignedByApprover = form.IsObjectivesSignedByApprover;
+            //ObjectivesApproverSignature = form.ObjectivesApproverSignature == null ? string.Empty : form.ObjectivesApproverSignature;
         }
     }
 }

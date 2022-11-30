@@ -54,6 +54,13 @@ namespace BonusSystemApplication.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Form>()
+                .HasOne(f => f.Signatures)
+                .WithOne(s => s.Form)
+                .HasForeignKey<Signatures>(s => s.FormId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Form>()
                 .HasIndex(f => new { f.EmployeeId, f.WorkprojectId, f.Period, f.Year }).IsUnique();
 
             modelBuilder.Entity<Form>().Property(f => f.Period).IsRequired();
@@ -63,16 +70,7 @@ namespace BonusSystemApplication.Models
             modelBuilder.Entity<Form>().Property(f => f.IsProposalForBonusPayment).HasDefaultValue(false);
 
             modelBuilder.Entity<Form>().Property(f => f.IsObjectivesFreezed).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsObjectivesSignedByEmployee).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsObjectivesRejectedByEmployee).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsObjectivesSignedByManager).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsObjectivesSignedByApprover).HasDefaultValue(false);
-
             modelBuilder.Entity<Form>().Property(f => f.IsResultsFreezed).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsResultsRejectedByEmployee).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsResultsSignedByManager).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsResultsSignedByApprover).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsResultsSignedByEmployee).HasDefaultValue(false);
 
             #endregion
 
@@ -108,6 +106,29 @@ namespace BonusSystemApplication.Models
                 or.Navigation(or => or.Result).IsRequired();
 
                 or.HasIndex(o => new { o.FormId, o.Row }).IsUnique();
+            });
+            #endregion
+
+            #region Signatures configuration
+            modelBuilder.Entity<Signatures>(s =>
+            {
+                s.OwnsOne(s => s.ForObjectives, o =>
+                {
+                    o.Property(o => o.IsSignedByEmployee).HasDefaultValue(false);
+                    o.Property(o => o.IsRejectedByEmployee).HasDefaultValue(false);
+                    o.Property(o => o.IsSignedByManager).HasDefaultValue(false);
+                    o.Property(o => o.IsSignedByApprover).HasDefaultValue(false);
+                });
+                s.Navigation(s => s.ForObjectives).IsRequired();
+
+                s.OwnsOne(s => s.ForResults, r =>
+                {
+                    r.Property(o => o.IsSignedByEmployee).HasDefaultValue(false);
+                    r.Property(o => o.IsRejectedByEmployee).HasDefaultValue(false);
+                    r.Property(o => o.IsSignedByManager).HasDefaultValue(false);
+                    r.Property(o => o.IsSignedByApprover).HasDefaultValue(false);
+                });
+                s.Navigation(s => s.ForResults).IsRequired();
             });
             #endregion
 

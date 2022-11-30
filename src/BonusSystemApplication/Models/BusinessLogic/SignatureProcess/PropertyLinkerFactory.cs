@@ -23,15 +23,15 @@
                 PropertyType = PropertyTypes.Objectives,
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.IsObjectivesRejectedByEmployee)},
-                    { nameof(Form.IsObjectivesSignedByManager), null},
-                    { nameof(Form.IsObjectivesSignedByApprover), null},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByEmployee), nameof(Form.Signatures.ForObjectives.IsRejectedByEmployee)},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByManager), null},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByApprover), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.IsObjectivesSignedByEmployee), nameof(Form.ObjectivesEmployeeSignature)},
-                    { nameof(Form.IsObjectivesSignedByManager), nameof(Form.ObjectivesManagerSignature)},
-                    { nameof(Form.IsObjectivesSignedByApprover), nameof(Form.ObjectivesApproverSignature)},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByEmployee), nameof(Form.Signatures.ForObjectives.EmployeeSignature)},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByManager), nameof(Form.Signatures.ForObjectives.ManagerSignature)},
+                    { nameof(Form.Signatures.ForObjectives.IsSignedByApprover), nameof(Form.Signatures.ForObjectives.ApproverSignature)},
                 }
             };
         }
@@ -43,15 +43,15 @@
                 PropertyType = PropertyTypes.Results,
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.IsResultsSignedByEmployee), nameof(Form.IsResultsRejectedByEmployee)},
-                    { nameof(Form.IsResultsSignedByManager), null},
-                    { nameof(Form.IsResultsSignedByApprover), null},
+                    { nameof(Form.Signatures.ForResults.IsSignedByEmployee), nameof(Form.Signatures.ForResults.IsRejectedByEmployee)},
+                    { nameof(Form.Signatures.ForResults.IsSignedByManager), null},
+                    { nameof(Form.Signatures.ForResults.IsSignedByApprover), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.IsResultsSignedByEmployee), nameof(Form.ResultsEmployeeSignature)},
-                    { nameof(Form.IsResultsSignedByManager), nameof(Form.ResultsManagerSignature)},
-                    { nameof(Form.IsResultsSignedByApprover), nameof(Form.ResultsApproverSignature)},
+                    { nameof(Form.Signatures.ForResults.IsSignedByEmployee), nameof(Form.Signatures.ForResults.EmployeeSignature)},
+                    { nameof(Form.Signatures.ForResults.IsSignedByManager), nameof(Form.Signatures.ForResults.ManagerSignature)},
+                    { nameof(Form.Signatures.ForResults.IsSignedByApprover), nameof(Form.Signatures.ForResults.ApproverSignature)},
                 }
             };
         }
