@@ -7,6 +7,7 @@
     {
         public long FormId { get; set; } = 0;
         public bool IsObjectivesFreezed { get; set; } = false;
+        public bool IsResultsFreezed { get; set; } = false;
         public string Period { get; set; } = string.Empty;
         public string Year { get; set; } = string.Empty;
         public long EmployeeId { get; set; } = 0;
@@ -26,6 +27,7 @@
         {
             FormId = form.Id;
             IsObjectivesFreezed = form.IsObjectivesFreezed;
+            IsResultsFreezed = form.IsResultsFreezed;
             Period = form.Period.ToString();
             Year = form.Year.ToString();
             EmployeeId = form.Employee?.Id == null ? 0 : form.Employee.Id;

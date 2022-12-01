@@ -141,25 +141,6 @@ namespace BonusSystemApplication.Models.Repositories
 
                         // Signatures data block
                         Signatures = f.Signatures,
-
-                        // ObjectivesSignature data block
-                        //IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
-                        //ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
-                        //IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
-                        //IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
-                        //ObjectivesManagerSignature = f.ObjectivesManagerSignature,
-                        //IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
-                        //ObjectivesApproverSignature = f.ObjectivesApproverSignature,
-
-
-                        // ResultsSignature data block
-                        //IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
-                        //ResultsEmployeeSignature = f.ResultsEmployeeSignature,
-                        //IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
-                        //IsResultsSignedByManager = f.IsResultsSignedByManager,
-                        //ResultsManagerSignature = f.ResultsManagerSignature,
-                        //IsResultsSignedByApprover = f.IsResultsSignedByApprover,
-                        //ResultsApproverSignature = f.ResultsApproverSignature,
                     })
                     .First();
         }
@@ -176,22 +157,6 @@ namespace BonusSystemApplication.Models.Repositories
                         LastSavedBy = f.LastSavedBy,
                         LastSavedDateTime = f.LastSavedDateTime,
                         Signatures = f.Signatures,
-
-                        //IsObjectivesSignedByEmployee = f.IsObjectivesSignedByEmployee,
-                        //ObjectivesEmployeeSignature = f.ObjectivesEmployeeSignature,
-                        //IsObjectivesRejectedByEmployee = f.IsObjectivesRejectedByEmployee,
-                        //IsObjectivesSignedByManager = f.IsObjectivesSignedByManager,
-                        //ObjectivesManagerSignature = f.ObjectivesManagerSignature,
-                        //IsObjectivesSignedByApprover = f.IsObjectivesSignedByApprover,
-                        //ObjectivesApproverSignature = f.ObjectivesApproverSignature,
-
-                        //IsResultsSignedByEmployee = f.IsResultsSignedByEmployee,
-                        //ResultsEmployeeSignature = f.ResultsEmployeeSignature,
-                        //IsResultsRejectedByEmployee = f.IsResultsRejectedByEmployee,
-                        //IsResultsSignedByManager = f.IsResultsSignedByManager,
-                        //ResultsManagerSignature = f.ResultsManagerSignature,
-                        //IsResultsSignedByApprover = f.IsResultsSignedByApprover,
-                        //ResultsApproverSignature = f.ResultsApproverSignature,
                     })
                     .First();
             return form;

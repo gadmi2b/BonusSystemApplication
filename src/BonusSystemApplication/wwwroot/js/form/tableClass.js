@@ -1,15 +1,23 @@
 ﻿/**
  * maintains the table
- * ObjectivesDefinition_ObjectivesResults_0__Statement
+ * 
+ * ObjectivesResults[i].Objective.Statement
+ * ObjectivesResults_0__Objective_Statement
+ * 
+ * ObjectivesResults[i].Row
+ * ObjectivesResults_0__Row
  */
 
 class Table {
 
   static totalRows = 10;
 
-  static baseObjectives = "ObjectivesDefinition_Objectives";
-  static baseResults = "ResultsDefinition_Results";
+  static baseObjectivesResults = "ObjectivesResults"
   static row = "Row";
+
+  static baseObjectives = "Objective";
+  static baseResults = "Result";
+
   static statement = "Statement";
   static description = "Description";
   static isKey = "IsKey";
@@ -60,17 +68,17 @@ class Table {
    * @param {number} rowNumber - the number of row cell belong to
    */
   static getCellId(columnName, rowNumber) {
-
-    if (columnName === this.keyCheck || columnName === this.achieved || columnName === this.kpi) {
-      return (this.baseResults + "_" + rowNumber + "__" + columnName);
+    if (columnName == this.row) {
+      return (this.baseObjectivesResults + "_" + rowNumber + "__" + columnName);
+    } else if(columnName === this.keyCheck || columnName === this.achieved || columnName === this.kpi) {
+      return (this.baseObjectivesResults + "_" + rowNumber + "__" + this.baseResults + "_" + columnName);
     } else {
-      return (this.baseObjectives + "_" + rowNumber + "__" + columnName);
+      return (this.baseObjectivesResults + "_" + rowNumber + "__" + this.baseObjectives + "_" + columnName);
     }
   }
 
 
   static getValue(columnName, rowNumber) {
-
     const cellId = this.getCellId(columnName, rowNumber);
 
     const element = document.getElementById(cellId);
@@ -115,7 +123,7 @@ class Table {
     }
 
     const parts = cellId.split(deliminator);
-    const rowNumber = Number.parseInt(parts[2]);
+    const rowNumber = Number.parseInt(parts[1]);
     return rowNumber;
   }
 

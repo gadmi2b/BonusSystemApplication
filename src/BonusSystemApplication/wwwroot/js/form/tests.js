@@ -3,17 +3,21 @@
 });
 
 function runTests() {
-  console.log("testTableClass-GetCellId: " + testTableClassGetCellId());
-  console.log("testTableClass-GetRowNumberById: " + testTableClassGetRowNumberById());
-  console.log("testTableClass-GetColumnNameById: " + testTableClassGetColumnNameById());
-  console.log("testTableClass-IsKeyChecked: " + testTableClassIsKeyChecked());
-  console.log("testTableClass-IsMeasurableChecked: " + testTableClassIsMeasurableChecked());
-  console.log("testTableClass-SetValue: " + testTableClassSetValue());
+  console.log("testTableClass-GetCellId:................." + testTableClassGetCellId());
+  console.log("testTableClass-GetRowNumberById:.........." + testTableClassGetRowNumberById());
+  console.log("testTableClass-GetColumnNameById:........." + testTableClassGetColumnNameById());
+  console.log("testTableClass-IsKeyChecked:.............." + testTableClassIsKeyChecked());
+  console.log("testTableClass-IsMeasurableChecked:......." + testTableClassIsMeasurableChecked());
+  console.log("testTableClass-SetValue:.................." + testTableClassSetValue());
 }
+
+//ObjectivesResults[i].Objective.Statement
+//ObjectivesResults_0__Objective_Statement
+//ObjectivesResults_0__Row
 
 function testTableClassGetCellId() {
   //arrange
-  const expected = "ObjectivesDefinition_ObjectivesResults_3__Row";
+  const expected = "ObjectivesResults_3__Row";
 
   //act
   const actual = Table.getCellId(Table.row, 3);
@@ -31,7 +35,7 @@ function testTableClassGetRowNumberById() {
   const expected = 5;
 
   //act
-  const actual = Table.getRowNumberById("ObjectivesDefinition_ObjectivesResults_5__Target");
+  const actual = Table.getRowNumberById("ObjectivesResults_5__Objective_Target");
 
   //asset
   if (expected === actual) {
@@ -46,7 +50,7 @@ function testTableClassGetColumnNameById() {
   const expected = "Target";
 
   //act
-  const actual = Table.getColumnNameById("ObjectivesDefinition_ObjectivesResults_5__Target");
+  const actual = Table.getColumnNameById("ObjectivesResults_5__Objective_Target");
 
   //asset
   if (expected === actual) {
@@ -58,7 +62,7 @@ function testTableClassGetColumnNameById() {
 
 function testTableClassIsKeyChecked() {
   //arrange
-  const expected = false;
+  const expected = true;
 
   //act
   const actual = Table.isKeyChecked(4);
@@ -91,8 +95,8 @@ function testTableClassSetValue() {
   const expected = "55";
 
   //act
-  Table.setValue("ObjectivesDefinition_ObjectivesResults_9__Target", 55);
-  const actual = document.getElementById("ObjectivesDefinition_ObjectivesResults_9__Target").value;
+  Table.setValue("ObjectivesResults_9__Objective_Target", 55);
+  const actual = document.getElementById("ObjectivesResults_9__Objective_Target").value;
 
   //asset
   if (expected === actual) {

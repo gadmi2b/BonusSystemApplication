@@ -185,9 +185,9 @@ namespace BonusSystemApplication.Controllers
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
                 Definition = new Definition(form),
+                ObjectivesResults = form.ObjectivesResults,
                 Conclusion = new Conclusion(form),
                 Signatures = form.Signatures,
-                ObjectivesResults = form.ObjectivesResults,
 
                 //ObjectivesSignature = new ObjectivesSignature(form),
                 //ResultsSignature = new ResultsSignature(form),
@@ -495,32 +495,22 @@ namespace BonusSystemApplication.Controllers
 
         [HttpPost]
         public IActionResult SaveProcess(Definition definition,
-                                         ObjectivesSignature objectivesSignature,
-                                         Conclusion conclusion,
-                                         ResultsSignature resultsSignature)
+                                         List<ObjectiveResult> objectivesResults,
+                                         Conclusion conclusion)
         {
             // TODO: check form stage:
-            //       stage#1: [IsObjectivesFreezed == false && IsObjectivesSigned == false] &&
-            //                [IsResultsFreezed == false    && IsResultsSigned == false]
+            //       stage#1: [IsObjectivesFreezed == false && IsResultsFreezed == false]
             //                --> definition and conclusion could be saved
+            //                --> objectives and results could be saved
 
-            //       stage#2: [IsObjectivesFreezed == true && IsObjectivesSigned == false] &&
-            //                [IsResultsFreezed == false   && IsResultsSigned == false]
+            //       stage#2: [IsObjectivesFreezed == true && IsResultsFreezed == false]
+            //                --> conclusion could be saved
+            //                --> results could be saved
+
+            //       stage#3: [IsObjectivesFreezed == true && IsResultsFreezed == true]
             //                --> conclusion could be saved
 
-            //       stage#3: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
-            //                [IsResultsFreezed == false   && IsResultsSigned == false]
-            //                --> conclusion could be saved
 
-            //       stage#4: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
-            //                [IsResultsFreezed == true    && IsResultsSigned == false]
-            //                --> nothing could be saved
-
-            //       stage#5: [IsObjectivesFreezed == true && IsObjectivesSigned == true &&
-            //                [IsResultsFreezed == true    && IsResultsSigned == true]
-            //                --> nothing could be saved
-
-            // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
 
             long formId = definition.FormId;
 
@@ -533,10 +523,11 @@ namespace BonusSystemApplication.Controllers
                 //       --> definition and conclusion could be saved
             }
 
-            #region Get form from database
-            Form form = formRepository.GetFormObjectivesResultsData(formId);
-
+            #region Getting Form data precisely
+            Form form = formRepository.GetFormData(formId);
             #endregion
+
+            // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
 
             return RedirectToAction("Form");
         }

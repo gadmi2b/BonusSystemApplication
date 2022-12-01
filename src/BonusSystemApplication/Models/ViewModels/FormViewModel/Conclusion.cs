@@ -5,7 +5,6 @@
     /// </summary>
     public class Conclusion
     {
-        public bool IsResultsFreezed { get; set; } = false;
         public string OverallKpi { get; set; } = string.Empty;
         public bool IsProposalForBonusPayment { get; set; } = false;
         public string ManagerComment { get; set; } = string.Empty;
@@ -15,7 +14,6 @@
         public Conclusion() { }
         public Conclusion(Form form)
         {
-            IsResultsFreezed = form.IsResultsFreezed;
             OverallKpi = form.OverallKpi;
             IsProposalForBonusPayment = form.IsProposalForBonusPayment;
             ManagerComment = form.ManagerComment;

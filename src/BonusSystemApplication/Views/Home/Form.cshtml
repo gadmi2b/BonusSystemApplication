@@ -3,6 +3,10 @@
   Layout = "_Layout";
 }
 
+<script type="text/javascript">
+    
+</script>
+
 <head>
   <link rel="stylesheet" href="~/css/form/wrapper.css" />
 
@@ -44,7 +48,7 @@ BEM convention: Block Elements Modifiers
         <input asp-for="Definition.FormId" type="hidden" id="js-formId" readonly />
         <input asp-for="Definition.IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
 @*        <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />*@
-        <input asp-for="Conclusion.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
+        <input asp-for="Definition.IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
 @*        <input asp-for="ResultsSignature.IsResultsSigned" type="hidden" readonly />*@
     </div>
 
@@ -211,7 +215,7 @@ BEM convention: Block Elements Modifiers
             objectives is not freezed or results is freezed *@
         <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
                 disabled="@(!Model.Definition.IsObjectivesFreezed ||
-                             Model.Conclusion.IsResultsFreezed)">
+                             Model.Definition.IsResultsFreezed)">
             @* Objectives Employee*@
             <div class="content-signatures-block__checkbox js-signature">
               <label for="@nameof(Signatures.ForObjectives.IsSignedByEmployee)">Employee:</label>
@@ -253,7 +257,7 @@ BEM convention: Block Elements Modifiers
         <p>Freeze results before validation.</p>
         <fieldset class="content-signatures-block" id="js-signatureBlockResults"
                 disabled="@(!Model.Definition.IsObjectivesFreezed ||
-                            !Model.Conclusion.IsResultsFreezed)">
+                            !Model.Definition.IsResultsFreezed)">
             @* Results Employee*@
             <div class="content-signatures-block__checkbox js-signature">
               <label for="@nameof(Signatures.ForResults.IsSignedByEmployee)">Employee:</label>
@@ -304,10 +308,10 @@ BEM convention: Block Elements Modifiers
         <p class="button-group__title">Results:</p>
         <input type="submit" value="Freeze" asp-controller="Home" asp-action="Freeze" class="cmn-button button--width"
                disabled="@(!Model.Definition.IsObjectivesFreezed ||
-                            Model.Conclusion.IsResultsFreezed)" />
+                            Model.Definition.IsResultsFreezed)" />
         <input type="submit" value="Unfreeze" asp-controller="Home" asp-action="Unfreeze" class="cmn-button button--width"
                disabled="@(!Model.Definition.IsObjectivesFreezed ||
-                           !Model.Conclusion.IsResultsFreezed)"/>
+                           !Model.Definition.IsResultsFreezed)"/>
     </div>
     <div class="button-group">
         <p class="button-group__line"></p>
