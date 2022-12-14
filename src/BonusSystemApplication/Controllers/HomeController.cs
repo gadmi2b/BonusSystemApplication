@@ -510,6 +510,7 @@ namespace BonusSystemApplication.Controllers
             //       stage#3: [IsObjectivesFreezed == true && IsResultsFreezed == true]
             //                --> conclusion could be saved
 
+            // added comment
 
 
             long formId = definition.FormId;
