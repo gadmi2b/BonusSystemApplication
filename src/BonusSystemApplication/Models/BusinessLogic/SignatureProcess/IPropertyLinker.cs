@@ -2,7 +2,8 @@
 {
     public interface IPropertyLinker
     {
-        PropertyTypes PropertyType { get; set; }
+        PropertyType PropertyType { get; set; }
+        string PropertyTypeName { get; set; }
 
         // link between all IsSigned and IsRejected properties
         Dictionary<string, string?> IdPairsIsSignedIsRejected { get; set; }

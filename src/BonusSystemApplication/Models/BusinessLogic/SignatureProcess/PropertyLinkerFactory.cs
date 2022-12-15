@@ -2,14 +2,14 @@
 {
     public static class PropertyLinkerFactory
     {
-        public static IPropertyLinker CreatePropertyLinker(PropertyTypes propertyType)
+        public static IPropertyLinker CreatePropertyLinker(PropertyType propertyType)
         {
             switch (propertyType)
             {
-                case PropertyTypes.Objectives:
+                case PropertyType.ForObjectives:
                     return GetObjectivesSignaturePropertyLinker();
 
-                case PropertyTypes.Results:
+                case PropertyType.ForResults:
                     return GetResultsSignaturePropertyLinker();
 
                 default: throw new ArgumentException("Unknown type of property");
@@ -20,18 +20,19 @@
         {
             return new PropertyLinker()
             {
-                PropertyType = PropertyTypes.Objectives,
+                PropertyType = PropertyType.ForObjectives,
+                PropertyTypeName = nameof(ForObjectives),
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByEmployee), nameof(Form.Signatures.ForObjectives.IsRejectedByEmployee)},
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByManager), null},
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByApprover), null},
+                    { nameof(ForObjectives.IsSignedByEmployee), nameof(ForObjectives.IsRejectedByEmployee)},
+                    { nameof(ForObjectives.IsSignedByManager), null},
+                    { nameof(ForObjectives.IsSignedByApprover), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByEmployee), nameof(Form.Signatures.ForObjectives.EmployeeSignature)},
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByManager), nameof(Form.Signatures.ForObjectives.ManagerSignature)},
-                    { nameof(Form.Signatures.ForObjectives.IsSignedByApprover), nameof(Form.Signatures.ForObjectives.ApproverSignature)},
+                    { nameof(ForObjectives.IsSignedByEmployee), nameof(ForObjectives.EmployeeSignature)},
+                    { nameof(ForObjectives.IsSignedByManager), nameof(ForObjectives.ManagerSignature)},
+                    { nameof(ForObjectives.IsSignedByApprover), nameof(ForObjectives.ApproverSignature)},
                 }
             };
         }
@@ -40,21 +41,21 @@
         {
             return new PropertyLinker()
             {
-                PropertyType = PropertyTypes.Results,
+                PropertyType = PropertyType.ForResults,
+                PropertyTypeName = nameof(ForResults),
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.Signatures.ForResults.IsSignedByEmployee), nameof(Form.Signatures.ForResults.IsRejectedByEmployee)},
-                    { nameof(Form.Signatures.ForResults.IsSignedByManager), null},
-                    { nameof(Form.Signatures.ForResults.IsSignedByApprover), null},
+                    { nameof(ForResults.IsSignedByEmployee), nameof(ForResults.IsRejectedByEmployee)},
+                    { nameof(ForResults.IsSignedByManager), null},
+                    { nameof(ForResults.IsSignedByApprover), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(Form.Signatures.ForResults.IsSignedByEmployee), nameof(Form.Signatures.ForResults.EmployeeSignature)},
-                    { nameof(Form.Signatures.ForResults.IsSignedByManager), nameof(Form.Signatures.ForResults.ManagerSignature)},
-                    { nameof(Form.Signatures.ForResults.IsSignedByApprover), nameof(Form.Signatures.ForResults.ApproverSignature)},
+                    { nameof(ForResults.IsSignedByEmployee), nameof(ForResults.EmployeeSignature)},
+                    { nameof(ForResults.IsSignedByManager), nameof(ForResults.ManagerSignature)},
+                    { nameof(ForResults.IsSignedByApprover), nameof(ForResults.ApproverSignature)},
                 }
             };
         }
-
     }
 }

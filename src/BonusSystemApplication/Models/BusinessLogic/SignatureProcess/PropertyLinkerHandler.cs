@@ -45,19 +45,19 @@
 
             if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(checkboxId))
             {
-                propertiesValues.Add(checkboxId, isCheckboxChecked);
+                propertiesValues.Add(GetFullName(checkboxId), isCheckboxChecked);
 
                 if (IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
                                     checkboxId, out string signatureId))
                 {
-                    propertiesValues.Add(signatureId, string.Empty);
+                    propertiesValues.Add(GetFullName(signatureId), string.Empty);
                 }
 
                 if (!isCheckboxChecked &&
                     IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedIsRejected,
                                     checkboxId, out string isRejectedId))
                 {
-                    propertiesValues.Add(isRejectedId, isCheckboxChecked);
+                    propertiesValues.Add(GetFullName(isRejectedId), isCheckboxChecked);
                 }
             }
 
@@ -75,18 +75,18 @@
 
             if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsValue(checkboxId))
             {
-                propertiesValues.Add(checkboxId, isCheckboxChecked);
+                propertiesValues.Add(GetFullName(checkboxId), isCheckboxChecked);
 
                 if (isCheckboxChecked &&
                     IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedIsRejected,
                                         checkboxId, out string isSignedId))
                 {
-                    propertiesValues.Add(isSignedId, isCheckboxChecked);
+                    propertiesValues.Add(GetFullName(isSignedId), isCheckboxChecked);
 
                     if (IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
                                         isSignedId, out string signatureId))
                     {
-                        propertiesValues.Add(signatureId, string.Empty);
+                        propertiesValues.Add(GetFullName(signatureId), string.Empty);
                     }
                 }
             }
@@ -118,6 +118,20 @@
 
             if (member == null) { return false; }
             else { return true; }
+        }
+        /// <summary>
+        /// Returns ClassName.property for property it belongs
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns>ClassName.property for property it belongs</returns>
+        private static string GetFullName(string property)
+        {
+            if (AffectedPropertyLinker?.PropertyTypeName == null || string.IsNullOrEmpty(property))
+            {
+                return string.Empty;
+            }
+
+            return $"{AffectedPropertyLinker.PropertyTypeName}.{property}";
         }
     }
 }

@@ -47,22 +47,7 @@ namespace BonusSystemApplication.Models.Repositories
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
             originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
-
-            //originalForm.IsObjectivesSignedByEmployee = changedForm.IsObjectivesSignedByEmployee;
-            //originalForm.ObjectivesEmployeeSignature = changedForm.ObjectivesEmployeeSignature;
-            //originalForm.IsObjectivesRejectedByEmployee = changedForm.IsObjectivesRejectedByEmployee;
-            //originalForm.IsObjectivesSignedByManager = changedForm.IsObjectivesSignedByManager;
-            //originalForm.ObjectivesManagerSignature = changedForm.ObjectivesManagerSignature;
-            //originalForm.IsObjectivesSignedByApprover = changedForm.IsObjectivesSignedByApprover;
-            //originalForm.ObjectivesApproverSignature = changedForm.ObjectivesApproverSignature;
-
-            //originalForm.IsResultsSignedByEmployee = changedForm.IsResultsSignedByEmployee;
-            //originalForm.ResultsEmployeeSignature = changedForm.ResultsEmployeeSignature;
-            //originalForm.IsResultsRejectedByEmployee = changedForm.IsResultsRejectedByEmployee;
-            //originalForm.IsResultsSignedByManager = changedForm.IsResultsSignedByManager;
-            //originalForm.ResultsManagerSignature = changedForm.ResultsManagerSignature;
-            //originalForm.IsResultsSignedByApprover = changedForm.IsResultsSignedByApprover;
-            //originalForm.ResultsApproverSignature = changedForm.ResultsApproverSignature;
+            originalForm.Signatures = changedForm.Signatures;
 
             context.SaveChanges();
         }
@@ -145,7 +130,7 @@ namespace BonusSystemApplication.Models.Repositories
                     .First();
         }
 
-        public Form GetFormSignatureData(long formId)
+        public Form GetIsFreezedAndSignatureData(long formId)
         {
             Form form = context.Forms
                     .Where(f => f.Id == formId)
@@ -161,19 +146,7 @@ namespace BonusSystemApplication.Models.Repositories
                     .First();
             return form;
         }
-        public Form GetFormIsFreezedStates(long formId)
-        {
-            return context.Forms
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Form()
-                    {
-                        Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                    })
-                    .First();
-        }
-        public Form GetFormObjectivesResultsData(long formId)
+        public Form GetObjectivesResultsData(long formId)
         {
             Form form = context.Forms
                     .Where(f => f.Id == formId)
@@ -250,6 +223,78 @@ namespace BonusSystemApplication.Models.Repositories
                 .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
                 .AsNoTracking();
             return forms;
+        }
+
+
+        public IQueryable<Form> GetDefinition(long formId)
+        {
+            IQueryable<Form> formQuery = context.Forms.AsQueryable()
+                .Where(f => f.Id == formId)
+                .Select(f => new Form
+                {
+                    Id = f.Id,
+                    IsObjectivesFreezed = f.IsObjectivesFreezed,
+                    IsResultsFreezed = f.IsResultsFreezed,
+                    Period = f.Period,
+                    Year = f.Year,
+                    IsWpmHox = f.IsWpmHox,
+                    EmployeeId = f.EmployeeId,
+                    ManagerId = f.ManagerId,
+                    ApproverId = f.ApproverId,
+                    WorkprojectId = f.WorkprojectId,
+                });
+            return formQuery;
+        }
+        public IQueryable<Form> GetObjectives(long formId)
+        {
+            IQueryable<Form> formQuery = context.Forms.AsQueryable()
+                .Where(f => f.Id == formId)
+                .Select(f => new Form
+                {
+                    Id = f.Id,
+                    ObjectivesResults = f.ObjectivesResults.AsQueryable()
+                        .Select(or => new ObjectiveResult
+                        {
+                            Id = or.Id,
+                            Row = or.Row,
+                            Objective = or.Objective,
+                        })
+                        .ToList(),
+                });
+            return formQuery;
+        }
+        public IQueryable<Form> GetResults(long formId)
+        {
+            IQueryable<Form> formQuery = context.Forms.AsQueryable()
+                .Where(f => f.Id == formId)
+                .Select(f => new Form
+                {
+                    Id = f.Id,
+                    ObjectivesResults = f.ObjectivesResults.AsQueryable()
+                        .Select(or => new ObjectiveResult
+                        {
+                            Id = or.Id,
+                            Row = or.Row,
+                            Result = or.Result,
+                        })
+                        .ToList(),
+                });
+            return formQuery;
+        }
+        public IQueryable<Form> GetConclusion(long formId)
+        {
+            IQueryable<Form> formQuery = context.Forms.AsQueryable()
+                .Where(f => f.Id == formId)
+                .Select(f => new Form
+                {
+                    Id = f.Id,
+                    OverallKpi = f.OverallKpi,
+                    IsProposalForBonusPayment = f.IsProposalForBonusPayment,
+                    ManagerComment = f.ManagerComment,
+                    EmployeeComment = f.EmployeeComment,
+                    OtherComment = f.OtherComment,
+                });
+            return formQuery;
         }
     }
 }

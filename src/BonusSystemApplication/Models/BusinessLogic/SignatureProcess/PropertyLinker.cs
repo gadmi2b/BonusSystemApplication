@@ -2,7 +2,8 @@
 {
     public class PropertyLinker : IPropertyLinker
     {
-        public PropertyTypes PropertyType { get; set; }
+        public PropertyType PropertyType { get; set; }
+        public string PropertyTypeName { get; set; }
         public Dictionary<string, string?> IdPairsIsSignedIsRejected { get; set; }
 
         public Dictionary<string, string?> IdPairsIsSignedSignature { get; set; }

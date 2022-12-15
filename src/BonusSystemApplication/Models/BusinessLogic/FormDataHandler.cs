@@ -1,6 +1,7 @@
 ﻿using BonusSystemApplication.Models.ViewModels.FormViewModel;
 using BonusSystemApplication.UserIdentiry;
 using Microsoft.Data.SqlClient.Server;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 
@@ -77,120 +78,43 @@ namespace BonusSystemApplication.Models.BusinessLogic
             }
         }
 
-        public static void UpdateSignatureFormData(Form form, Dictionary<string, object> propertiesValues)
-        {
-            foreach (string property in propertiesValues.Keys)
-            {
-                var value = propertiesValues[property];
-                PropertyInfo propertyInfo = form.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
-                if (propertyInfo != null && propertyInfo.CanWrite)
-                {
-                    propertyInfo.SetValue(form, value);
-                }
-            }
-        }
         public static void UpdateLastSavedFormData(Form form)
         {
             form.LastSavedBy = UserData.GetUserName();
             form.LastSavedDateTime = DateTime.Now;
         }
 
+        public static void UpdateSignatures(Form form, Dictionary<string, object> propertiesValues)
+        {
+            Signatures signatures = form.Signatures;
+            foreach (string propertyPath in propertiesValues.Keys)
+            {
+                var value = propertiesValues[propertyPath];
+                SetNestedProperty(propertyPath, signatures, value);
+            }
 
+            form.Signatures = signatures;
+        }
 
-        //public static void UpdateObjectivesResultsFormData(Form form,
-        //                                                   Definition definition,
-        //                                                   Conclusion conclusion)
-        //{
-        //    if (IsObjectivesResultsSavePossible(form))
-        //    {
-        //        // Objectives updating
-        //        if (Enum.TryParse(definition.Period, out Periods period))
-        //        {
-        //            form.Period = period;
-        //        }
-        //        else
-        //        {
-        //            throw new ArgumentException("Unknown value of period. Form save is impossible");
-        //        }
+        /// <summary>
+        /// Sets property of nested type of target object by propertyPath
+        /// </summary>
+        /// <param name="propertyPath"></param> like ChildObject.Property
+        /// <param name="target"></param> Parent object
+        /// <param name="value"></param> new value of property
+        private static void SetNestedProperty(string propertyPath, object target, object value)
+        {
+            string[] levels = propertyPath.Split('.');
+            for (int lvl = 0; lvl < levels.Length - 1; lvl++)
+            {
+                PropertyInfo propertyToGet = target.GetType().GetProperty(levels[lvl]);
+                target = propertyToGet.GetValue(target, null);
+            }
+            PropertyInfo propertyToSet = target.GetType().GetProperty(levels.Last());
+            propertyToSet.SetValue(target, value, null);
+        }
 
-        //        if (Int32.TryParse(definition.Year, out int year))
-        //        {
-        //            form.Year = year;
-        //        }
-        //        else
-        //        {
-        //            throw new ArgumentException("Unknown value of year. Form save is impossible");
-        //        }
-
-        //        form.EmployeeId = definition.EmployeeId;
-        //        form.ManagerId = definition.ManagerId;
-        //        form.ApproverId = definition.ApproverId;
-        //        form.WorkprojectId = definition.WorkprojectId;
-        //        form.IsWpmHox = definition.IsWpmHox;
-
-        //        // TODO: !!! Rows in Objectives and in Results must be the same
-        //        //       !!! incorrect just copy data from obj to objRes
-        //        foreach (Objective obj in definition.Objectives)
-        //        {
-        //            foreach(ObjectiveResult objRes in form.ObjectivesResults)
-        //            {
-        //                objRes.Row = obj.Row;
-        //                objRes.Statement = obj.Statement;
-        //                objRes.Description = obj.Description;
-        //                objRes.IsKey = obj.IsKey;
-        //                objRes.IsMeasurable = obj.IsMeasurable;
-        //                objRes.Unit = obj.Unit;
-        //                objRes.Threshold = obj.Threshold;
-        //                objRes.Target = obj.Target;
-        //                objRes.Challenge = obj.Challenge;
-        //                objRes.WeightFactor = obj.WeightFactor;
-        //                objRes.KpiUpperLimit = obj.KpiUpperLimit;
-        //            }
-        //        }
-
-        //        // Results updating
-
-        //        form.ManagerComment = conclusion.ManagerComment;
-        //        form.EmployeeComment = conclusion.EmployeeComment;
-        //        form.OtherComment = conclusion.OtherComment;
-
-        //        // TODO: !!! Rows in Objectives and in Results must be the same
-        //        //       !!! incorrect just copy data from res to objRes
-        //        foreach (Result res in conclusion.Results)
-        //        {
-        //            foreach (ObjectiveResult objRes in form.ObjectivesResults)
-        //            {
-        //                objRes.KeyCheck = res.KeyCheck;
-        //                objRes.Achieved = res.Achieved;
-        //                objRes.Kpi = res.Kpi;
-        //            }
-        //        }
-        //    }
-        //    else if (IsResultsSavePossible(form))
-        //    {
-        //        // Results updating
-        //        form.IsProposalForBonusPayment = conclusion.IsProposalForBonusPayment;
-
-        //        form.ManagerComment = conclusion.ManagerComment;
-        //        form.EmployeeComment = conclusion.EmployeeComment;
-        //        form.OtherComment = conclusion.OtherComment;
-
-        //        // TODO: !!! Rows in Objectives and in Results must be the same
-        //        //       !!! incorrect just copy data from res to objRes
-        //        foreach (Result res in conclusion.Results)
-        //        {
-        //            foreach (ObjectiveResult objRes in form.ObjectivesResults)
-        //            {
-        //                objRes.KeyCheck = res.KeyCheck;
-        //                objRes.Achieved = res.Achieved;
-        //                objRes.Kpi = res.Kpi;
-        //            }
-        //        }
-
-        //        // TODO: calculate OverallKpi = form.OverallKpi
-        //        //       provide values with the same checks as at client side
-        //    }
-        //}
+ 
         private static bool IsObjectivesResultsSavePossible(Form form)
         {
             if(!form.IsObjectivesFreezed && !form.IsResultsFreezed)

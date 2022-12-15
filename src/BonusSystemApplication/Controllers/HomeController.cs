@@ -11,6 +11,7 @@ using BonusSystemApplication.UserIdentiry;
 using System.Text.Json;
 using BonusSystemApplication.Models.BusinessLogic;
 using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
+using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 
 
 //using Newtonsoft.Json.Serialization;
@@ -414,7 +415,7 @@ namespace BonusSystemApplication.Controllers
             }
 
             #region Determine which properties were affected. Getting affected PropertyLinker
-            foreach (PropertyTypes type in Enum.GetValues(typeof(PropertyTypes)).Cast<PropertyTypes>())
+            foreach (PropertyType type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
             {
                 IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
                 if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, checkboxId))
@@ -452,8 +453,8 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Get form from database and check signature possibility
-            Form form = formRepository.GetFormSignatureData(formId);
-            if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Objectives &&
+            Form form = formRepository.GetIsFreezedAndSignatureData(formId);
+            if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
                !FormDataHandler.IsObjectivesSignaturePossible(form))
             {
                 JsonResult errorResponse = new JsonResult(new
@@ -464,7 +465,7 @@ namespace BonusSystemApplication.Controllers
                 return errorResponse;
             }
 
-            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyTypes.Results &&
+            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
                !FormDataHandler.IsResultsSignaturePossible(form))
             {
                 JsonResult errorResponse = new JsonResult(new
@@ -478,7 +479,7 @@ namespace BonusSystemApplication.Controllers
 
             #region Fill property-value pair with User signature and Update Form data
             FormDataHandler.PutUserSignature(ref propertiesValues);
-            FormDataHandler.UpdateSignatureFormData(form, propertiesValues);
+            FormDataHandler.UpdateSignatures(form, propertiesValues);
             FormDataHandler.UpdateLastSavedFormData(form);
             formRepository.UpdateFormSignatures(form);
             #endregion
@@ -498,19 +499,6 @@ namespace BonusSystemApplication.Controllers
                                          List<ObjectiveResult> objectivesResults,
                                          Conclusion conclusion)
         {
-            // TODO: check form stage:
-            //       stage#1: [IsObjectivesFreezed == false && IsResultsFreezed == false]
-            //                --> definition and conclusion could be saved
-            //                --> objectives and results could be saved
-
-            //       stage#2: [IsObjectivesFreezed == true && IsResultsFreezed == false]
-            //                --> conclusion could be saved
-            //                --> results could be saved
-
-            //       stage#3: [IsObjectivesFreezed == true && IsResultsFreezed == true]
-            //                --> conclusion could be saved
-
-            // added comment
 
 
             long formId = definition.FormId;
@@ -521,14 +509,31 @@ namespace BonusSystemApplication.Controllers
             if(formId == 0)
             {
                 // TODO: save new Form
-                //       --> definition and conclusion could be saved
+                //       return to client
             }
 
-            #region Getting Form data precisely
-            Form form = formRepository.GetFormData(formId);
+            #region Save Form
+            Console.WriteLine("-----------------------------------------START QUERYING-------------------------------------------");
+            IQueryable<Form> formDefinition = formRepository.GetDefinition(formId);
+            Console.WriteLine("----------------------------------------_DEFINITION DONE------------------------------------------");
+            IQueryable<Form> formObjectives = formRepository.GetObjectives(formId);
+            Console.WriteLine("-----------------------------------------OBJECTIVES DONE------------------------------------------");
+            IQueryable<Form> formResults = formRepository.GetResults(formId);
+            Console.WriteLine("------------------------------------------RESULTS DONE--------------------------------------------");
+            IQueryable<Form> formConclusion = formRepository.GetConclusion(formId);
+            Console.WriteLine("-----------------------------------------CONSLUSION DONE------------------------------------------");
             #endregion
 
-            // TODO: to add SaveConfigurator class to flexible define [stages] and [stage requirement]
+            #region Getting Form IsFreezed states and all Signatures
+            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
+            #endregion
+
+            // TODO: depending on states and signatures extract from DB form parts
+            //       and collect information about what should be changed into SaveConfigurator
+
+            SaveConfigurator saveConfigurator = new SaveConfigurator(statesAndSignatures);
+            //IQueryable<Form> query = saveConfigurator.GetFormQuery(formId, formRepository);
+            Form form = saveConfigurator.GetFormQuery(formId, formRepository);
 
             return RedirectToAction("Form");
         }

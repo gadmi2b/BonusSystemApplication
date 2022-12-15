@@ -1,8 +1,8 @@
 ﻿namespace BonusSystemApplication.Models.BusinessLogic.SignatureProcess
 {
-    public enum PropertyTypes
+    public enum PropertyType
     {
-        Objectives = 1,
-        Results = 2,
+        ForObjectives = 1,
+        ForResults = 2,
     }
 }
