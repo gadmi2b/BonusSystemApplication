@@ -1,5 +1,4 @@
-﻿using BonusSystemApplication.Models.ViewModels.FormViewModel;
-using BonusSystemApplication.UserIdentiry;
+﻿using BonusSystemApplication.UserIdentiry;
 using Microsoft.Data.SqlClient.Server;
 using System.Net;
 using System.Reflection;

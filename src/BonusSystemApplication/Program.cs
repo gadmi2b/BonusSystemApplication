@@ -1,5 +1,6 @@
 using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
+using BonusSystemApplication.Models.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,8 @@ builder.Services.AddTransient<IGlobalAccessRepository, GlobalAccessRepository>()
 builder.Services.AddTransient<IFormRepository, FormRepository>();
 builder.Services.AddTransient<IWorkprojectRepository, WorkprojectRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+builder.Services.AddTransient<IDefinitionRepository, DefinitionRepository>();
 
 var app = builder.Build();
 

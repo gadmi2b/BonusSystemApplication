@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BonusSystemApplication.Models
 {
@@ -6,9 +7,11 @@ namespace BonusSystemApplication.Models
     {
         public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
         public DbSet<Form> Forms { get; set; }
+        public DbSet<Definition> Definitions { get; set; }
+        public DbSet<ObjectiveResult> ObjectivesResults { get; set; }
+        public DbSet<Conclusion> Conclusions { get; set; }
         public DbSet<LocalAccess> LocalAccess { get; set; }
         public DbSet<GlobalAccess> GlobalAccess { get; set; }
-        public DbSet<ObjectiveResult> ObjectivesResults { get; set; }
         public DbSet<Workproject> Workprojects { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -19,32 +22,24 @@ namespace BonusSystemApplication.Models
         {
 
             #region Form configuring
+            modelBuilder.Entity<Form>(f =>
+            {
+                f.HasOne(f => f.Definition)
+                 .WithOne(d => d.Form)
+                 .HasForeignKey<Definition>(d => d.Id);
 
-            modelBuilder.Entity<Form>()
-                .HasOne(f => f.Employee)
-                .WithMany(u => u.EmployeeForms)
-                .HasForeignKey(f => f.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict)      //user deletion must be forbidden (set IsActive to false instead)
-                .IsRequired();
+                f.HasOne(f => f.Conclusion)
+                 .WithOne(c => c.Form)
+                 .HasForeignKey<Conclusion>(c => c.Id);
+            });
 
-            modelBuilder.Entity<Form>()
-                .HasOne(f => f.Manager)
-                .WithMany(u => u.ManagerForms)
-                .HasForeignKey(f => f.ManagerId)
-                .OnDelete(DeleteBehavior.SetNull);      //user deletion must be forbidden (set IsActive to false instead)
+            modelBuilder.Entity<Form>().ToTable("Forms");
+            modelBuilder.Entity<Definition>().ToTable("Forms");
+            modelBuilder.Entity<Conclusion>().ToTable("Forms");
 
-            modelBuilder.Entity<Form>()
-                .HasOne(f => f.Approver)
-                .WithMany(u => u.ApproverForms)
-                .HasForeignKey(f => f.ApproverId)
-                .OnDelete(DeleteBehavior.Restrict);     //user deletion must be forbidden (set IsActive to false instead)
-
-            modelBuilder.Entity<Form>()
-                .HasOne(f => f.Workproject)
-                .WithMany(wp => wp.Forms)
-                .HasForeignKey(f => f.WorkprojectId)
-                .OnDelete(DeleteBehavior.Restrict)      //workprojects deletion must be forbidden (set IsActive to false instead)
-                .IsRequired();
+            //modelBuilder.Entity<Form>().ToTable("Forms");
+            //modelBuilder.Entity<Definition>().ToTable("Forms");
+            //modelBuilder.Entity<Conclusion>().ToTable("Forms");
 
             modelBuilder.Entity<Form>()
                 .HasMany(f => f.ObjectivesResults)
@@ -60,18 +55,48 @@ namespace BonusSystemApplication.Models
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Form>()
-                .HasIndex(f => new { f.EmployeeId, f.WorkprojectId, f.Period, f.Year }).IsUnique();
-
-            modelBuilder.Entity<Form>().Property(f => f.Period).IsRequired();
-            modelBuilder.Entity<Form>().Property(f => f.Year).IsRequired();
-
-            modelBuilder.Entity<Form>().Property(f => f.IsWpmHox).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsProposalForBonusPayment).HasDefaultValue(false);
-
             modelBuilder.Entity<Form>().Property(f => f.IsObjectivesFreezed).HasDefaultValue(false);
             modelBuilder.Entity<Form>().Property(f => f.IsResultsFreezed).HasDefaultValue(false);
+            #endregion
 
+            #region Definition configuring
+            modelBuilder.Entity<Definition>()
+                .HasOne(d => d.Employee)
+                .WithMany(u => u.EmployeeFormDefinitions)
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict)      //user deletion must be forbidden (set IsActive to false instead)
+                .IsRequired();
+
+            modelBuilder.Entity<Definition>()
+                .HasOne(d => d.Manager)
+                .WithMany(u => u.ManagerFormDefinitions)
+                .HasForeignKey(d => d.ManagerId)
+                .OnDelete(DeleteBehavior.SetNull);      //user deletion must be forbidden (set IsActive to false instead)
+
+            modelBuilder.Entity<Definition>()
+                .HasOne(d => d.Approver)
+                .WithMany(u => u.ApproverFormDefinitions)
+                .HasForeignKey(d => d.ApproverId)
+                .OnDelete(DeleteBehavior.Restrict);     //user deletion must be forbidden (set IsActive to false instead)
+
+            modelBuilder.Entity<Definition>()
+                .HasOne(d => d.Workproject)
+                .WithMany(wp => wp.FormDefinitions)
+                .HasForeignKey(d => d.WorkprojectId)
+                .OnDelete(DeleteBehavior.Restrict)      //workprojects deletion must be forbidden (set IsActive to false instead)
+                .IsRequired();
+
+            modelBuilder.Entity<Definition>()
+                .HasIndex(d => new { d.EmployeeId, d.WorkprojectId, d.Period, d.Year }).IsUnique();
+
+            modelBuilder.Entity<Definition>().Property(d => d.Period).IsRequired();
+            modelBuilder.Entity<Definition>().Property(d => d.Year).IsRequired();
+
+            modelBuilder.Entity<Definition>().Property(d => d.IsWpmHox).HasDefaultValue(false);
+            #endregion
+
+            #region Conclusion configuring
+            modelBuilder.Entity<Conclusion>().Property(c => c.IsProposalForBonusPayment).HasDefaultValue(false);
             #endregion
 
             #region LocalAccess configuring
@@ -170,7 +195,6 @@ namespace BonusSystemApplication.Models
             modelBuilder.Entity<User>().HasIndex(u => u.Pid).IsUnique();
 
             modelBuilder.Entity<User>().Property(u => u.IsActive).HasDefaultValue(true);
-
             #endregion
 
             #region Department configuring

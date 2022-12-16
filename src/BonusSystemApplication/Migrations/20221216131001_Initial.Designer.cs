@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BonusSystemApplication.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221130173655_Initial")]
+    [Migration("20221216131001_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,76 @@ namespace BonusSystemApplication.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BonusSystemApplication.Models.Conclusion", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("EmployeeComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsProposalForBonusPayment")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("ManagerComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtherComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OverallKpi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Forms", (string)null);
+                });
+
+            modelBuilder.Entity("BonusSystemApplication.Models.Definition", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ApproverId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EmployeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsWpmHox")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<long?>("ManagerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Period")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("WorkprojectId")
+                        .IsRequired()
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("WorkprojectId");
+
+                    b.HasIndex("EmployeeId", "WorkprojectId", "Period", "Year")
+                        .IsUnique();
+
+                    b.ToTable("Forms", (string)null);
+                });
 
             modelBuilder.Entity("BonusSystemApplication.Models.Department", b =>
                 {
@@ -52,31 +122,12 @@ namespace BonusSystemApplication.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<long?>("ApproverId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("EmployeeComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("IsObjectivesFreezed")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("IsProposalForBonusPayment")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsResultsFreezed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsWpmHox")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -87,40 +138,9 @@ namespace BonusSystemApplication.Migrations
                     b.Property<DateTime?>("LastSavedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ManagerComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ManagerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("OtherComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OverallKpi")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Period")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("WorkprojectId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ApproverId");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("WorkprojectId");
-
-                    b.HasIndex("EmployeeId", "WorkprojectId", "Period", "Year")
-                        .IsUnique();
-
-                    b.ToTable("Forms");
+                    b.ToTable("Forms", (string)null);
                 });
 
             modelBuilder.Entity("BonusSystemApplication.Models.GlobalAccess", b =>
@@ -361,26 +381,43 @@ namespace BonusSystemApplication.Migrations
                     b.ToTable("Workprojects");
                 });
 
-            modelBuilder.Entity("BonusSystemApplication.Models.Form", b =>
+            modelBuilder.Entity("BonusSystemApplication.Models.Conclusion", b =>
+                {
+                    b.HasOne("BonusSystemApplication.Models.Form", "Form")
+                        .WithOne("Conclusion")
+                        .HasForeignKey("BonusSystemApplication.Models.Conclusion", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+                });
+
+            modelBuilder.Entity("BonusSystemApplication.Models.Definition", b =>
                 {
                     b.HasOne("BonusSystemApplication.Models.User", "Approver")
-                        .WithMany("ApproverForms")
+                        .WithMany("ApproverFormDefinitions")
                         .HasForeignKey("ApproverId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BonusSystemApplication.Models.User", "Employee")
-                        .WithMany("EmployeeForms")
+                        .WithMany("EmployeeFormDefinitions")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("BonusSystemApplication.Models.Form", "Form")
+                        .WithOne("Definition")
+                        .HasForeignKey("BonusSystemApplication.Models.Definition", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BonusSystemApplication.Models.User", "Manager")
-                        .WithMany("ManagerForms")
+                        .WithMany("ManagerFormDefinitions")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("BonusSystemApplication.Models.Workproject", "Workproject")
-                        .WithMany("Forms")
+                        .WithMany("FormDefinitions")
                         .HasForeignKey("WorkprojectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -388,6 +425,8 @@ namespace BonusSystemApplication.Migrations
                     b.Navigation("Approver");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("Form");
 
                     b.Navigation("Manager");
 
@@ -660,6 +699,12 @@ namespace BonusSystemApplication.Migrations
 
             modelBuilder.Entity("BonusSystemApplication.Models.Form", b =>
                 {
+                    b.Navigation("Conclusion")
+                        .IsRequired();
+
+                    b.Navigation("Definition")
+                        .IsRequired();
+
                     b.Navigation("LocalAccesses");
 
                     b.Navigation("ObjectivesResults");
@@ -680,18 +725,18 @@ namespace BonusSystemApplication.Migrations
 
             modelBuilder.Entity("BonusSystemApplication.Models.User", b =>
                 {
-                    b.Navigation("ApproverForms");
+                    b.Navigation("ApproverFormDefinitions");
 
-                    b.Navigation("EmployeeForms");
+                    b.Navigation("EmployeeFormDefinitions");
 
                     b.Navigation("LocalAccesses");
 
-                    b.Navigation("ManagerForms");
+                    b.Navigation("ManagerFormDefinitions");
                 });
 
             modelBuilder.Entity("BonusSystemApplication.Models.Workproject", b =>
                 {
-                    b.Navigation("Forms");
+                    b.Navigation("FormDefinitions");
                 });
 #pragma warning restore 612, 618
         }

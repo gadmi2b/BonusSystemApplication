@@ -7,6 +7,72 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\BusinessLogic\**" />
+    <Compile Remove="Models\ViewModels\**" />
+    <Content Remove="Models\BusinessLogic\**" />
+    <Content Remove="Models\ViewModels\**" />
+    <EmbeddedResource Remove="Models\BusinessLogic\**" />
+    <EmbeddedResource Remove="Models\ViewModels\**" />
+    <None Remove="Models\BusinessLogic\**" />
+    <None Remove="Models\ViewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Models\BusinessLogic\FormDataHandler.cs" />
+    <Compile Include="Models\BusinessLogic\SaveProcess\SaveConfigurator.cs" />
+    <Compile Include="Models\BusinessLogic\SaveProcess\UpdatableParts.cs" />
+    <Compile Include="Models\BusinessLogic\SignatureProcess\IPropertyLinker.cs" />
+    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinker.cs" />
+    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerFactory.cs" />
+    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerHandler.cs" />
+    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyType.cs" />
+    <Compile Include="Models\ViewModels\HomeFormViewModel.cs" />
+    <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\FormDataAvailable.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\FormDataExtractor.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\FormDataSorted.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\IFormDataExtractor.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\Permissions.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\TableRow.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\TableSelectLists.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\UserSelections.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\js\form\ajax.js" />
+    <None Include="wwwroot\js\form\objectives-results.js" />
+    <None Include="wwwroot\js\form\signatures.js" />
+    <None Include="wwwroot\js\form\tableClass.js" />
+    <None Include="wwwroot\js\form\tests.js" />
+    <None Include="wwwroot\js\form\textareas.js" />
+    <None Include="wwwroot\js\index\bootstrap.js" />
+    <None Include="wwwroot\js\index\index.js" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap-multiselect\js\bootstrap-multiselect.js" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap-multiselect\js\bootstrap-multiselect.min.js" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap\js\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\lib\bootstrap\bootstrap\js\bootstrap.min.js.map" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\LICENSE.md" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
+    <None Include="wwwroot\lib\popper.js\umd\popper.min.js" />
+    <None Include="wwwroot\lib\popper.js\umd\popper.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -21,7 +87,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\lib\bootstrap\" />
+    <Folder Include="Models\ViewModels\FormViewModel\" />
   </ItemGroup>
 
 </Project>

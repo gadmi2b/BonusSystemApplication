@@ -6,12 +6,12 @@ using BonusSystemApplication.Models.Repositories;
 using Microsoft.Data.SqlClient.Server;
 using BonusSystemApplication.Models.ViewModels;
 using BonusSystemApplication.Models.ViewModels.Index;
-using BonusSystemApplication.Models.ViewModels.FormViewModel;
 using BonusSystemApplication.UserIdentiry;
 using System.Text.Json;
 using BonusSystemApplication.Models.BusinessLogic;
 using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
+using System.Security.Cryptography;
 
 
 //using Newtonsoft.Json.Serialization;
@@ -46,7 +46,7 @@ namespace BonusSystemApplication.Controllers
             workprojectRepository = workprojectRepo;
             userRepository = userRepo;
 
-            UserData.UserId = 9;
+            UserData.UserId = 7;
         }
 
         public IActionResult Index(UserSelections userSelections)
@@ -56,6 +56,12 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Queries to request available for User forms
+
+
+                #region Query for all Forms
+                //IQueryable<Form> allFormsQuery = formRepository.GetAllFormsQuery(globalAccesses, UserData.UserId);
+                //List<Form> availableFormz = allFormsQuery.ToList();
+                #endregion
 
                 #region Query for forms where user has Global accesses
                 IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(globalAccesses);
@@ -75,23 +81,28 @@ namespace BonusSystemApplication.Controllers
                 {
                     combinedFormsQuery = combinedFormsQuery.Union(globalAccessFormsQuery);
                 }
-            #endregion
+                #endregion
 
             #endregion
 
             #region Load data from database into forms
             List<Form> availableForms = combinedFormsQuery
-                .Select(f => new Form {
+                .Select(f => new Form
+                {
                     Id = f.Id,
-                    Employee = f.Employee,
-                    Workproject = f.Workproject,
-                    LocalAccesses = f.LocalAccesses,
-                    ApproverId = f.ApproverId,
-                    ManagerId = f.ManagerId,
-                    WorkprojectId = f.WorkprojectId,
                     LastSavedDateTime = f.LastSavedDateTime,
-                    Period = f.Period,
-                    Year = f.Year,
+                    LocalAccesses = f.LocalAccesses,
+                    Definition = new Definition
+                    {
+                        Form = f,
+                        Employee = f.Definition.Employee,
+                        Workproject = f.Definition.Workproject,
+                        ApproverId = f.Definition.ApproverId,
+                        ManagerId = f.Definition.ManagerId,
+                        WorkprojectId = f.Definition.WorkprojectId,
+                        Period = f.Definition.Period,
+                        Year = f.Definition.Year,
+                    }
                 })
                 .ToList();
             #endregion
@@ -106,13 +117,13 @@ namespace BonusSystemApplication.Controllers
                 .Select(pair => new TableRow
                 {
                     Id = pair.Key.Id,
-                    EmployeeFullName = ($"{pair.Key.Employee.LastNameEng} {pair.Key.Employee.FirstNameEng}"),
-                    WorkprojectName = pair.Key.Workproject.Name,
-                    DepartmentName = pair.Key.Employee.Department?.Name,
-                    TeamName = pair.Key.Employee.Team?.Name,
+                    EmployeeFullName = ($"{pair.Key.Definition.Employee.LastNameEng} {pair.Key.Definition.Employee.FirstNameEng}"),
+                    WorkprojectName = pair.Key.Definition.Workproject.Name,
+                    DepartmentName = pair.Key.Definition.Employee.Department?.Name,
+                    TeamName = pair.Key.Definition.Employee.Team?.Name,
                     LastSavedDateTime = pair.Key.LastSavedDateTime,
-                    Period = pair.Key.Period.ToString(),
-                    Year = pair.Key.Year.ToString(),
+                    Period = pair.Key.Definition.Period.ToString(),
+                    Year = pair.Key.Definition.Year.ToString(),
                     Permissions = pair.Value
                 })
                 .ToList();
@@ -185,13 +196,10 @@ namespace BonusSystemApplication.Controllers
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
-                Definition = new Definition(form),
+                Definition = form.Definition,
                 ObjectivesResults = form.ObjectivesResults,
-                Conclusion = new Conclusion(form),
+                Conclusion = form.Conclusion,
                 Signatures = form.Signatures,
-
-                //ObjectivesSignature = new ObjectivesSignature(form),
-                //ResultsSignature = new ResultsSignature(form),
 
                 PeriodSelectList = Enum.GetNames(typeof(Periods))
                     .Select(s => new SelectListItem
@@ -214,6 +222,13 @@ namespace BonusSystemApplication.Controllers
                         Text = w.Name,
                     })
                     .ToList(),
+
+                TeamName = form.Definition.Employee.Team.Name,
+                PositionName = form.Definition.Employee.Position.NameEng,
+                Pid = form.Definition.Employee.Pid,
+                WorkprojectDescription = form.Definition.Workproject.Description,
+                IsObjectivesFreezed = form.IsObjectivesFreezed,
+                IsResultsFreezed = form.IsResultsFreezed,
             };
             #endregion
 
@@ -501,7 +516,7 @@ namespace BonusSystemApplication.Controllers
         {
 
 
-            long formId = definition.FormId;
+            long formId = definition.Id;
 
             // TODO: add user checking
             //       add formId checking
@@ -514,13 +529,13 @@ namespace BonusSystemApplication.Controllers
 
             #region Save Form
             Console.WriteLine("-----------------------------------------START QUERYING-------------------------------------------");
-            IQueryable<Form> formDefinition = formRepository.GetDefinition(formId);
+            //IQueryable<Form> formDefinition = formRepository.GetDefinition(formId);
             Console.WriteLine("----------------------------------------_DEFINITION DONE------------------------------------------");
-            IQueryable<Form> formObjectives = formRepository.GetObjectives(formId);
+            //IQueryable<Form> formObjectives = formRepository.GetObjectives(formId);
             Console.WriteLine("-----------------------------------------OBJECTIVES DONE------------------------------------------");
-            IQueryable<Form> formResults = formRepository.GetResults(formId);
+            //IQueryable<Form> formResults = formRepository.GetResults(formId);
             Console.WriteLine("------------------------------------------RESULTS DONE--------------------------------------------");
-            IQueryable<Form> formConclusion = formRepository.GetConclusion(formId);
+            //IQueryable<Form> formConclusion = formRepository.GetConclusion(formId);
             Console.WriteLine("-----------------------------------------CONSLUSION DONE------------------------------------------");
             #endregion
 

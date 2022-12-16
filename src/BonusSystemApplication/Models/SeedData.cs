@@ -182,15 +182,37 @@ namespace BonusSystemApplication.Models
             new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
         };
 
+        private static Definition[] Definitions =
+        {
+            new Definition { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2021 },
+            new Definition { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
+            new Definition { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2021 },
+            new Definition { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
+
+            new Definition { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
+            new Definition { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
+        };
+
+        private static Conclusion[] Conclusions =
+        {
+            new Conclusion { },
+            new Conclusion { },
+            new Conclusion { },
+            new Conclusion { },
+
+            new Conclusion { },
+            new Conclusion { },
+        };
+
         private static Form[] Forms =
         {
-            new Form { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2021, Signatures = Signatures[0] },
-            new Form { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[1] },
-            new Form { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2021, Signatures = Signatures[2] },
-            new Form { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[3] },
+            new Form { Definition = Definitions[0], Conclusion = Conclusions[0], Signatures = Signatures[0] },
+            new Form { Definition = Definitions[1], Conclusion = Conclusions[1], Signatures = Signatures[1] },
+            new Form { Definition = Definitions[2], Conclusion = Conclusions[2], Signatures = Signatures[2] },
+            new Form { Definition = Definitions[3], Conclusion = Conclusions[3], Signatures = Signatures[3] },
 
-            new Form { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, Signatures = Signatures[4], IsWpmHox = true },
-            new Form { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2021, Signatures = Signatures[5], IsWpmHox = true },
+            new Form { Definition = Definitions[4], Conclusion = Conclusions[4], Signatures = Signatures[4] },
+            new Form { Definition = Definitions[5], Conclusion = Conclusions[5], Signatures = Signatures[5] },
         };
 
         private static ObjectiveResult[] ObjectivesResults =
@@ -270,6 +292,12 @@ namespace BonusSystemApplication.Models
 
             if (context.Workprojects.Count() == 0)
                 context.Workprojects.AddRange(Workprojects);
+
+            if (context.Definitions.Count() == 0)
+                context.Definitions.AddRange(Definitions);
+
+            if (context.Conclusions.Count() == 0)
+                context.Conclusions.AddRange(Conclusions);
 
             if (context.Forms.Count() == 0)
                 context.Forms.AddRange(Forms);

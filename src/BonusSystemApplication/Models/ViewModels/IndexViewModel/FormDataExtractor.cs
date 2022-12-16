@@ -8,7 +8,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<string> availableEmployees = new List<string>();
             availableEmployees = forms
-                .Select(f => ($"{f.Employee.LastNameEng} {f.Employee.FirstNameEng}"))
+                .Select(f => ($"{f.Definition.Employee.LastNameEng} {f.Definition.Employee.FirstNameEng}"))
                 .Distinct()
                 .ToList();
 
@@ -18,7 +18,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<Periods> availablePeriods = new List<Periods>();
             availablePeriods = forms
-                .Select(f => f.Period)
+                .Select(f => f.Definition.Period)
                 .Distinct()
                 .ToList();
 
@@ -28,7 +28,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<int> availableYears = new List<int>();
             availableYears = forms
-                .Select(f => f.Year)
+                .Select(f => f.Definition.Year)
                 .Distinct()
                 .ToList();
 
@@ -38,7 +38,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<string> availableDepartments = new List<string>();
             availableDepartments = forms
-                .Select(f => f.Employee.Department.Name)
+                .Select(f => f.Definition.Employee.Department.Name)
                 .Distinct()
                 .ToList();
 
@@ -48,7 +48,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<string> availableTeams = new List<string>();
             availableTeams = forms
-                .Select(f => f.Employee.Team.Name)
+                .Select(f => f.Definition.Employee.Team.Name)
                 .Distinct()
                 .ToList();
 
@@ -58,7 +58,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             List<string> availableWorkprojects = new List<string>();
             availableWorkprojects = forms
-                .Select(f => f.Workproject.Name)
+                .Select(f => f.Definition.Workproject.Name)
                 .Distinct()
                 .ToList();
 

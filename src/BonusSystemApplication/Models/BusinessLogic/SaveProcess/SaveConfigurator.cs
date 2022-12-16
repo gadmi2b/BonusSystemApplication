@@ -63,10 +63,10 @@ namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess
             List<IQueryable<Form>> queries = new List<IQueryable<Form>>();
             foreach(UpdatableParts part in updatableParts)
             {
-                if (part == UpdatableParts.Definition) { queries.Add(formRepo.GetDefinition(formId)); }
-                if (part == UpdatableParts.Objectives) { queries.Add(formRepo.GetObjectives(formId)); }
-                if (part == UpdatableParts.Results) { queries.Add(formRepo.GetResults(formId)); }
-                if (part == UpdatableParts.Conclusion) { queries.Add(formRepo.GetConclusion(formId)); }
+                //if (part == UpdatableParts.Definition) { queries.Add(formRepo.GetDefinition(formId)); }
+                //if (part == UpdatableParts.Objectives) { queries.Add(formRepo.GetObjectives(formId)); }
+                //if (part == UpdatableParts.Results) { queries.Add(formRepo.GetResults(formId)); }
+                //if (part == UpdatableParts.Conclusion) { queries.Add(formRepo.GetConclusion(formId)); }
             }
 
             //queries.Add(formRepo.GetDefinition(formId));

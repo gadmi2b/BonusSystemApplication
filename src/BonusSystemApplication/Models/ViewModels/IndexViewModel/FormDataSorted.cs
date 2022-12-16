@@ -90,12 +90,12 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         }
         private bool IsFormCanBeShown(Form form, List<string> formPermissions, UserSelections userSelections)
         {
-            if (isValueSelected(userSelections.SelectedEmployees, $"{form.Employee.LastNameEng} {form.Employee.FirstNameEng}") &&
-                isValueSelected(userSelections.SelectedPeriods, form.Period.ToString()) &&
-                isValueSelected(userSelections.SelectedYears, form.Year.ToString()) &&
-                isValueSelected(userSelections.SelectedDepartments, form.Employee.Department.Name) &&
-                isValueSelected(userSelections.SelectedTeams, form.Employee.Team.Name) &&
-                isValueSelected(userSelections.SelectedWorkprojects, form.Workproject.Name) &&
+            if (isValueSelected(userSelections.SelectedEmployees, $"{form.Definition.Employee.LastNameEng} {form.Definition.Employee.FirstNameEng}") &&
+                isValueSelected(userSelections.SelectedPeriods, form.Definition.Period.ToString()) &&
+                isValueSelected(userSelections.SelectedYears, form.Definition.Year.ToString()) &&
+                isValueSelected(userSelections.SelectedDepartments, form.Definition.Employee.Department.Name) &&
+                isValueSelected(userSelections.SelectedTeams, form.Definition.Employee.Team.Name) &&
+                isValueSelected(userSelections.SelectedWorkprojects, form.Definition.Workproject.Name) &&
                 isValueSelected(userSelections.SelectedPermissions, formPermissions))
             {
                 return true;

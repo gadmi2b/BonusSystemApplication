@@ -113,22 +113,22 @@ namespace BonusSystemApplication.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Period = table.Column<int>(type: "int", nullable: false),
-                    Year = table.Column<int>(type: "int", nullable: false),
-                    LastSavedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastSavedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OverallKpi = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsWpmHox = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    IsProposalForBonusPayment = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    ManagerComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmployeeComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OtherComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsObjectivesFreezed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsResultsFreezed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    LastSavedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastSavedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Period = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    IsWpmHox = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
                     ManagerId = table.Column<long>(type: "bigint", nullable: true),
                     ApproverId = table.Column<long>(type: "bigint", nullable: true),
-                    WorkprojectId = table.Column<long>(type: "bigint", nullable: false)
+                    WorkprojectId = table.Column<long>(type: "bigint", nullable: false),
+                    OverallKpi = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsProposalForBonusPayment = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ManagerComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmployeeComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtherComment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
