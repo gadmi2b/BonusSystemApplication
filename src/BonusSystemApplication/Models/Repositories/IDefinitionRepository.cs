@@ -2,6 +2,7 @@
 {
     public interface IDefinitionRepository
     {
-        Form GetForm(long formId);
+        List<long> GetParticipationFormIds(long userId);
+        List<long> GetGlobalAccessFormIds(IEnumerable<GlobalAccess> globalAccesses);
     }
 }

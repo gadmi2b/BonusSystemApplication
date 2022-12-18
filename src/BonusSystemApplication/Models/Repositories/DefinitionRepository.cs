@@ -7,15 +7,52 @@ namespace BonusSystemApplication.Models.Repositories
         private DataContext context;
         public DefinitionRepository(DataContext ctx) => context = ctx;
 
-        public Form GetForm(long formId)
+        public List<long> GetParticipationFormIds(long userId)
         {
-            Form form = context.Definitions
-                .Where(d => d.Id == formId)
-                .Include(d => d.Form)
-                    .ThenInclude(f => f.Definition)
-                .Select(d => d.Form)
-                .First();
-            return form;
+            return context.Definitions
+                .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
+                .Select(d => d.Id)
+                .ToList();
+        }
+        public List<long> GetGlobalAccessFormIds(IEnumerable<GlobalAccess> globalAccesses)
+        {
+            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable()
+                .Include(d => d.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(d => d.Employee)
+                    .ThenInclude(e => e.Team)
+                .Include(d => d.Workproject)
+                .AsNoTracking();
+
+            IQueryable<Definition> queryFiltered = null;
+
+            foreach (var gAccess in globalAccesses)
+            {
+                IQueryable<Definition> query = queryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(gAccess));
+
+                if (query == null)
+                {
+                    continue;
+                }
+
+                if (queryFiltered == null)
+                {
+                    queryFiltered = query;
+                }
+                else
+                {
+                    queryFiltered = queryFiltered.Union(query);
+                }
+            }
+
+            if(queryFiltered == null)
+            {
+                return new List<long>();
+            }
+
+            return queryFiltered
+                .Select(d => d.Id)
+                .ToList();
         }
     }
 }

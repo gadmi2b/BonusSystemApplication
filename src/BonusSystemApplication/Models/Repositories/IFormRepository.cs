@@ -2,16 +2,12 @@
 {
     public interface IFormRepository
     {
-        IEnumerable<Form> GetForms();
+        List<Form> GetForms(List<long> formIds);
         Form GetFormData(long formId);
         Form GetIsFreezedAndSignatureData(long formId);
         Form GetObjectivesResultsData(long formId);
 
-
-        IQueryable<Form> GetAllFormsQuery(IEnumerable<GlobalAccess> globalAccesses, long userId);
-        IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<GlobalAccess> globalAccesses);
-        IQueryable<Form> GetFormsWithLocalAccess(long userId);
-        IQueryable<Form> GetFormsWithParticipation(long userId);
+        List<long> GetLocalAccessFormIds(long userId);
 
         //IQueryable<Form> GetDefinition(long formId);
         //IQueryable<Form> GetObjectives(long formId);

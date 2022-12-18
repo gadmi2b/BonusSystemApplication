@@ -30,6 +30,7 @@
     <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataAvailable.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataExtractor.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\DataHandler.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataSorted.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\IFormDataExtractor.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\Permissions.cs" />

@@ -270,7 +270,8 @@ namespace BonusSystemApplication.Models
         private static GlobalAccess[] GlobalAccess =
         {
             new GlobalAccess { User = Users[8], Department = Departments[2], Team = Teams[3] },
-            new GlobalAccess { User = Users[8], Department = Departments[2], Team = Teams[5] }
+            new GlobalAccess { User = Users[8], Department = Departments[2], Team = Teams[5] },
+            new GlobalAccess { User = Users[6], Department = Departments[2], Team = Teams[5] },
         };
 
 

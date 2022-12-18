@@ -12,6 +12,7 @@ using BonusSystemApplication.Models.BusinessLogic;
 using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
+using BonusSystemApplication.Models.ViewModels.IndexViewModel;
 
 
 //using Newtonsoft.Json.Serialization;
@@ -26,6 +27,7 @@ namespace BonusSystemApplication.Controllers
 
         private IGlobalAccessRepository globalAccessRepository;
         private IFormRepository formRepository;
+        private IDefinitionRepository definitionRepository;
         private IWorkprojectRepository workprojectRepository;
         private IUserRepository userRepository;
 
@@ -35,11 +37,13 @@ namespace BonusSystemApplication.Controllers
                               IGenericRepository<Workproject> workprojectGenRepo,
                               IGlobalAccessRepository globalAccessRepo,
                               IFormRepository formRepo,
+                              IDefinitionRepository definitionRepo,
                               IWorkprojectRepository workprojectRepo,
                               IUserRepository userRepo)
         {
             _logger = logger;
             formRepository = formRepo;
+            definitionRepository = definitionRepo;
             userGenRepository = userGenRepo;
             workprojectGenRepository = workprojectGenRepo;
             globalAccessRepository = globalAccessRepo;
@@ -55,60 +59,40 @@ namespace BonusSystemApplication.Controllers
             IEnumerable<GlobalAccess> globalAccesses = globalAccessRepository.GetGlobalAccessesByUserId(UserData.UserId);
             #endregion
 
-            #region Queries to request available for User forms
+            #region Getting form Ids available for User
+            //Form Ids where user has Global accesses
+            IEnumerable<long> gAccessFormIds = definitionRepository.GetGlobalAccessFormIds(globalAccesses);
 
+            //Form Ids where user has Local access
+            IEnumerable<long> lAccessFormIds = formRepository.GetLocalAccessFormIds(UserData.UserId);
 
-                #region Query for all Forms
-                //IQueryable<Form> allFormsQuery = formRepository.GetAllFormsQuery(globalAccesses, UserData.UserId);
-                //List<Form> availableFormz = allFormsQuery.ToList();
-                #endregion
+            //Form Ids where user has any Participation
+            IEnumerable<long> participationFormIds = definitionRepository.GetParticipationFormIds(UserData.UserId);
 
-                #region Query for forms where user has Global accesses
-                IQueryable<Form> globalAccessFormsQuery = formRepository.GetFormsWithGlobalAccess(globalAccesses);
-                #endregion
-
-                #region Query for forms where user has Local access
-                IQueryable<Form> localAccessFormsQuery = formRepository.GetFormsWithLocalAccess(UserData.UserId);
-                #endregion
-
-                #region Query for forms where user has any Participation
-                IQueryable<Form> participantFormsQuery = formRepository.GetFormsWithParticipation(UserData.UserId);
-                #endregion
-
-                #region Queries combination
-                IQueryable<Form> combinedFormsQuery = participantFormsQuery.Union(localAccessFormsQuery);
-                if (globalAccessFormsQuery != null)
-                {
-                    combinedFormsQuery = combinedFormsQuery.Union(globalAccessFormsQuery);
-                }
-                #endregion
-
+            //Form Ids combination and sorting
+            List<long> availableFormIds = gAccessFormIds
+                                            .Union(lAccessFormIds)
+                                            .Union(participationFormIds)
+                                            .OrderBy(id => id)
+                                            .ToList();
             #endregion
 
-            #region Load data from database into forms
-            List<Form> availableForms = combinedFormsQuery
-                .Select(f => new Form
-                {
-                    Id = f.Id,
-                    LastSavedDateTime = f.LastSavedDateTime,
-                    LocalAccesses = f.LocalAccesses,
-                    Definition = new Definition
-                    {
-                        Form = f,
-                        Employee = f.Definition.Employee,
-                        Workproject = f.Definition.Workproject,
-                        ApproverId = f.Definition.ApproverId,
-                        ManagerId = f.Definition.ManagerId,
-                        WorkprojectId = f.Definition.WorkprojectId,
-                        Period = f.Definition.Period,
-                        Year = f.Definition.Year,
-                    }
-                })
-                .ToList();
+            #region Load data from database into forms and get corrsponding permissions
+            Dictionary<Form, List<Permissions>> availableFormPermissions =
+                                    formRepository.GetForms(availableFormIds)
+                                    .ToDictionary(f => f,
+                                                  f => FormDataExtractor.GetPermissions(f,
+                                                                                        UserData.UserId,
+                                                                                        gAccessFormIds,
+                                                                                        lAccessFormIds,
+                                                                                        participationFormIds));
             #endregion
 
-            UserData.SetAvailableFormIds(availableForms);
-            FormDataAvailable formDataAvailable = new FormDataAvailable(availableForms, UserData.UserId, globalAccesses);
+            UserData.AvailableFormIds = availableFormIds;
+
+            FormDataAvailable formDataAvailable = new FormDataAvailable(availableFormPermissions);
+
+
             userSelections.PrepareSelections(formDataAvailable);
             FormDataSorted formDataSorted = new FormDataSorted(availableForms, UserData.UserId, globalAccesses, userSelections);
 
@@ -173,7 +157,7 @@ namespace BonusSystemApplication.Controllers
             else
             {
                 #region Validate selected form id
-                if (id < 0 || !UserData.availableFormIds.Contains(id))
+                if (id < 0 || !UserData.AvailableFormIds.Contains(id))
                 {
                     // TODO: incorrect formId was requested to be opened
                     //       to add error page to show it to user
@@ -248,7 +232,7 @@ namespace BonusSystemApplication.Controllers
             List<long> itemsToRemove = new List<long>();
             foreach (long formId in selectedFormIds)
             {
-                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
                 {
                     itemsToRemove.Add(formId);
                 }
@@ -280,7 +264,7 @@ namespace BonusSystemApplication.Controllers
             List<long> itemsToRemove = new List<long>();
             foreach (long formId in selectedFormIds)
             {
-                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
                 {
                     itemsToRemove.Add(formId);
                 }
@@ -310,7 +294,7 @@ namespace BonusSystemApplication.Controllers
             List<long> itemsToRemove = new List<long>();
             foreach (long formId in selectedFormIds)
             {
-                if (formId <= 0 || !UserData.availableFormIds.Contains(formId))
+                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
                 {
                     itemsToRemove.Add(formId);
                 }

@@ -16,11 +16,5 @@
         public Workproject? Workproject { get; set; }
 
         public Form Form { get; set; }
-
-        //readonly values
-        //public string TeamName { get; set; } = string.Empty;
-        //public string PositionName { get; set; } = string.Empty;
-        //public string Pid { get; set; } = string.Empty;
-        //public string WorkprojectDescription { get; set; } = string.Empty;
     }
 }

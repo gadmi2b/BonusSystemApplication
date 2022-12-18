@@ -11,9 +11,43 @@ namespace BonusSystemApplication.Models.Repositories
         private DataContext context;
         public FormRepository(DataContext ctx) => context = ctx;
 
-        public IEnumerable<Form> GetForms()
+        public List<Form> GetForms(List<long> formIds)
         {
-            throw new NotImplementedException();
+            return context.Forms
+                    .Where(f => formIds.Contains(f.Id))
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        LastSavedDateTime = f.LastSavedDateTime,
+                        Definition = new Definition
+                        {
+                            Period = f.Definition.Period,
+                            Year = f.Definition.Year,
+                            ApproverId = f.Definition.ApproverId,
+                            ManagerId = f.Definition.ManagerId,
+                            EmployeeId = f.Definition.EmployeeId,
+
+                            Employee = new User
+                            {
+                                LastNameEng = f.Definition.Employee.LastNameEng,
+                                FirstNameEng = f.Definition.Employee.FirstNameEng,
+                                Team = new Team
+                                {
+                                    Name = f.Definition.Employee.Team.Name,
+                                },
+                                Department = new Department
+                                {
+                                    Name = f.Definition.Employee.Department.Name,
+                                },
+                            },
+                            Workproject = new Workproject
+                            {
+                                Id = f.Definition.Workproject.Id,
+                                Name = f.Definition.Workproject.Name,
+                            },
+                        }
+                    })
+                    .ToList();
         }
 
         public void CreateForm(Form form)
@@ -147,120 +181,13 @@ namespace BonusSystemApplication.Models.Repositories
             return form;
         }
 
-        public IQueryable<Form> GetAllFormsQuery(IEnumerable<GlobalAccess> globalAccesses, long userId)
+        public List<long> GetLocalAccessFormIds(long userId)
         {
-            IQueryable<Form> allFormsQuery= context.Forms.AsQueryable()
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Department)
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Team)
-                .Include(f => f.Definition)
-                    .ThenInclude(f => f.Workproject)
-                .Include(f => f.LocalAccesses)
-                .AsNoTracking();
-
-            IQueryable<Form> formsQuery1 = allFormsQuery.Where(ExpressionBuilder.GetExpressionForLocalAccess(userId));
-            IQueryable<Form> formsQuery2 = allFormsQuery.Where(ExpressionBuilder.GetExpressionForParticipation(userId));
-
-            IQueryable<Form> formsQuery = formsQuery1.Union(formsQuery2);
-            List<Form> forms = formsQuery.ToList();
-
-            foreach (var formGA in globalAccesses)
-            {
-                IQueryable<Form> query = allFormsQuery.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
-
-                if (query == null)
-                {
-                    continue;
-                }
-
-                if (formsQuery == null)
-                {
-                    formsQuery = query;
-                }
-                else
-                {
-                    formsQuery = formsQuery.Union(query);
-                }
-            }
-
-            //formsQuery.Where(ExpressionBuilder.GetExpressionForLocalAccess(userId));
-            //formsQuery.Where(ExpressionBuilder.GetExpressionForParticipation(userId));
-
-            return formsQuery;
-        }
-
-        public IQueryable<Form> GetFormsWithGlobalAccess(IEnumerable<GlobalAccess> globalAccesses) //OK
-        {
-            IQueryable<Form> formsQueryInitial = context.Forms.AsQueryable()
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Department)
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Team)
-                .Include(f => f.Definition)
-                    .ThenInclude(f => f.Workproject)
-                .Include(f => f.LocalAccesses)
-                .AsNoTracking();
-
-            IQueryable<Form> formsQuery = null;
-
-            foreach (var formGA in globalAccesses)
-            {
-                IQueryable<Form> query = formsQueryInitial.Where(ExpressionBuilder.GetExpressionForGlobalAccess(formGA));
-
-                if(query == null)
-                {
-                    continue;
-                }
-
-                if (formsQuery == null)
-                {
-                    formsQuery = query;
-                }
-                else
-                {
-                    formsQuery = formsQuery.Union(query);
-                }
-            }
-
-            // TODO: add null check here or in controller
-            return formsQuery;
-        }
-        public IQueryable<Form> GetFormsWithLocalAccess(long userId) //OK
-        {
-            IQueryable<Form> forms = context.Forms.AsQueryable()
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Department)
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Team)
-                .Include(f => f.Definition)
-                    .ThenInclude(f => f.Workproject)
-                .Include(f => f.LocalAccesses)
-                .Where(ExpressionBuilder.GetExpressionForLocalAccess(userId))
-                .AsNoTracking();
-            return forms;
-        }
-        public IQueryable<Form> GetFormsWithParticipation(long userId) //OK
-        {
-            IQueryable<Form> forms = context.Forms.AsQueryable()
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Department)
-                .Include(f => f.Definition)
-                    .ThenInclude(d => d.Employee)
-                        .ThenInclude(e => e.Team)
-                .Include(f => f.Definition)
-                    .ThenInclude(f => f.Workproject)
-                .Include(f => f.LocalAccesses)
-                .Where(ExpressionBuilder.GetExpressionForParticipation(userId))
-                .AsNoTracking();
-            return forms;
+            return context.Forms
+                .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
+                .Select(f => f.Id)
+                .ToList();
+                
         }
 
         /*

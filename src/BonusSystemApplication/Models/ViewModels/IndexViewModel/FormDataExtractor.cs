@@ -2,8 +2,38 @@
 
 namespace BonusSystemApplication.Models.ViewModels.Index
 {
-    public class FormDataExtractor : IFormDataExtractor
+    public static class FormDataExtractor
     {
+
+        public static List<Permissions> GetPermissions(Form f,
+                                                long userId,
+                                                IEnumerable<long> gAccessFormIds,
+                                                IEnumerable<long> lAccessFormIds,
+                                                IEnumerable<long> participationFormIds)
+        {
+            List<Permissions> permissions = new List<Permissions>();
+            if (gAccessFormIds.Contains(f.Id))
+            {
+                permissions.Add(Permissions.GlobalAccess);
+            }
+            if (lAccessFormIds.Contains(f.Id))
+            {
+                permissions.Add(Permissions.LocalAccess);
+            }
+            if (participationFormIds.Contains(f.Id))
+            {
+                if (userId == f.Definition.EmployeeId) { permissions.Add(Permissions.Employee); }
+                if (userId == f.Definition.ManagerId) { permissions.Add(Permissions.Manager); }
+                if (userId == f.Definition.ApproverId) { permissions.Add(Permissions.Approver); }
+            }
+
+            return permissions;
+        }
+
+
+
+
+
         public List<string> GetAvailableEmployees(List<Form> forms)
         {
             List<string> availableEmployees = new List<string>();
@@ -96,6 +126,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availablePermissions;
         }
+
 
         private List<long> GetFormIdsWithGlobalAccess(List<Form> forms, IEnumerable<GlobalAccess> globalAccesses)
         {

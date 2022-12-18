@@ -10,6 +10,7 @@
         public List<string> SelectedTeams { get; set; } = new List<string>();
         public List<string> SelectedWorkprojects { get; set; } = new List<string>();
 
+        
         public void PrepareSelections(FormDataAvailable formDataAvailable)
         {
             RemoveDistinct();
@@ -141,5 +142,4 @@
             itemsToRemove.Clear();
         }
     }
-
 }

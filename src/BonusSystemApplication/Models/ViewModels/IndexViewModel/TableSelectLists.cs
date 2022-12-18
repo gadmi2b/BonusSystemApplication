@@ -14,6 +14,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<SelectListItem> DepartmentSelectListItems { get; set; }
         public List<SelectListItem> TeamSelectListItems { get; set; }
         public List<SelectListItem> WorkprojectSelectListItems { get; set; }
+        
 
         public TableSelectLists(FormDataAvailable formDataAvailable,
                                 UserSelections userSelections)
@@ -86,6 +87,5 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return selectListItems;
         }
-
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddTransient<IGenericRepository<Workproject>, GenericRepository
 
 builder.Services.AddTransient<IGlobalAccessRepository, GlobalAccessRepository>();
 builder.Services.AddTransient<IFormRepository, FormRepository>();
+builder.Services.AddTransient<IDefinitionRepository, DefinitionRepository>();
 builder.Services.AddTransient<IWorkprojectRepository, WorkprojectRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 
