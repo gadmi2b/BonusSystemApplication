@@ -9,14 +9,14 @@ namespace BonusSystemApplication.Models.Repositories
 
         public List<long> GetParticipationFormIds(long userId)
         {
-            return context.Definitions
+            return context.Definitions.TagWith("Get form ids with Participation access")
                 .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
                 .Select(d => d.Id)
                 .ToList();
         }
         public List<long> GetGlobalAccessFormIds(IEnumerable<GlobalAccess> globalAccesses)
         {
-            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable()
+            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable().TagWith("Get form ids with Global access")
                 .Include(d => d.Employee)
                     .ThenInclude(e => e.Department)
                 .Include(d => d.Employee)

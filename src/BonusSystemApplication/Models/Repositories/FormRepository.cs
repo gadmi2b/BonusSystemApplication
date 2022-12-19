@@ -13,7 +13,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public List<Form> GetForms(List<long> formIds)
         {
-            return context.Forms
+            return context.Forms.TagWith("Get forms data for Index")
                     .Where(f => formIds.Contains(f.Id))
                     .Select(f => new Form
                     {
@@ -183,7 +183,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public List<long> GetLocalAccessFormIds(long userId)
         {
-            return context.Forms
+            return context.Forms.TagWith("Get form ids with Local access")
                 .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
                 .Select(f => f.Id)
                 .ToList();

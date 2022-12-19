@@ -78,26 +78,33 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Load data from database into forms and get corrsponding permissions
-            Dictionary<Form, List<Permissions>> availableFormPermissions =
+            FormDataAvailable formDataAvailable = new FormDataAvailable(
                                     formRepository.GetForms(availableFormIds)
                                     .ToDictionary(f => f,
                                                   f => FormDataExtractor.GetPermissions(f,
                                                                                         UserData.UserId,
                                                                                         gAccessFormIds,
                                                                                         lAccessFormIds,
-                                                                                        participationFormIds));
+                                                                                        participationFormIds)));
+
             #endregion
 
             UserData.AvailableFormIds = availableFormIds;
 
-            FormDataAvailable formDataAvailable = new FormDataAvailable(availableFormPermissions);
+            // TODO: to analyse: this time there are Several big classes for data preparing
+            //       FormDataAvailable, FormDataSorted
+            //       and it is necessary to manage same information in similar manner several times
+            //       Perhaps it will be useful to create a class for each information/type
+            //       and operate it inside this class. If a new information will appear
+            //       it will be necessary to create new object and attach it to viewmodel...
 
+            // TODO: FormDataSorted: Sorted<Data> collections are not used. FormDataSorted could be removed.
 
             userSelections.PrepareSelections(formDataAvailable);
-            FormDataSorted formDataSorted = new FormDataSorted(availableForms, UserData.UserId, globalAccesses, userSelections);
+            FormDataSorted formDataSorted = new FormDataSorted(formDataAvailable, userSelections);
 
-            #region Prepare TableRows
-            List<TableRow> tableRows = formDataSorted.FormAndPermissions
+            #region Prepare TableRows: table content
+            List<TableRow> tableRows = formDataSorted.SortedFormPermissions
                 .Select(pair => new TableRow
                 {
                     Id = pair.Key.Id,
@@ -108,12 +115,12 @@ namespace BonusSystemApplication.Controllers
                     LastSavedDateTime = pair.Key.LastSavedDateTime,
                     Period = pair.Key.Definition.Period.ToString(),
                     Year = pair.Key.Definition.Year.ToString(),
-                    Permissions = pair.Value
+                    Permissions = pair.Value.Select(p => p.ToString()).ToList(),
                 })
                 .ToList();
             #endregion
 
-            #region Prepare TableSelectLists
+            #region Prepare TableSelectLists: dropdowns content
             TableSelectLists tableSelectLists = new TableSelectLists(formDataAvailable, userSelections);
             #endregion
 

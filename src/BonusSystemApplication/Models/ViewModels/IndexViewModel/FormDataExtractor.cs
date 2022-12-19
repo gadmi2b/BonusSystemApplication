@@ -29,12 +29,22 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return permissions;
         }
-
-
-
-
-
-        public List<string> GetAvailableEmployees(List<Form> forms)
+        public static List<Permissions> GetAvailablePermissions(List<List<Permissions>> allPermissions)
+        {
+            List<Permissions> permissions = new List<Permissions>();
+            foreach (List<Permissions> list in allPermissions)
+            {
+                foreach (Permissions p in list)
+                {
+                    if (!permissions.Contains(p))
+                    {
+                        permissions.Add(p);
+                    }
+                }
+            }
+            return permissions;
+        }
+        public static List<string> GetAvailableEmployees(List<Form> forms)
         {
             List<string> availableEmployees = new List<string>();
             availableEmployees = forms
@@ -44,7 +54,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableEmployees;
         }
-        public List<Periods> GetAvailablePeriods(List<Form> forms)
+        public static List<Periods> GetAvailablePeriods(List<Form> forms)
         {
             List<Periods> availablePeriods = new List<Periods>();
             availablePeriods = forms
@@ -54,7 +64,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availablePeriods;
         }
-        public List<int> GetAvailableYears(List<Form> forms)
+        public static List<int> GetAvailableYears(List<Form> forms)
         {
             List<int> availableYears = new List<int>();
             availableYears = forms
@@ -64,7 +74,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableYears;
         }
-        public List<string> GetAvailableDepartments(List<Form> forms)
+        public static List<string> GetAvailableDepartments(List<Form> forms)
         {
             List<string> availableDepartments = new List<string>();
             availableDepartments = forms
@@ -74,7 +84,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableDepartments;
         }
-        public List<string> GetAvailableTeams(List<Form> forms)
+        public static List<string> GetAvailableTeams(List<Form> forms)
         {
             List<string> availableTeams = new List<string>();
             availableTeams = forms
@@ -84,7 +94,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableTeams;
         }
-        public List<string> GetAvailableWorkprojects(List<Form> forms)
+        public static List<string> GetAvailableWorkprojects(List<Form> forms)
         {
             List<string> availableWorkprojects = new List<string>();
             availableWorkprojects = forms
@@ -94,95 +104,5 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return availableWorkprojects;
         }
-        public List<Permissions> GetAvailablePermissions(List<Form> forms, long userId, IEnumerable<GlobalAccess> globalAccesses)
-        {
-            List<long> formIdsWithGlobalAccess = GetFormIdsWithGlobalAccess(forms, globalAccesses);
-            List<long> formIdsWithLocalAccess = GetFormIdsWithLocalAccess(forms, userId);
-            List<long> formIdsWithEmployeeParticipation = GetFormIdsWithEmployeeParticipation(forms, userId);
-            List<long> formIdsWithManagerParticipation = GetFormIdsWithManagerParticipation(forms, userId);
-            List<long> formIdsWithApproverParticipation = GetFormIdsWithApproverParticipation(forms, userId);
-
-            List<Permissions> availablePermissions = new List<Permissions>();
-            if (formIdsWithGlobalAccess.Count > 0)
-            {
-                availablePermissions.Add(Permissions.GlobalAccess);
-            }
-            if (formIdsWithLocalAccess.Count > 0)
-            {
-                availablePermissions.Add(Permissions.LocalAccess);
-            }
-            if (formIdsWithEmployeeParticipation.Count > 0)
-            {
-                availablePermissions.Add(Permissions.Employee);
-            }
-            if (formIdsWithManagerParticipation.Count > 0)
-            {
-                availablePermissions.Add(Permissions.Manager);
-            }
-            if (formIdsWithApproverParticipation.Count > 0)
-            {
-                availablePermissions.Add(Permissions.Approver);
-            }
-
-            return availablePermissions;
-        }
-
-
-        private List<long> GetFormIdsWithGlobalAccess(List<Form> forms, IEnumerable<GlobalAccess> globalAccesses)
-        {
-            List<long> formIdsWithGlobalAccess = new List<long>();
-
-            foreach (GlobalAccess formGA in globalAccesses)
-            {
-                Func<Form, bool> delegateGA = ExpressionBuilder.GetExpressionForGlobalAccess(formGA).Compile();
-                formIdsWithGlobalAccess = forms
-                    .Where(f => delegateGA.Invoke(f))
-                    .Select(f => f.Id)
-                    .ToList();
-            }
-
-            return formIdsWithGlobalAccess;
-        }
-        private List<long> GetFormIdsWithLocalAccess(List<Form> forms, long userId)
-        {
-            Func<Form, bool> delegateLA = ExpressionBuilder.GetExpressionForLocalAccess(userId).Compile();
-            List<long> formIdsWithLocalAccess = forms
-                .Where(f => delegateLA.Invoke(f))
-                .Select(f => f.Id)
-                .ToList();
-
-            return formIdsWithLocalAccess;
-        }
-        private List<long> GetFormIdsWithEmployeeParticipation(List<Form> forms, long userId)
-        {
-            Func<Form, bool> delEmployeeParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Employee);
-            List<long> formIdsWithEmployeeParticipation = forms
-                .Where(f => delEmployeeParticipation.Invoke(f))
-                .Select(f => f.Id)
-                .ToList();
-
-            return formIdsWithEmployeeParticipation;
-        }
-        private List<long> GetFormIdsWithManagerParticipation(List<Form> forms, long userId)
-        {
-            Func<Form, bool> delManagerParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Manager);
-            List<long> formIdsWithManagerParticipation = forms
-                .Where(f => delManagerParticipation.Invoke(f))
-                .Select(f => f.Id)
-                .ToList();
-
-            return formIdsWithManagerParticipation;
-        }
-        private List<long> GetFormIdsWithApproverParticipation(List<Form> forms, long userId)
-        {
-            Func<Form, bool> delApproverParticipation = ExpressionBuilder.GetMethodForParticipation(userId, Permissions.Approver);
-            List<long> formIdsWithApproverParticipation = forms
-                .Where(f => delApproverParticipation.Invoke(f))
-                .Select(f => f.Id)
-                .ToList();
-
-            return formIdsWithApproverParticipation;
-        }
-
     }
 }
