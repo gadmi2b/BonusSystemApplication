@@ -5,8 +5,8 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public class FormDataSorted
     {
-        public Dictionary<Form, List<Permissions>> SortedFormPermissions { get; } = new Dictionary<Form, List<Permissions>>();
-        public List<Permissions> SortedPermissions { get; set; }
+        public Dictionary<Form, List<Permission>> SortedFormPermissions { get; } = new Dictionary<Form, List<Permission>>();
+        public List<Permission> SortedPermissions { get; set; }
         public List<string> SortedEmployees { get; set; }
         public List<Periods> SortedPeriods { get; set; }
         public List<int> SortedYears { get; set; }
@@ -18,7 +18,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         {
             foreach(Form f in formDataAvailable.AvailableFormPermissions.Keys)
             {
-                List<Permissions> permissions = formDataAvailable.AvailableFormPermissions[f];
+                List<Permission> permissions = formDataAvailable.AvailableFormPermissions[f];
                 if (IsFormCanBeShown(f, userSelections, permissions))
                 {
                     SortedFormPermissions.Add(f, permissions);
@@ -36,7 +36,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             SortedPermissions = FormDataExtractor.GetAvailablePermissions(SortedFormPermissions.Values.ToList());
         }
 
-        private bool IsFormCanBeShown(Form form, UserSelections userSelections, List<Permissions> formPermissions)
+        private bool IsFormCanBeShown(Form form, UserSelections userSelections, List<Permission> formPermissions)
         {
             if (isValueSelected(userSelections.SelectedEmployees, $"{form.Definition.Employee.LastNameEng} {form.Definition.Employee.FirstNameEng}") &&
                 isValueSelected(userSelections.SelectedPeriods, form.Definition.Period.ToString()) &&

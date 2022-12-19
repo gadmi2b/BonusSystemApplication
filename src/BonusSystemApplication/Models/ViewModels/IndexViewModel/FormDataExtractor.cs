@@ -5,36 +5,36 @@ namespace BonusSystemApplication.Models.ViewModels.Index
     public static class FormDataExtractor
     {
 
-        public static List<Permissions> GetPermissions(Form f,
+        public static List<Permission> GetPermissions(Form f,
                                                 long userId,
                                                 IEnumerable<long> gAccessFormIds,
                                                 IEnumerable<long> lAccessFormIds,
                                                 IEnumerable<long> participationFormIds)
         {
-            List<Permissions> permissions = new List<Permissions>();
+            List<Permission> permissions = new List<Permission>();
             if (gAccessFormIds.Contains(f.Id))
             {
-                permissions.Add(Permissions.GlobalAccess);
+                permissions.Add(Permission.GlobalAccess);
             }
             if (lAccessFormIds.Contains(f.Id))
             {
-                permissions.Add(Permissions.LocalAccess);
+                permissions.Add(Permission.LocalAccess);
             }
             if (participationFormIds.Contains(f.Id))
             {
-                if (userId == f.Definition.EmployeeId) { permissions.Add(Permissions.Employee); }
-                if (userId == f.Definition.ManagerId) { permissions.Add(Permissions.Manager); }
-                if (userId == f.Definition.ApproverId) { permissions.Add(Permissions.Approver); }
+                if (userId == f.Definition.EmployeeId) { permissions.Add(Permission.Employee); }
+                if (userId == f.Definition.ManagerId) { permissions.Add(Permission.Manager); }
+                if (userId == f.Definition.ApproverId) { permissions.Add(Permission.Approver); }
             }
 
             return permissions;
         }
-        public static List<Permissions> GetAvailablePermissions(List<List<Permissions>> allPermissions)
+        public static List<Permission> GetAvailablePermissions(List<List<Permission>> allPermissions)
         {
-            List<Permissions> permissions = new List<Permissions>();
-            foreach (List<Permissions> list in allPermissions)
+            List<Permission> permissions = new List<Permission>();
+            foreach (List<Permission> list in allPermissions)
             {
-                foreach (Permissions p in list)
+                foreach (Permission p in list)
                 {
                     if (!permissions.Contains(p))
                     {

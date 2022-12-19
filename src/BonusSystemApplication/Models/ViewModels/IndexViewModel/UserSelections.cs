@@ -93,7 +93,7 @@
             {
                 if (string.IsNullOrEmpty(item)
                     ? false
-                    : (Enum.TryParse(item, out Permissions result) && !formDataAvailable.AvailablePermissions.Contains(result)) ||
+                    : (Enum.TryParse(item, out Permission result) && !formDataAvailable.AvailablePermissions.Contains(result)) ||
                       !Enum.TryParse(item, out result))
                 {
                     itemsToRemove.Add(item);

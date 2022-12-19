@@ -13,7 +13,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public List<Form> GetForms(List<long> formIds)
         {
-            return context.Forms.TagWith("Get forms data for Index")
+            return context.Forms.TagWith($"Forms data for Index view: {formIds.Count()} forms total")
                     .Where(f => formIds.Contains(f.Id))
                     .Select(f => new Form
                     {
@@ -86,7 +86,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public Form GetFormData(long formId) //OK
         {
-            return context.Forms
+            return context.Forms.TagWith("Form data for Form view requesting")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -130,17 +130,11 @@ namespace BonusSystemApplication.Models.Repositories
                                 Name = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Name,
                                 Description = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Description,
                             },
-                            Period = f.Definition.Period,
-                            Year = f.Definition.Year,
-                            IsWpmHox = f.Definition.IsWpmHox,
                         },
-
-                        //Conclusion data block
-                        Conclusion = f.Conclusion,
-
                         // Objectives and Results data block
                         ObjectivesResults = f.ObjectivesResults,
-
+                        // Conclusion data block
+                        Conclusion = f.Conclusion,
                         // Signatures data block
                         Signatures = f.Signatures,
                     })
@@ -149,7 +143,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public Form GetIsFreezedAndSignatureData(long formId) //OK
         {
-            Form form = context.Forms
+            Form form = context.Forms.TagWith("IsFreezed and Signatures requesting")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -183,7 +177,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public List<long> GetLocalAccessFormIds(long userId)
         {
-            return context.Forms.TagWith("Get form ids with Local access")
+            return context.Forms.TagWith("Form Ids with Local access requesting")
                 .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
                 .Select(f => f.Id)
                 .ToList();

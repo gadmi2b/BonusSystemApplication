@@ -30,9 +30,8 @@
     <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataAvailable.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataExtractor.cs" />
-    <Compile Include="Models\ViewModels\IndexViewModel\DataHandler.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataSorted.cs" />
-    <Compile Include="Models\ViewModels\IndexViewModel\Permissions.cs" />
+    <Compile Include="Models\ViewModels\IndexViewModel\Permission.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\TableRow.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\TableSelectLists.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\UserSelections.cs" />

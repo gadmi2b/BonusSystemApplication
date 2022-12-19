@@ -22,7 +22,7 @@
         }
 
         public static Dictionary<string, object> GetPropertiesValues(string checkboxId,
-                                                                     bool isCheckboxChecked)
+                                                                       bool isCheckboxChecked)
         {
             Dictionary<string, object> propertiesValues = new Dictionary<string, object>();
             if (AffectedPropertyLinker == null || string.IsNullOrEmpty(checkboxId))
@@ -32,7 +32,7 @@
 
             #region Description of logic
             /*
-             * LOGIC: < if signature was dropped => reject must be dropped also>
+             * LOGIC: < if signature was dropped => reject must be dropped also >
              * if checkbox for signing was clicked then we have to add:
              * - isSigned  key-value pair to dictionary (id and value)
              * - signature key-value pair to dictionary (id and just empty.string)

@@ -12,8 +12,6 @@ using BonusSystemApplication.Models.BusinessLogic;
 using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
-using BonusSystemApplication.Models.ViewModels.IndexViewModel;
-
 
 //using Newtonsoft.Json.Serialization;
 

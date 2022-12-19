@@ -5,8 +5,8 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 {
     public class FormDataAvailable
     {
-        public Dictionary<Form, List<Permissions>> AvailableFormPermissions { get; }
-        public List<Permissions> AvailablePermissions { get; set; } = new List<Permissions>();
+        public Dictionary<Form, List<Permission>> AvailableFormPermissions { get; }
+        public List<Permission> AvailablePermissions { get; set; } = new List<Permission>();
         public List<string> AvailableEmployees { get; set; }
         public List<Periods> AvailablePeriods { get; set; }
         public List<int> AvailableYears { get; set; }
@@ -14,7 +14,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<string> AvailableTeams { get; set; }
         public List<string> AvailableWorkprojects { get; set; }
 
-        public FormDataAvailable(Dictionary<Form, List<Permissions>> availableFormPermissions)
+        public FormDataAvailable(Dictionary<Form, List<Permission>> availableFormPermissions)
         {
             AvailableFormPermissions = availableFormPermissions;
 

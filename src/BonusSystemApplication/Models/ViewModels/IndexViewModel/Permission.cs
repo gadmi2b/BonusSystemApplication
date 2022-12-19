@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.Index
 {
-    public enum Permissions
+    public enum Permission
     {
         Undefined = 0,
         Employee = 1,
