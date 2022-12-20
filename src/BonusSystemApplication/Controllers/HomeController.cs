@@ -503,8 +503,6 @@ namespace BonusSystemApplication.Controllers
                                          List<ObjectiveResult> objectivesResults,
                                          Conclusion conclusion)
         {
-
-
             long formId = definition.Id;
 
             // TODO: add user checking
@@ -515,18 +513,6 @@ namespace BonusSystemApplication.Controllers
                 // TODO: save new Form
                 //       return to client
             }
-
-            #region Save Form
-            Console.WriteLine("-----------------------------------------START QUERYING-------------------------------------------");
-            //IQueryable<Form> formDefinition = formRepository.GetDefinition(formId);
-            Console.WriteLine("----------------------------------------_DEFINITION DONE------------------------------------------");
-            //IQueryable<Form> formObjectives = formRepository.GetObjectives(formId);
-            Console.WriteLine("-----------------------------------------OBJECTIVES DONE------------------------------------------");
-            //IQueryable<Form> formResults = formRepository.GetResults(formId);
-            Console.WriteLine("------------------------------------------RESULTS DONE--------------------------------------------");
-            //IQueryable<Form> formConclusion = formRepository.GetConclusion(formId);
-            Console.WriteLine("-----------------------------------------CONSLUSION DONE------------------------------------------");
-            #endregion
 
             #region Getting Form IsFreezed states and all Signatures
             Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);

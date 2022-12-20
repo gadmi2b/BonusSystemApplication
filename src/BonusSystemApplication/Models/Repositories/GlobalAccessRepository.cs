@@ -9,7 +9,7 @@ namespace BonusSystemApplication.Models.Repositories
 
         public IEnumerable<GlobalAccess> GetGlobalAccessesByUserId(long userId)
         {
-            return context.GlobalAccess.TagWith("Getting global accesses")
+            return context.GlobalAccess.TagWith("Global accesses requesting")
                 .Where(x => x.UserId == userId)
                 .AsNoTracking()
                 .ToList();
