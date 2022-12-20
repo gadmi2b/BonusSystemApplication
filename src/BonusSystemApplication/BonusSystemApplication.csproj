@@ -20,7 +20,7 @@
   <ItemGroup>
     <Compile Include="Models\BusinessLogic\FormDataHandler.cs" />
     <Compile Include="Models\BusinessLogic\SaveProcess\SaveConfigurator.cs" />
-    <Compile Include="Models\BusinessLogic\SaveProcess\UpdatableParts.cs" />
+    <Compile Include="Models\BusinessLogic\SaveProcess\SaveParts.cs" />
     <Compile Include="Models\BusinessLogic\SignatureProcess\IPropertyLinker.cs" />
     <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinker.cs" />
     <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerFactory.cs" />

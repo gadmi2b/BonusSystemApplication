@@ -457,9 +457,9 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Get form from database and check signature possibility
-            Form form = formRepository.GetIsFreezedAndSignatureData(formId);
+            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
             if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
-               !FormDataHandler.IsObjectivesSignaturePossible(form))
+               !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
             {
                 JsonResult errorResponse = new JsonResult(new
                 {
@@ -470,7 +470,7 @@ namespace BonusSystemApplication.Controllers
             }
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
-               !FormDataHandler.IsResultsSignaturePossible(form))
+               !FormDataHandler.IsResultsSignaturePossible(statesAndSignatures))
             {
                 JsonResult errorResponse = new JsonResult(new
                 {
@@ -483,9 +483,9 @@ namespace BonusSystemApplication.Controllers
 
             #region Fill property-value pair with User signature and Update Form data
             FormDataHandler.PutUserSignature(ref propertiesValues);
-            FormDataHandler.UpdateSignatures(form, propertiesValues);
-            FormDataHandler.UpdateLastSavedFormData(form);
-            formRepository.UpdateFormSignatures(form);
+            FormDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
+            FormDataHandler.UpdateLastSavedFormData(statesAndSignatures);
+            formRepository.UpdateFormSignatures(statesAndSignatures);
             #endregion
 
             JsonResult response = new JsonResult(new
@@ -518,12 +518,17 @@ namespace BonusSystemApplication.Controllers
             Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
             #endregion
 
-            // TODO: depending on states and signatures extract from DB form parts
-            //       and collect information about what should be changed into SaveConfigurator
+            // TODO: Use ModelState to check model binding status
 
             SaveConfigurator saveConfigurator = new SaveConfigurator(statesAndSignatures);
-            //IQueryable<Form> query = saveConfigurator.GetFormQuery(formId, formRepository);
-            Form form = saveConfigurator.GetFormQuery(formId, formRepository);
+            if(!saveConfigurator.IsDataCouldBeUpdated(formRepository,
+                                                      definition,
+                                                      objectivesResults,
+                                                      conclusion))
+            {
+                // TODO: update is not possible
+                return RedirectToAction("Form");
+            }
 
             return RedirectToAction("Form");
         }
