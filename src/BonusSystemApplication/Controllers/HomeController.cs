@@ -107,7 +107,7 @@ namespace BonusSystemApplication.Controllers
                 {
                     Id = pair.Key.Id,
                     EmployeeFullName = ($"{pair.Key.Definition.Employee.LastNameEng} {pair.Key.Definition.Employee.FirstNameEng}"),
-                    WorkprojectName = pair.Key.Definition.Workproject.Name,
+                    WorkprojectName = pair.Key.Definition.Workproject?.Name,
                     DepartmentName = pair.Key.Definition.Employee.Department?.Name,
                     TeamName = pair.Key.Definition.Employee.Team?.Name,
                     LastSavedDateTime = pair.Key.LastSavedDateTime,
@@ -144,6 +144,13 @@ namespace BonusSystemApplication.Controllers
                 form = new Form()
                 {
                     Id = 0,
+                    Definition = new Definition(),
+                    Conclusion = new Conclusion(),
+                    Signatures = new Signatures
+                    {
+                        ForObjectives = new ForObjectives(),
+                        ForResults = new ForResults(),
+                    },
                 };
 
                 List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
@@ -154,6 +161,8 @@ namespace BonusSystemApplication.Controllers
                         Id = 0,
                         Row = i + 1,
                         Form = form,
+                        Objective = new Objective(),
+                        Result = new Result(),
                     };
                     objectivesResults.Add(objectiveResult);
                 }
@@ -181,6 +190,10 @@ namespace BonusSystemApplication.Controllers
             IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
             IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
+
+            // TODO: More thin ViewModel is required: Definition = form.Definition - is to dick
+            //       I already took to form only necessary data
+            //       So I need to send only this data to client (need mapper)
 
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
@@ -212,10 +225,10 @@ namespace BonusSystemApplication.Controllers
                     })
                     .ToList(),
 
-                TeamName = form.Definition.Employee.Team.Name,
-                PositionName = form.Definition.Employee.Position.NameEng,
-                Pid = form.Definition.Employee.Pid,
-                WorkprojectDescription = form.Definition.Workproject.Description,
+                TeamName = form.Definition.Employee?.Team?.Name,
+                PositionName = form.Definition.Employee?.Position?.NameEng,
+                Pid = form.Definition.Employee?.Pid,
+                WorkprojectDescription = form.Definition.Workproject?.Description,
                 IsObjectivesFreezed = form.IsObjectivesFreezed,
                 IsResultsFreezed = form.IsResultsFreezed,
             };
@@ -503,6 +516,19 @@ namespace BonusSystemApplication.Controllers
                                          List<ObjectiveResult> objectivesResults,
                                          Conclusion conclusion)
         {
+            // TODO: [BindNever] for Employee and Form is not working: ModelState is Invalid
+            //       because these Properties are required
+            //       Perhaps it will be better to make DefinitionView, ConclusionView etc
+            //       or One ViewModel like HFVM but simplifyed till only necessary properties
+
+
+            if (!ModelState.IsValid)
+            {
+                // the model was not valid => redisplay the form so that 
+                // the user can fix errors
+                return RedirectToAction("Form", new { id = definition.Id });
+            }
+
             long formId = definition.Id;
 
             // TODO: add user checking

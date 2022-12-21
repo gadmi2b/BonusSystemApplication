@@ -97,9 +97,16 @@ namespace BonusSystemApplication.Models.Repositories
                         //Definition data block
                         Definition = new Definition
                         {
+                            EmployeeId = f.Definition.EmployeeId,
+                            ManagerId = f.Definition.ManagerId,
+                            ApproverId = f.Definition.ApproverId,
+                            WorkprojectId = f.Definition.WorkprojectId,
+                            Period = f.Definition.Period,
+                            Year = f.Definition.Year,
+                            IsWpmHox = f.Definition.IsWpmHox,
+
                             Employee = new User
                             {
-                                Id = f.Definition.Employee.Id,
                                 FirstNameEng = f.Definition.Employee.FirstNameEng,
                                 LastNameEng = f.Definition.Employee.LastNameEng,
                                 Pid = f.Definition.Employee.Pid,
@@ -114,19 +121,16 @@ namespace BonusSystemApplication.Models.Repositories
                             },
                             Manager = new User
                             {
-                                Id = f.Definition.ManagerId == null ? 0 : (long)f.Definition.ManagerId,
-                                FirstNameEng = f.Definition.Employee.FirstNameEng,
-                                LastNameEng = f.Definition.Employee.LastNameEng,
+                                FirstNameEng = f.Definition.Manager == null ? string.Empty : f.Definition.Manager.FirstNameEng,
+                                LastNameEng = f.Definition.Manager == null ? string.Empty : f.Definition.Manager.LastNameEng,
                             },
                             Approver = new User
                             {
-                                Id = f.Definition.ApproverId == null ? 0 : (long)f.Definition.ApproverId,
-                                FirstNameEng = f.Definition.Employee.FirstNameEng,
-                                LastNameEng = f.Definition.Employee.LastNameEng,
+                                FirstNameEng = f.Definition.Approver == null ? string.Empty : f.Definition.Approver.FirstNameEng,
+                                LastNameEng = f.Definition.Approver == null ? string.Empty : f.Definition.Approver.LastNameEng,
                             },
                             Workproject = new Workproject
                             {
-                                Id = f.Definition.WorkprojectId == null ? 0 : (long)f.Definition.WorkprojectId,
                                 Name = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Name,
                                 Description = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Description,
                             },

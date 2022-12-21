@@ -1,4 +1,6 @@
-﻿namespace BonusSystemApplication.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace BonusSystemApplication.Models
 {
     public class ObjectiveResult
     {
@@ -8,6 +10,7 @@
         public Result Result { get; set; }
 
         public long FormId { get; set; }
+        [BindNever]
         public Form Form { get; set; }
     }
 }
