@@ -37,13 +37,13 @@
           alert(response.status + " |  " + response.message);
         } else {
           for (let property in response.propertiesValues) {
-            let propertyID = '#' + property;
+            let propertyID = property;
             let propertyValue = response.propertiesValues[property];
 
             if (typeof propertyValue === "boolean") {
-              $(propertyID).prop("checked", propertyValue);
+              document.getElementById(propertyID).checked = propertyValue;
             } else if (typeof propertyValue === "string") {
-              $(propertyID).text(propertyValue);
+              document.getElementById(propertyID).innerHTML = propertyValue;
             }
           }
         }

@@ -13,6 +13,7 @@ namespace BonusSystemApplication.Models.ViewModels
         public List<SelectListItem> EmployeeSelectList { get; set; }
         public List<SelectListItem> WorkprojectSelectList { get; set; }
 
+        public long Id { get; set; }
         public string? TeamName { get; set; }
         public string? PositionName { get; set; }
         public string? Pid { get; set; }

@@ -198,6 +198,7 @@ namespace BonusSystemApplication.Controllers
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
+                Id = form.Id,
                 Definition = form.Definition,
                 ObjectivesResults = form.ObjectivesResults,
                 Conclusion = form.Conclusion,
@@ -519,7 +520,7 @@ namespace BonusSystemApplication.Controllers
             // TODO: [BindNever] for Employee and Form is not working: ModelState is Invalid
             //       because these Properties are required
             //       Perhaps it will be better to make DefinitionView, ConclusionView etc
-            //       or One ViewModel like HFVM but simplifyed till only necessary properties
+            //       or One ViewModel like HFVM but simplified till only necessary properties
 
 
             if (!ModelState.IsValid)

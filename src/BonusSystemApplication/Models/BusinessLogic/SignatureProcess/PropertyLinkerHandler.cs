@@ -45,19 +45,19 @@
 
             if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsKey(checkboxId))
             {
-                propertiesValues.Add(GetFullName(checkboxId), isCheckboxChecked);
+                propertiesValues.Add(checkboxId, isCheckboxChecked);
 
                 if (IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
                                     checkboxId, out string signatureId))
                 {
-                    propertiesValues.Add(GetFullName(signatureId), string.Empty);
+                    propertiesValues.Add(signatureId, string.Empty);
                 }
 
                 if (!isCheckboxChecked &&
                     IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedIsRejected,
                                     checkboxId, out string isRejectedId))
                 {
-                    propertiesValues.Add(GetFullName(isRejectedId), isCheckboxChecked);
+                    propertiesValues.Add(isRejectedId, isCheckboxChecked);
                 }
             }
 
@@ -75,18 +75,18 @@
 
             if (AffectedPropertyLinker.IdPairsIsSignedIsRejected.ContainsValue(checkboxId))
             {
-                propertiesValues.Add(GetFullName(checkboxId), isCheckboxChecked);
+                propertiesValues.Add(checkboxId, isCheckboxChecked);
 
                 if (isCheckboxChecked &&
                     IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedIsRejected,
                                         checkboxId, out string isSignedId))
                 {
-                    propertiesValues.Add(GetFullName(isSignedId), isCheckboxChecked);
+                    propertiesValues.Add(isSignedId, isCheckboxChecked);
 
                     if (IsExistGetMember(AffectedPropertyLinker.IdPairsIsSignedSignature,
                                         isSignedId, out string signatureId))
                     {
-                        propertiesValues.Add(GetFullName(signatureId), string.Empty);
+                        propertiesValues.Add(signatureId, string.Empty);
                     }
                 }
             }

@@ -24,15 +24,15 @@
                 PropertyTypeName = nameof(ForObjectives),
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(ForObjectives.IsSignedByEmployee), nameof(ForObjectives.IsRejectedByEmployee)},
-                    { nameof(ForObjectives.IsSignedByManager), null},
-                    { nameof(ForObjectives.IsSignedByApprover), null},
+                    { ForObjectives.ToStringIsSignedByEmployee(), ForObjectives.ToStringIsRejectedByEmployee()},
+                    { ForObjectives.ToStringIsSignedByManager(), null},
+                    { ForObjectives.ToStringIsSignedByApprover(), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(ForObjectives.IsSignedByEmployee), nameof(ForObjectives.EmployeeSignature)},
-                    { nameof(ForObjectives.IsSignedByManager), nameof(ForObjectives.ManagerSignature)},
-                    { nameof(ForObjectives.IsSignedByApprover), nameof(ForObjectives.ApproverSignature)},
+                    { ForObjectives.ToStringIsSignedByEmployee(), ForObjectives.ToStringEmployeeSignature()},
+                    { ForObjectives.ToStringIsSignedByManager(), ForObjectives.ToStringManagerSignature()},
+                    { ForObjectives.ToStringIsSignedByApprover(), ForObjectives.ToStringApproverSignature()},
                 }
             };
         }
