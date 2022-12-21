@@ -1,6 +1,6 @@
 ﻿namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess
 {
-    public enum UpdatableParts
+    public enum SaveParts
     {
         Definition = 0,
         Objectives = 1,

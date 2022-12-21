@@ -5,87 +5,86 @@ namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess
 {
     public class SaveConfigurator
     {
-        public List<UpdatableParts> updatableParts { get; set; } = new List<UpdatableParts>();
+        public List<SaveParts> Parts { get; set; } = new List<SaveParts>();
 
-        // TODO: create a method returned List<IQueryable<Form>> GetFormDataQueries(formIsFreezedAndSignatures):
-        //                                     IQueryable<Form> GetDefinition(formId)
-        //                                     IQueryable<Form> GetObjectives(formId)
-        //                                     IQueryable<Form> GetResults(formId)
-        //                                     IQueryable<Form> GetConclusion(formId)
-        //       and collect List<FormParts> partsToUpdate
-        // TODO: create a method updated requested form depending on partsToUpdate and
-        //       definition, objectivesResults, conclusion
-
-        public SaveConfigurator(Form form)
+        public SaveConfigurator(Form statesAndSignatures)
         {
-            bool isObjectiveSigned = form.Signatures.ForObjectives.IsSignedByEmployee &&
-                                     form.Signatures.ForObjectives.IsSignedByManager &&
-                                     form.Signatures.ForObjectives.IsSignedByApprover;
+            bool isObjectiveSigned = statesAndSignatures.Signatures.ForObjectives.IsSignedByEmployee &&
+                                     statesAndSignatures.Signatures.ForObjectives.IsSignedByManager &&
+                                     statesAndSignatures.Signatures.ForObjectives.IsSignedByApprover;
 
-            bool isResultsSigned = form.Signatures.ForResults.IsSignedByEmployee &&
-                                   form.Signatures.ForResults.IsSignedByManager &&
-                                   form.Signatures.ForResults.IsSignedByApprover;
+            bool isResultsSigned = statesAndSignatures.Signatures.ForResults.IsSignedByEmployee &&
+                                   statesAndSignatures.Signatures.ForResults.IsSignedByManager &&
+                                   statesAndSignatures.Signatures.ForResults.IsSignedByApprover;
 
             if(isResultsSigned)
             {
-                // TODO: nothing to save - exit
-                updatableParts = null;
+                // Nothing could be saved
+                Parts = null;
             }
-            else if (form.IsResultsFreezed)
+            else if (statesAndSignatures.IsResultsFreezed)
             {
-                // TODO: only Conclusion could be saved
-                updatableParts.Add(UpdatableParts.Conclusion);
+                // Conclusion could be saved
+                Parts.Add(SaveParts.Conclusion);
             }
             else if (isObjectiveSigned)
             {
-                // TODO: Results | Conclusion could be saved
-                updatableParts.Add(UpdatableParts.Results);
-                updatableParts.Add(UpdatableParts.Conclusion);
+                // Results & Conclusion could be saved
+                Parts.Add(SaveParts.Results);
+                Parts.Add(SaveParts.Conclusion);
             }
-            else if (form.IsObjectivesFreezed)
+            else if (statesAndSignatures.IsObjectivesFreezed)
             {
-                // TODO: Results | Conclusion could be saved
-                updatableParts.Add(UpdatableParts.Results);
-                updatableParts.Add(UpdatableParts.Conclusion);
+                // Results & Conclusion could be saved
+                Parts.Add(SaveParts.Results);
+                Parts.Add(SaveParts.Conclusion);
             }
             else
             {
-                // TODO: Definition | Objectives | Results | Conclusion could be saved
-                updatableParts.Add(UpdatableParts.Definition);
-                updatableParts.Add(UpdatableParts.Objectives);
-                updatableParts.Add(UpdatableParts.Results);
-                updatableParts.Add(UpdatableParts.Conclusion);
+                // Definition & Objectives & Results & Conclusion could be saved
+                Parts.Add(SaveParts.Definition);
+                Parts.Add(SaveParts.Objectives);
+                Parts.Add(SaveParts.Results);
+                Parts.Add(SaveParts.Conclusion);
             }
         }
     
-        public Form GetFormQuery(long formId, IFormRepository formRepo)
+        public bool IsDataCouldBeUpdated(IFormRepository formRepo,
+                                         Definition definition,
+                                         List<ObjectiveResult> objectivesResults,
+                                         Conclusion conclusion)
         {
-            List<IQueryable<Form>> queries = new List<IQueryable<Form>>();
-            foreach(UpdatableParts part in updatableParts)
+            if (Parts.Contains(SaveParts.Definition))
             {
-                //if (part == UpdatableParts.Definition) { queries.Add(formRepo.GetDefinition(formId)); }
-                //if (part == UpdatableParts.Objectives) { queries.Add(formRepo.GetObjectives(formId)); }
-                //if (part == UpdatableParts.Results) { queries.Add(formRepo.GetResults(formId)); }
-                //if (part == UpdatableParts.Conclusion) { queries.Add(formRepo.GetConclusion(formId)); }
+                // TODO: Is Definition possible to update?
+                if(definition.EmployeeId == null ||
+                   definition.Period == null ||
+                   definition.Year == null ||
+                   definition.WorkprojectId == null)
+                {
+                    return false;
+                }
+
+                // TODO: Is combination of these components is unique?
+                
+            }
+            if (Parts.Contains(SaveParts.Objectives))
+            {
+                // TODO: Is Objectives possible to update?
+
+            }
+            if (Parts.Contains(SaveParts.Results))
+            {
+                // TODO: Is Results possible to update?
+
+            }
+            if (Parts.Contains(SaveParts.Conclusion))
+            {
+                // TODO: Is Conclusion possible to update?
+
             }
 
-            //queries.Add(formRepo.GetDefinition(formId));
-            //queries.Add(formRepo.GetConclusion(formId));
-
-            IQueryable<Form> combinedFormsQuery = null;
-            for (int i = 0; i < queries.Count; i++)
-            {
-                if (i == 0)
-                {
-                    combinedFormsQuery = queries[i];
-                }
-                else
-                {
-                    combinedFormsQuery = combinedFormsQuery.Union(queries[i]);
-                }
-            }
-
-            return combinedFormsQuery.ToList()[0]; // EF problem here
+            return true;
         }
     }
 }
