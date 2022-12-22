@@ -2,7 +2,7 @@
 {
     public static class PropertyLinkerHandler
     {
-        public static IPropertyLinker AffectedPropertyLinker { get; set; } = null;
+        public static IPropertyLinker? AffectedPropertyLinker { get; set; } = null;
 
         public static bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
                                                              string checkboxId)
@@ -118,20 +118,6 @@
 
             if (member == null) { return false; }
             else { return true; }
-        }
-        /// <summary>
-        /// Returns ClassName.property for property it belongs
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns>ClassName.property for property it belongs</returns>
-        private static string GetFullName(string property)
-        {
-            if (AffectedPropertyLinker?.PropertyTypeName == null || string.IsNullOrEmpty(property))
-            {
-                return string.Empty;
-            }
-
-            return $"{AffectedPropertyLinker.PropertyTypeName}.{property}";
         }
     }
 }

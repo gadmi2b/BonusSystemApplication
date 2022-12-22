@@ -9,5 +9,34 @@
         public bool IsSignedByManager { get; set; }
         public string? ApproverSignature { get; set; }
         public bool IsSignedByApprover { get; set; }
+
+        public static string ToStringEmployeeSignature()
+        {
+            return $"{nameof(ForResults)}.{nameof(EmployeeSignature)}";
+        }
+        public static string ToStringIsSignedByEmployee()
+        {
+            return $"{nameof(ForResults)}.{nameof(IsSignedByEmployee)}";
+        }
+        public static string ToStringIsRejectedByEmployee()
+        {
+            return $"{nameof(ForResults)}.{nameof(IsRejectedByEmployee)}";
+        }
+        public static string ToStringManagerSignature()
+        {
+            return $"{nameof(ForResults)}.{nameof(ManagerSignature)}";
+        }
+        public static string ToStringIsSignedByManager()
+        {
+            return $"{nameof(ForResults)}.{nameof(IsSignedByManager)}";
+        }
+        public static string ToStringApproverSignature()
+        {
+            return $"{nameof(ForResults)}.{nameof(ApproverSignature)}";
+        }
+        public static string ToStringIsSignedByApprover()
+        {
+            return $"{nameof(ForResults)}.{nameof(IsSignedByApprover)}";
+        }
     }
 }

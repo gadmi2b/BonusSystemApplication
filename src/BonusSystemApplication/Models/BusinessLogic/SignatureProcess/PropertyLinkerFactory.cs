@@ -21,7 +21,6 @@
             return new PropertyLinker()
             {
                 PropertyType = PropertyType.ForObjectives,
-                PropertyTypeName = nameof(ForObjectives),
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
                     { ForObjectives.ToStringIsSignedByEmployee(), ForObjectives.ToStringIsRejectedByEmployee()},
@@ -42,18 +41,17 @@
             return new PropertyLinker()
             {
                 PropertyType = PropertyType.ForResults,
-                PropertyTypeName = nameof(ForResults),
                 IdPairsIsSignedIsRejected = new Dictionary<string, string?>()
                 {
-                    { nameof(ForResults.IsSignedByEmployee), nameof(ForResults.IsRejectedByEmployee)},
-                    { nameof(ForResults.IsSignedByManager), null},
-                    { nameof(ForResults.IsSignedByApprover), null},
+                    { ForResults.ToStringIsSignedByEmployee(), ForResults.ToStringIsRejectedByEmployee()},
+                    { ForResults.ToStringIsSignedByManager(), null},
+                    { ForResults.ToStringIsSignedByApprover(), null},
                 },
                 IdPairsIsSignedSignature = new Dictionary<string, string?>()
                 {
-                    { nameof(ForResults.IsSignedByEmployee), nameof(ForResults.EmployeeSignature)},
-                    { nameof(ForResults.IsSignedByManager), nameof(ForResults.ManagerSignature)},
-                    { nameof(ForResults.IsSignedByApprover), nameof(ForResults.ApproverSignature)},
+                    { ForResults.ToStringIsSignedByEmployee(), ForResults.ToStringEmployeeSignature()},
+                    { ForResults.ToStringIsSignedByManager(), ForResults.ToStringManagerSignature()},
+                    { ForResults.ToStringIsSignedByApprover(), ForResults.ToStringApproverSignature()},
                 }
             };
         }

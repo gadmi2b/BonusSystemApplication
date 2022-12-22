@@ -12,6 +12,7 @@ using BonusSystemApplication.Models.BusinessLogic;
 using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -194,6 +195,16 @@ namespace BonusSystemApplication.Controllers
             // TODO: More thin ViewModel is required: Definition = form.Definition - is to dick
             //       I already took to form only necessary data
             //       So I need to send only this data to client (need mapper)
+
+            // HomeFormViewModel        same
+            //  [DefinitionView]        new
+            //  [ColclusionView]        new
+            //  [ObjectiveResultView]   new
+            //      Objective           same
+            //      Result              same
+            //  [SignatureView]         new
+            //      ForObjectives       same
+            //      ForResults          same
 
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
@@ -527,7 +538,16 @@ namespace BonusSystemApplication.Controllers
             {
                 // the model was not valid => redisplay the form so that 
                 // the user can fix errors
-                return RedirectToAction("Form", new { id = definition.Id });
+                foreach(string key in ModelState.Keys)
+                {
+                    if (ModelState[key].ValidationState == ModelValidationState.Invalid)
+                    {
+                        if (key.Contains(nameof(Models.Form)) || key.Equals($"{nameof(Definition).ToLower()}.{nameof(Definition.Employee)}"))
+                            continue;
+                        else
+                            return RedirectToAction("Form", new { id = definition.Id });
+                    }
+                }
             }
 
             long formId = definition.Id;
