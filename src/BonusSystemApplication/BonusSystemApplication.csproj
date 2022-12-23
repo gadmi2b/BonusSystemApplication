@@ -26,6 +26,10 @@
     <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerFactory.cs" />
     <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerHandler.cs" />
     <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyType.cs" />
+    <Compile Include="Models\ViewModels\FormViewModel\ConclusionViewModel.cs" />
+    <Compile Include="Models\ViewModels\FormViewModel\DefinitionViewModel.cs" />
+    <Compile Include="Models\ViewModels\FormViewModel\ObjectiveResultViewModel.cs" />
+    <Compile Include="Models\ViewModels\FormViewModel\SignatureViewModel.cs" />
     <Compile Include="Models\ViewModels\HomeFormViewModel.cs" />
     <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataAvailable.cs" />
@@ -83,10 +87,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\ViewModels\FormViewModel\" />
   </ItemGroup>
 
 </Project>

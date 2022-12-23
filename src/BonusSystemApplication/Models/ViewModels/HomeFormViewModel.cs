@@ -20,5 +20,6 @@ namespace BonusSystemApplication.Models.ViewModels
         public string? WorkprojectDescription { get; set; }
         public bool IsObjectivesFreezed { get; set; }
         public bool IsResultsFreezed { get; set; }
+
     }
 }
