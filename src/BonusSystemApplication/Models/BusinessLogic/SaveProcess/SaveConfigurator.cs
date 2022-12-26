@@ -41,7 +41,10 @@ namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess
             }
             else
             {
-                // Definition & Objectives & Results & Conclusion could be saved
+                // Definition & Objectives & Results & Conclusion could be saved:
+                // Definition & Objectives are take from form
+                // Results: achieved is taken from form, others recalculated
+                // Conclusion: Comments are taken from form, IsProposalForBonusPayment and OverallKPI recalculated
                 Parts.Add(SaveParts.Definition);
                 Parts.Add(SaveParts.Objectives);
                 Parts.Add(SaveParts.Results);

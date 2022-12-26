@@ -11,11 +11,12 @@
         public long? ApproverId { get; set; }
         public long? WorkprojectId { get; set; }
 
-        public string TeamName { get; set; }
-        public string PositionName { get; set; }
-        public string Pid { get; set; }
-        public string WorkprojectDescription { get; set; }
+        public string? TeamName { get; set; }
+        public string? PositionName { get; set; }
+        public string? Pid { get; set; }
+        public string? WorkprojectDescription { get; set; }
 
+        public DefinitionViewModel() { }
         public DefinitionViewModel(Definition source)
         {
             Id = source.Id;
@@ -27,10 +28,10 @@
             ApproverId = source.ApproverId;
             WorkprojectId = source.WorkprojectId;
 
-            TeamName = source.Employee?.Team?.Name == null ? string.Empty : source.Employee.Team.Name;
-            PositionName = source.Employee?.Position?.NameEng == null ? string.Empty : source.Employee.Position.NameEng;
-            Pid = source.Employee?.Pid == null ? string.Empty : source.Employee.Pid;
-            WorkprojectDescription = source.Workproject?.Description == null ? string.Empty : source.Workproject.Description;
+            TeamName = source.Employee?.Team?.Name;
+            PositionName = source.Employee?.Position?.NameEng;
+            Pid = source.Employee?.Pid;
+            WorkprojectDescription = source.Workproject?.Description;
         }
     }
 }

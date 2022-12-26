@@ -45,7 +45,7 @@ BEM convention: Block Elements Modifiers
   <content class="content">
    <form method="post" id="content-form">
     <div style="display:none">
-        <input asp-for="Id" type="hidden" id="js-formId" readonly />
+        <input asp-for="Definition.Id" type="hidden" id="js-formId" readonly />
         <input asp-for="IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
 @*        <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />*@
         <input asp-for="IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
@@ -79,18 +79,18 @@ BEM convention: Block Elements Modifiers
             <input asp-for="Definition.IsWpmHox" type="checkbox" />
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="TeamName">Team:</label>
-            <input asp-for="TeamName" type="text"  disabled
+            <label asp-for="Definition.TeamName">Team:</label>
+            <input asp-for="Definition.TeamName" type="text"  disabled
                     class="content--styles content-employee--styles" id="js-teamName"/>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="PositionName">Position:</label>
-            <input asp-for="PositionName" type="text" disabled
+            <label asp-for="Definition.PositionName">Position:</label>
+            <input asp-for="Definition.PositionName" type="text" disabled
                     class="content--styles content-employee--styles" id="js-positionName"/>
         </div>
         <div class="content-employee__column-2-flex">
-            <label asp-for="Pid">PID:</label>
-            <input asp-for="Pid" type="text" disabled
+            <label asp-for="Definition.Pid">PID:</label>
+            <input asp-for="Definition.Pid" type="text" disabled
                     class="content--styles content-employee--styles" id="js-pid"/>
         </div>
         </div>
@@ -100,7 +100,7 @@ BEM convention: Block Elements Modifiers
             <select asp-for="Definition.WorkprojectId" asp-items="Model.WorkprojectSelectList"
                     class="content--styles" onchange="requestWorkprojectDescription(this)">
             </select>
-            <input asp-for="WorkprojectDescription" type="text" disabled
+            <input asp-for="Definition.WorkprojectDescription" type="text" disabled
                     class="content-employee--styles" id="js-workprojectDescription"/>
         </div>
         <div class="content-employee__column-2-flex">
@@ -176,7 +176,7 @@ BEM convention: Block Elements Modifiers
             </td>
             <td colspan="2" class="content-table__footer--padding" ><b>Overall KPI =</b></td>
             <td class="content-table__footer--border"><input id="js-kpiSum" type="text"
-                value="@Model.Conclusion.OverallKpi" disabled/></td>
+                asp-for="Conclusion.OverallKpi" disabled/></td>
           </tr>
         </tfoot>
     </table>

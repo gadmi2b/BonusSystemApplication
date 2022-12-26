@@ -1,11 +1,11 @@
 ﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
-    public class SignatureViewModel
+    public class SignaturesViewModel
     {
-        ForObjectives ForObjectives { get; set; }
-        ForResults ForResults { get; set; }
+        public ForObjectives ForObjectives { get; set; }
+        public ForResults ForResults { get; set; }
     
-        public SignatureViewModel(Signatures source)
+        public SignaturesViewModel(Signatures source)
         {
             ForObjectives = source.ForObjectives;
             ForResults = source.ForResults;

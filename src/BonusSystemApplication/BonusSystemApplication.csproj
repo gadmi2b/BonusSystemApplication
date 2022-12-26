@@ -29,7 +29,7 @@
     <Compile Include="Models\ViewModels\FormViewModel\ConclusionViewModel.cs" />
     <Compile Include="Models\ViewModels\FormViewModel\DefinitionViewModel.cs" />
     <Compile Include="Models\ViewModels\FormViewModel\ObjectiveResultViewModel.cs" />
-    <Compile Include="Models\ViewModels\FormViewModel\SignatureViewModel.cs" />
+    <Compile Include="Models\ViewModels\FormViewModel\SignaturesViewModel.cs" />
     <Compile Include="Models\ViewModels\HomeFormViewModel.cs" />
     <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
     <Compile Include="Models\ViewModels\IndexViewModel\FormDataAvailable.cs" />

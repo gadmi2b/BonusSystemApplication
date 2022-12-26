@@ -5,7 +5,8 @@
         public int Row { get; set; }
         public Objective Objective { get; set; }
         public Result Result { get; set; }
-    
+
+        public ObjectiveResultViewModel() { }
         public ObjectiveResultViewModel(ObjectiveResult source)
         {
             Row = source.Row;

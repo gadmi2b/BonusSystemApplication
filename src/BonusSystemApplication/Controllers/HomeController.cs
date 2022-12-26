@@ -13,6 +13,7 @@ using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using BonusSystemApplication.Models.ViewModels.FormViewModel;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -209,11 +210,12 @@ namespace BonusSystemApplication.Controllers
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
-                Id = form.Id,
-                Definition = form.Definition,
-                ObjectivesResults = form.ObjectivesResults,
-                Conclusion = form.Conclusion,
-                Signatures = form.Signatures,
+                Definition = new DefinitionViewModel(form.Definition),
+                Conclusion = new ConclusionViewModel(form.Conclusion),
+                Signatures = new SignaturesViewModel(form.Signatures),
+                ObjectivesResults = form.ObjectivesResults
+                            .Select(or => new ObjectiveResultViewModel(or))
+                            .ToList(),
 
                 PeriodSelectList = Enum.GetNames(typeof(Periods))
                     .Select(s => new SelectListItem
@@ -237,10 +239,6 @@ namespace BonusSystemApplication.Controllers
                     })
                     .ToList(),
 
-                TeamName = form.Definition.Employee?.Team?.Name,
-                PositionName = form.Definition.Employee?.Position?.NameEng,
-                Pid = form.Definition.Employee?.Pid,
-                WorkprojectDescription = form.Definition.Workproject?.Description,
                 IsObjectivesFreezed = form.IsObjectivesFreezed,
                 IsResultsFreezed = form.IsResultsFreezed,
             };
@@ -524,30 +522,16 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveProcess(Definition definition,
-                                         List<ObjectiveResult> objectivesResults,
-                                         Conclusion conclusion)
+        public IActionResult SaveProcess(DefinitionViewModel definition,
+                                         ConclusionViewModel conclusion,
+                                         List<ObjectiveResultViewModel> objectivesResults)
         {
-            // TODO: [BindNever] for Employee and Form is not working: ModelState is Invalid
-            //       because these Properties are required
-            //       Perhaps it will be better to make DefinitionView, ConclusionView etc
-            //       or One ViewModel like HFVM but simplified till only necessary properties
-
-
             if (!ModelState.IsValid)
             {
                 // the model was not valid => redisplay the form so that 
                 // the user can fix errors
-                foreach(string key in ModelState.Keys)
-                {
-                    if (ModelState[key].ValidationState == ModelValidationState.Invalid)
-                    {
-                        if (key.Contains(nameof(Models.Form)) || key.Equals($"{nameof(Definition).ToLower()}.{nameof(Definition.Employee)}"))
-                            continue;
-                        else
-                            return RedirectToAction("Form", new { id = definition.Id });
-                    }
-                }
+
+                return RedirectToAction("Form", new { id = definition.Id });
             }
 
             long formId = definition.Id;
@@ -568,14 +552,14 @@ namespace BonusSystemApplication.Controllers
             // TODO: Use ModelState to check model binding status
 
             SaveConfigurator saveConfigurator = new SaveConfigurator(statesAndSignatures);
-            if(!saveConfigurator.IsDataCouldBeUpdated(formRepository,
-                                                      definition,
-                                                      objectivesResults,
-                                                      conclusion))
-            {
-                // TODO: update is not possible
-                return RedirectToAction("Form");
-            }
+            //if(!saveConfigurator.IsDataCouldBeUpdated(formRepository,
+            //                                          definition,
+            //                                          objectivesResults,
+            //                                          conclusion))
+            //{
+            //    // TODO: update is not possible
+            //    return RedirectToAction("Form");
+            //}
 
             return RedirectToAction("Form");
         }
