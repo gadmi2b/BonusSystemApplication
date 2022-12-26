@@ -193,20 +193,6 @@ namespace BonusSystemApplication.Controllers
             IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
 
-            // TODO: More thin ViewModel is required: Definition = form.Definition - is to dick
-            //       I already took to form only necessary data
-            //       So I need to send only this data to client (need mapper)
-
-            // HomeFormViewModel        same
-            //  [DefinitionView]        new
-            //  [ColclusionView]        new
-            //  [ObjectiveResultView]   new
-            //      Objective           same
-            //      Result              same
-            //  [SignatureView]         new
-            //      ForObjectives       same
-            //      ForResults          same
-
             #region Prepare HomeFormViewModel
             HomeFormViewModel homeFormViewModel = new HomeFormViewModel
             {
@@ -524,30 +510,72 @@ namespace BonusSystemApplication.Controllers
         [HttpPost]
         public IActionResult SaveProcess(DefinitionViewModel definition,
                                          ConclusionViewModel conclusion,
+                                         SignaturesViewModel signatures,
                                          List<ObjectiveResultViewModel> objectivesResults)
         {
-            if (!ModelState.IsValid)
-            {
-                // the model was not valid => redisplay the form so that 
-                // the user can fix errors
-
-                return RedirectToAction("Form", new { id = definition.Id });
-            }
 
             long formId = definition.Id;
 
             // TODO: add user checking
             //       add formId checking
 
-            if(formId == 0)
+            if (formId == 0)
             {
                 // TODO: save new Form
                 //       return to client
+            }
+            else
+            {
             }
 
             #region Getting Form IsFreezed states and all Signatures
             Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
             #endregion
+
+            if (!ModelState.IsValid)
+            {
+                // the model was not valid => redisplay the form so that 
+                // the user can fix errors
+
+                #region Getting queries for Users and Workprojects
+                IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+                IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
+                #endregion
+
+
+                return View(new HomeFormViewModel
+                {
+                    Definition = definition,
+                    Conclusion = conclusion,
+                    Signatures = new SignaturesViewModel(statesAndSignatures.Signatures),
+                    ObjectivesResults = objectivesResults,
+
+                    PeriodSelectList = Enum.GetNames(typeof(Periods))
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s,
+                        Text = s,
+                    })
+                    .ToList(),
+                    EmployeeSelectList = usersQuery
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = $"{u.LastNameEng} {u.FirstNameEng}",
+                    })
+                    .ToList(),
+                    WorkprojectSelectList = workprojectsQuery
+                    .Select(w => new SelectListItem
+                    {
+                        Value = w.Id.ToString(),
+                        Text = w.Name,
+                    })
+                    .ToList(),
+
+                    IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed,
+                    IsResultsFreezed = statesAndSignatures.IsResultsFreezed,
+                });
+            }
 
             // TODO: Use ModelState to check model binding status
 
