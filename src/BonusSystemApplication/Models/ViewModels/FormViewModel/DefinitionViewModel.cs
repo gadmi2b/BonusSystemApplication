@@ -2,7 +2,6 @@
 {
     public class DefinitionViewModel
     {
-        public long Id { get; set; }
         public Periods Period { get; set; }
         public int Year { get; set; }
         public bool IsWpmHox { get; set; }
@@ -19,7 +18,6 @@
         public DefinitionViewModel() { }
         public DefinitionViewModel(Definition source)
         {
-            Id = source.Id;
             Period = source.Period;
             Year = source.Year;
             IsWpmHox = source.IsWpmHox;

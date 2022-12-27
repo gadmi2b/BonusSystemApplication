@@ -136,55 +136,15 @@ namespace BonusSystemApplication.Controllers
         }
 
         [Route("Home/Form/{id:long}")]
-        public IActionResult Form(long id)
+        public IActionResult Form(HomeFormViewModel formViewModel)
         {
-            #region Form preparing depending on selected Id
-            Form form = null;
-
-            if (id == 0)
+            #region Validate incoming form id
+            if (formViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formViewModel.Id))
             {
-                form = new Form()
-                {
-                    Id = 0,
-                    Definition = new Definition(),
-                    Conclusion = new Conclusion(),
-                    Signatures = new Signatures
-                    {
-                        ForObjectives = new ForObjectives(),
-                        ForResults = new ForResults(),
-                    },
-                };
+                // TODO: incorrect formId was requested to be opened
+                //       to add error page to show it to user
 
-                List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
-                for (int i = 0; i < 10; i++)
-                {
-                    ObjectiveResult objectiveResult = new ObjectiveResult()
-                    {
-                        Id = 0,
-                        Row = i + 1,
-                        Form = form,
-                        Objective = new Objective(),
-                        Result = new Result(),
-                    };
-                    objectivesResults.Add(objectiveResult);
-                }
-                form.ObjectivesResults = objectivesResults;
-            }
-            else
-            {
-                #region Validate selected form id
-                if (id < 0 || !UserData.AvailableFormIds.Contains(id))
-                {
-                    // TODO: incorrect formId was requested to be opened
-                    //       to add error page to show it to user
-
-                    RedirectToAction("Index");
-                }
-                #endregion
-
-                #region Getting Form data precisely
-                form = formRepository.GetFormData(id);
-                #endregion
+                RedirectToAction("Index");
             }
             #endregion
 
@@ -193,44 +153,98 @@ namespace BonusSystemApplication.Controllers
             IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
 
-            #region Prepare HomeFormViewModel
-            HomeFormViewModel homeFormViewModel = new HomeFormViewModel
-            {
-                Definition = new DefinitionViewModel(form.Definition),
-                Conclusion = new ConclusionViewModel(form.Conclusion),
-                Signatures = new SignaturesViewModel(form.Signatures),
-                ObjectivesResults = form.ObjectivesResults
-                            .Select(or => new ObjectiveResultViewModel(or))
-                            .ToList(),
-
-                PeriodSelectList = Enum.GetNames(typeof(Periods))
+            #region Dropdown lists preparation
+            formViewModel.PeriodSelectList = Enum.GetNames(typeof(Periods))
                     .Select(s => new SelectListItem
                     {
                         Value = s,
                         Text = s,
                     })
-                    .ToList(),
-                EmployeeSelectList = usersQuery
+                    .ToList();
+            formViewModel.EmployeeSelectList = usersQuery
                     .Select(u => new SelectListItem
                     {
                         Value = u.Id.ToString(),
                         Text = $"{u.LastNameEng} {u.FirstNameEng}",
                     })
-                    .ToList(),
-                WorkprojectSelectList = workprojectsQuery
+                    .ToList();
+            formViewModel.WorkprojectSelectList = workprojectsQuery
                     .Select(w => new SelectListItem
                     {
                         Value = w.Id.ToString(),
                         Text = w.Name,
                     })
-                    .ToList(),
-
-                IsObjectivesFreezed = form.IsObjectivesFreezed,
-                IsResultsFreezed = form.IsResultsFreezed,
-            };
+                    .ToList();
             #endregion
 
-            return View(homeFormViewModel);
+            //From Index view with Id selected only
+            if (formViewModel.Definition == null ||
+                formViewModel.Conclusion == null ||
+                formViewModel.ObjectivesResults == null)
+            {
+                #region Form preparing depending on selected Id
+                Form form = null;
+
+                if (formViewModel.Id == 0)
+                {
+                    form = new Form()
+                    {
+                        Id = 0,
+                        Definition = new Definition(),
+                        Conclusion = new Conclusion(),
+                        Signatures = new Signatures
+                        {
+                            ForObjectives = new ForObjectives(),
+                            ForResults = new ForResults(),
+                        },
+                    };
+
+                    List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        ObjectiveResult objectiveResult = new ObjectiveResult()
+                        {
+                            Id = 0,
+                            Row = i + 1,
+                            Form = form,
+                            Objective = new Objective(),
+                            Result = new Result(),
+                        };
+                        objectivesResults.Add(objectiveResult);
+                    }
+                    form.ObjectivesResults = objectivesResults;
+                }
+                else
+                {
+                    #region Getting Form data precisely
+                    form = formRepository.GetFormData(formViewModel.Id);
+                    #endregion
+                }
+                #endregion
+
+                #region Prepare HomeFormViewModel
+                formViewModel.Id = form.Id;
+                formViewModel.IsObjectivesFreezed = form.IsObjectivesFreezed;
+                formViewModel.IsResultsFreezed = form.IsResultsFreezed;
+
+                formViewModel.Definition = new DefinitionViewModel(form.Definition);
+                formViewModel.Conclusion = new ConclusionViewModel(form.Conclusion);
+                formViewModel.Signatures = new SignaturesViewModel(form.Signatures);
+                formViewModel.ObjectivesResults = form.ObjectivesResults
+                            .Select(or => new ObjectiveResultViewModel(or))
+                            .ToList();
+                #endregion
+            }
+            //Redirected from Action like SaveProcess
+            else
+            {
+                Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formViewModel.Id);
+                formViewModel.Signatures = new SignaturesViewModel(statesAndSignatures.Signatures);
+                formViewModel.IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed;
+                formViewModel.IsResultsFreezed = statesAndSignatures.IsResultsFreezed;
+            }
+
+            return View(formViewModel);
         }
 
         [HttpPost]
@@ -508,13 +522,10 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveProcess(DefinitionViewModel definition,
-                                         ConclusionViewModel conclusion,
-                                         SignaturesViewModel signatures,
-                                         List<ObjectiveResultViewModel> objectivesResults)
+        public IActionResult SaveProcess(HomeFormViewModel formViewModel)
         {
 
-            long formId = definition.Id;
+            long formId = formViewModel.Id;
 
             // TODO: add user checking
             //       add formId checking
@@ -537,44 +548,7 @@ namespace BonusSystemApplication.Controllers
                 // the model was not valid => redisplay the form so that 
                 // the user can fix errors
 
-                #region Getting queries for Users and Workprojects
-                IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
-                IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
-                #endregion
-
-
-                return View(new HomeFormViewModel
-                {
-                    Definition = definition,
-                    Conclusion = conclusion,
-                    Signatures = new SignaturesViewModel(statesAndSignatures.Signatures),
-                    ObjectivesResults = objectivesResults,
-
-                    PeriodSelectList = Enum.GetNames(typeof(Periods))
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s,
-                        Text = s,
-                    })
-                    .ToList(),
-                    EmployeeSelectList = usersQuery
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.Id.ToString(),
-                        Text = $"{u.LastNameEng} {u.FirstNameEng}",
-                    })
-                    .ToList(),
-                    WorkprojectSelectList = workprojectsQuery
-                    .Select(w => new SelectListItem
-                    {
-                        Value = w.Id.ToString(),
-                        Text = w.Name,
-                    })
-                    .ToList(),
-
-                    IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed,
-                    IsResultsFreezed = statesAndSignatures.IsResultsFreezed,
-                });
+                return View("Form", formViewModel);
             }
 
             // TODO: Use ModelState to check model binding status

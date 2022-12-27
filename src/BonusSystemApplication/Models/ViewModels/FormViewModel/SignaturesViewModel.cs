@@ -4,7 +4,8 @@
     {
         public ForObjectives ForObjectives { get; set; }
         public ForResults ForResults { get; set; }
-    
+
+        public SignaturesViewModel() { }
         public SignaturesViewModel(Signatures source)
         {
             ForObjectives = source.ForObjectives;

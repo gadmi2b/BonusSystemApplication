@@ -45,7 +45,7 @@ BEM convention: Block Elements Modifiers
   <content class="content">
    <form method="post" id="content-form">
     <div style="display:none">
-        <input asp-for="Definition.Id" type="hidden" id="js-formId" readonly />
+        <input asp-for="@Model.Id" type="hidden" id="js-formId" readonly />
         <input asp-for="IsObjectivesFreezed" type="hidden" id="js-isObjectivesFreezed" readonly />
 @*        <input asp-for="ObjectivesSignature.IsObjectivesSigned" type="hidden" readonly />*@
         <input asp-for="IsResultsFreezed" type="hidden" id="js-isResultsFreezed" readonly />
@@ -58,7 +58,7 @@ BEM convention: Block Elements Modifiers
         <img class="content-period__image" src="~/images/Ecar.png" alt="logo"/>
         <div class="content-period-center">
         <span class="content-period-center__title">PERSONAL PERFORMANCE OBJECTIVES FOR</span>
-        <select asp-for="Definition.Period" asp-items="Model.PeriodSelectList"
+        <select asp-for="@Model.Definition.Period" asp-items="@Model.PeriodSelectList"
                 class="content--styles content-period-center__period">
         </select>
         <span class="content-period-center__joinder">OF</span>
