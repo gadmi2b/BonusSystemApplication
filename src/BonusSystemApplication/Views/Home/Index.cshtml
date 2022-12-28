@@ -92,6 +92,7 @@ BEM convention: Block Elements Modifiers
         <input type="submit" name="submit" value="Apply filters" class="cmn-button" id="js-selection-submit"/>
     </form>
 
+
     <form method="post" class="content-table-form">
       <div class="button-group--flex">
         <span class="button-group--margin">
@@ -124,7 +125,8 @@ BEM convention: Block Elements Modifiers
         <tbody class="content-table__body">
           @for(int i = 0; i < Model.TableRows.Count(); i++)
           {
-            <tr onclick="window.open('@Url.Action("Form", "Home", new {id=Model.TableRows[i].Id})', '_blank')">
+            //<tr onclick="window.open('@Url.Action("Create", "Home", new {id=Model.TableRows[i].Id})', '_blank')">
+            <tr id="@Model.TableRows[i].Id">
               <td class="js-unopenable"><input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox" /></td>
               <td><span>@(i+1)</span></td>
               <td><span>@Model.TableRows[i].WorkprojectName</span></td>
@@ -154,7 +156,10 @@ BEM convention: Block Elements Modifiers
             </tr>
           }
         </tbody>
-      </table>
+      </table>  
+    </form>
+    <form method="post" asp-controller="Home" asp-action="Create" id="js-tableForm">
+      <input type="text" name="formId" value="" hidden />
     </form>
   </content>
 

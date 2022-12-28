@@ -53,20 +53,16 @@ $(document).ready(function () {
 });
 
 
-// cancelled Idea
-// add class active on hovered cell to make it clickable
+$(document).ready(function () {
+  $(".content-table").on('click','tr',function(e){
+    e.preventDefault();
+    var id = $(this).attr('id');
+    alert("Clicked = " + id);
+    var $form = $('#js-tableForm');
+    // set the input value
+    var elem = $form.find('input');
+    elem[0].value = id;
 
-//$(document).ready(function () {
-//  // add and remove class 'active' just to set on it click event listner
-//  $('.cell').addClass('active');
-//  $('.active').click(function () {
-//    alert("clicked");
-//    console.log('clicked');
-//  });
-//  $('.cell').removeClass('active');
-
-//  // each cell will be clickable
-//  $('.cell').hover(function () {
-//    $(this).toggleClass('active');
-//  });
-//});
+    $form.submit();
+  });
+});

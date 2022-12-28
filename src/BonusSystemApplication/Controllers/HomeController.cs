@@ -135,7 +135,35 @@ namespace BonusSystemApplication.Controllers
             return View(homeIndexViewModel);
         }
 
-        [Route("Home/Form/{id:long}")]
+        [HttpPost]
+        //[Route("Home/Create/{id:long}")]
+        public IActionResult Create(long formId)
+        {
+            if (formId < 0)
+                return RedirectToAction(nameof(Index));
+
+
+            #region Getting queries for Users and Workprojects
+            IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+            IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
+            #endregion
+
+            HomeFormViewModel formViewModel;
+            if (formId == 0)
+            {
+                formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
+            }
+            else
+            {
+                // TODO: load form definition and objectives  (no update in DB here)
+                //       load formViewModel
+                formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
+            }
+
+            return View(nameof(Form), formViewModel);
+        }
+
+        [HttpPost]
         public IActionResult Form(HomeFormViewModel formViewModel)
         {
             #region Validate incoming form id
@@ -144,7 +172,7 @@ namespace BonusSystemApplication.Controllers
                 // TODO: incorrect formId was requested to be opened
                 //       to add error page to show it to user
 
-                RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             #endregion
 
@@ -153,96 +181,20 @@ namespace BonusSystemApplication.Controllers
             IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
 
-            #region Dropdown lists preparation
-            formViewModel.PeriodSelectList = Enum.GetNames(typeof(Periods))
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s,
-                        Text = s,
-                    })
-                    .ToList();
-            formViewModel.EmployeeSelectList = usersQuery
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.Id.ToString(),
-                        Text = $"{u.LastNameEng} {u.FirstNameEng}",
-                    })
-                    .ToList();
-            formViewModel.WorkprojectSelectList = workprojectsQuery
-                    .Select(w => new SelectListItem
-                    {
-                        Value = w.Id.ToString(),
-                        Text = w.Name,
-                    })
-                    .ToList();
-            #endregion
+            Form? statesAndSignatures = null;
+            if(formViewModel.Id != 0)
+                statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formViewModel.Id);
 
-            //From Index view with Id selected only
-            if (formViewModel.Definition == null ||
-                formViewModel.Conclusion == null ||
-                formViewModel.ObjectivesResults == null)
+            formViewModel.InitilizeStatesAndSignatures(statesAndSignatures);
+            formViewModel.InitializeDropdowns(usersQuery, workprojectsQuery);
+
+            if (!ModelState.IsValid)
             {
-                #region Form preparing depending on selected Id
-                Form form = null;
-
-                if (formViewModel.Id == 0)
-                {
-                    form = new Form()
-                    {
-                        Id = 0,
-                        Definition = new Definition(),
-                        Conclusion = new Conclusion(),
-                        Signatures = new Signatures
-                        {
-                            ForObjectives = new ForObjectives(),
-                            ForResults = new ForResults(),
-                        },
-                    };
-
-                    List<ObjectiveResult> objectivesResults = new List<ObjectiveResult>();
-                    for (int i = 0; i < 10; i++)
-                    {
-                        ObjectiveResult objectiveResult = new ObjectiveResult()
-                        {
-                            Id = 0,
-                            Row = i + 1,
-                            Form = form,
-                            Objective = new Objective(),
-                            Result = new Result(),
-                        };
-                        objectivesResults.Add(objectiveResult);
-                    }
-                    form.ObjectivesResults = objectivesResults;
-                }
-                else
-                {
-                    #region Getting Form data precisely
-                    form = formRepository.GetFormData(formViewModel.Id);
-                    #endregion
-                }
-                #endregion
-
-                #region Prepare HomeFormViewModel
-                formViewModel.Id = form.Id;
-                formViewModel.IsObjectivesFreezed = form.IsObjectivesFreezed;
-                formViewModel.IsResultsFreezed = form.IsResultsFreezed;
-
-                formViewModel.Definition = new DefinitionViewModel(form.Definition);
-                formViewModel.Conclusion = new ConclusionViewModel(form.Conclusion);
-                formViewModel.Signatures = new SignaturesViewModel(form.Signatures);
-                formViewModel.ObjectivesResults = form.ObjectivesResults
-                            .Select(or => new ObjectiveResultViewModel(or))
-                            .ToList();
-                #endregion
+                return View(formViewModel);
             }
-            //Redirected from Action like SaveProcess
-            else
-            {
-                Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formViewModel.Id);
-                formViewModel.Signatures = new SignaturesViewModel(statesAndSignatures.Signatures);
-                formViewModel.IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed;
-                formViewModel.IsResultsFreezed = statesAndSignatures.IsResultsFreezed;
-            }
+
+            // TODO: provide Update process
+            //       id == 0: save new Form
 
             return View(formViewModel);
         }

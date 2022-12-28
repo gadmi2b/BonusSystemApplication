@@ -19,5 +19,87 @@ namespace BonusSystemApplication.Models.ViewModels
         public bool IsResultsFreezed { get; set; }
 
         public HomeFormViewModel() { }
+
+        public HomeFormViewModel(IQueryable<User> usersQuery,
+                                 IQueryable<Workproject> workprojectsQuery)
+        {
+            Id = 0;
+            Definition = new DefinitionViewModel();
+            Conclusion = new ConclusionViewModel();
+            Signatures = new SignaturesViewModel
+            {
+                ForObjectives = new ForObjectives(),
+                ForResults = new ForResults(),
+            };
+
+            List<ObjectiveResultViewModel> objectivesResults = new List<ObjectiveResultViewModel>();
+            for (int i = 0; i < 10; i++)
+            {
+                ObjectiveResultViewModel objectiveResult = new ObjectiveResultViewModel()
+                {
+                    Row = i + 1,
+                    Objective = new Objective(),
+                    Result = new Result(),
+                };
+                objectivesResults.Add(objectiveResult);
+            }
+            ObjectivesResults = objectivesResults;
+            IsObjectivesFreezed = false;
+            IsResultsFreezed = false;
+
+            InitializeDropdowns(usersQuery, workprojectsQuery);
+        }
+
+        public HomeFormViewModel(IQueryable<User> usersQuery,
+                                 IQueryable<Workproject> workprojectsQuery,
+                                 Form statesAndSignatures)
+            : this(usersQuery, workprojectsQuery)
+        {
+            InitilizeStatesAndSignatures(statesAndSignatures);
+        }
+        public void InitializeDropdowns(IQueryable<User> usersQuery, IQueryable<Workproject> workprojectsQuery)
+        {
+            PeriodSelectList = Enum.GetNames(typeof(Periods))
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s,
+                        Text = s,
+                    })
+                    .ToList();
+            EmployeeSelectList = usersQuery
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = $"{u.LastNameEng} {u.FirstNameEng}",
+                    })
+                    .ToList();
+            WorkprojectSelectList = workprojectsQuery
+                    .Select(w => new SelectListItem
+                    {
+                        Value = w.Id.ToString(),
+                        Text = w.Name,
+                    })
+                    .ToList();
+        }
+        
+        public void InitilizeStatesAndSignatures(Form? statesAndSignatures)
+        {
+            if(statesAndSignatures == null)
+            {
+                Signatures = new SignaturesViewModel
+                {
+                    ForObjectives = new ForObjectives(),
+                    ForResults = new ForResults(),
+                };
+                IsObjectivesFreezed = false;
+                IsResultsFreezed = false;
+            }
+            else
+            {
+                Signatures = new SignaturesViewModel(statesAndSignatures.Signatures);
+                IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed;
+                IsResultsFreezed = statesAndSignatures.IsResultsFreezed;
+            }
+        }
     }
 }
