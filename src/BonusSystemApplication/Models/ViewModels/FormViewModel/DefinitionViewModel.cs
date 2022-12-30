@@ -3,7 +3,7 @@
     public class DefinitionViewModel
     {
         public Periods Period { get; set; }
-        public int Year { get; set; }
+        public int Year { get; set; } = System.DateTime.Now.Year;
         public bool IsWpmHox { get; set; }
         public long EmployeeId { get; set; }
         public long? ManagerId { get; set; }

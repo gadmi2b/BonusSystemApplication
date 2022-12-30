@@ -137,11 +137,17 @@ namespace BonusSystemApplication.Controllers
 
         [HttpPost]
         //[Route("Home/Create/{id:long}")]
-        public IActionResult Create(long formId)
+        public IActionResult NewForm(long formId)
         {
             if (formId < 0)
                 return RedirectToAction(nameof(Index));
 
+            //------------------- Testing 2 cases ------------------------------------------------------------------
+            // 1: call Update(formId) in formRespository, get Form by Id and update something
+            // 2: call GetFormById(formId) here, change something and update it
+            //    or just read how Update works: the main question is change tracker works on copy of extracted data?
+            //    I guess no... => all save operation should be provided directly in Repository methods
+            //-------------------------------------------------------------------------------------------------------
 
             #region Getting queries for Users and Workprojects
             IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
@@ -160,6 +166,8 @@ namespace BonusSystemApplication.Controllers
                 formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
             }
 
+            // TO REMEMBER: a new View will be created here and send to user
+            //              Action Form will be uneffected
             return View(nameof(Form), formViewModel);
         }
 
@@ -176,25 +184,33 @@ namespace BonusSystemApplication.Controllers
             }
             #endregion
 
-            #region Getting queries for Users and Workprojects
-            IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
-            IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
-            #endregion
-
             Form? statesAndSignatures = null;
             if(formViewModel.Id != 0)
                 statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formViewModel.Id);
 
             formViewModel.InitilizeStatesAndSignatures(statesAndSignatures);
-            formViewModel.InitializeDropdowns(usersQuery, workprojectsQuery);
 
             if (!ModelState.IsValid)
             {
+                #region Getting queries for Users and Workprojects
+                IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+                IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
+                #endregion
+
+                formViewModel.InitializeDropdowns(usersQuery, workprojectsQuery);
                 return View(formViewModel);
             }
 
             // TODO: provide Update process
-            //       id == 0: save new Form
+            //       for any Id same rules, except one (applied in Update method in repository):
+            //       id == 0: create new Form and put it in DB
+            //       id != 0: load formId from DB and update it
+
+            // TODO: check what could be saved: formViewModel.IsStates and Signatures (see SaveProcess())
+            //       launch Update (formViewModel, PartsToSave) method:
+            //       if Id == 0: provide checks for: Definition, Objectives, Results (recalculate based on Objectives of this formViewModel)
+            //       if id != 0: get Form with Id,
+            //                   provide checks for: Definition, Objectives, Results (recalculate based on Objectives of loaded Form data)
 
             return View(formViewModel);
         }
