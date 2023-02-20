@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.Index
+﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class UserSelections
     {
@@ -10,7 +10,7 @@
         public List<string> SelectedTeams { get; set; } = new List<string>();
         public List<string> SelectedWorkprojects { get; set; } = new List<string>();
 
-        
+
         public void PrepareSelections(FormDataAvailable formDataAvailable)
         {
             RemoveDistinct();
@@ -64,7 +64,7 @@
             {
                 if (string.IsNullOrEmpty(item)
                     ? false
-                    : (Enum.TryParse(item, out Periods result) && !formDataAvailable.AvailablePeriods.Contains(result)) ||
+                    : Enum.TryParse(item, out Periods result) && !formDataAvailable.AvailablePeriods.Contains(result) ||
                       !Enum.TryParse(item, out result))
                 {
                     //SelectedPeriods.Remove(item);
@@ -79,7 +79,7 @@
             {
                 if (string.IsNullOrEmpty(item)
                     ? false
-                    : (Int32.TryParse(item, out int result) && !formDataAvailable.AvailableYears.Contains(result)) ||
+                    : Int32.TryParse(item, out int result) && !formDataAvailable.AvailableYears.Contains(result) ||
                       !Int32.TryParse(item, out result))
                 {
                     itemsToRemove.Add(item);
@@ -93,7 +93,7 @@
             {
                 if (string.IsNullOrEmpty(item)
                     ? false
-                    : (Enum.TryParse(item, out Permission result) && !formDataAvailable.AvailablePermissions.Contains(result)) ||
+                    : Enum.TryParse(item, out Permission result) && !formDataAvailable.AvailablePermissions.Contains(result) ||
                       !Enum.TryParse(item, out result))
                 {
                     itemsToRemove.Add(item);

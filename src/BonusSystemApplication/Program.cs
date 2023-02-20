@@ -1,6 +1,5 @@
 using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
-using BonusSystemApplication.Models.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.Index
+﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class TableRow
     {

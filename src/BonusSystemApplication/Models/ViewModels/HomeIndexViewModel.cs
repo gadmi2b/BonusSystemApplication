@@ -1,4 +1,4 @@
-﻿using BonusSystemApplication.Models.ViewModels.Index;
+﻿using BonusSystemApplication.Models.ViewModels.IndexViewModel;
 
 namespace BonusSystemApplication.Models.ViewModels
 {

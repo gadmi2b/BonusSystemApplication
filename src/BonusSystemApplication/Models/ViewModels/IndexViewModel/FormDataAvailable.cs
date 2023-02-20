@@ -1,7 +1,4 @@
-﻿using BonusSystemApplication.Models.Repositories;
-using System.Runtime.CompilerServices;
-
-namespace BonusSystemApplication.Models.ViewModels.Index
+﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class FormDataAvailable
     {
@@ -19,14 +16,14 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             AvailableFormPermissions = availableFormPermissions;
 
             List<Form> forms = availableFormPermissions.Keys.ToList();
-            AvailableEmployees = FormDataExtractor.GetAvailableEmployees(forms);
-            AvailablePeriods = FormDataExtractor.GetAvailablePeriods(forms);
-            AvailableYears = FormDataExtractor.GetAvailableYears(forms);
-            AvailableDepartments = FormDataExtractor.GetAvailableDepartments(forms);
-            AvailableTeams = FormDataExtractor.GetAvailableTeams(forms);
-            AvailableWorkprojects = FormDataExtractor.GetAvailableWorkprojects(forms);
+            AvailableEmployees = FormDataExtractor.ExtractEmployees(forms);
+            AvailablePeriods = FormDataExtractor.ExtractPeriods(forms);
+            AvailableYears = FormDataExtractor.ExtractYears(forms);
+            AvailableDepartments = FormDataExtractor.ExtractDepartments(forms);
+            AvailableTeams = FormDataExtractor.ExtractTeams(forms);
+            AvailableWorkprojects = FormDataExtractor.ExtractWorkprojects(forms);
 
-            AvailablePermissions = FormDataExtractor.GetAvailablePermissions(availableFormPermissions.Values.ToList());
+            AvailablePermissions = FormDataExtractor.ExtractPermissions(availableFormPermissions.Values.ToList());
         }
     }
 }

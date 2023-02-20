@@ -10,8 +10,8 @@ namespace BonusSystemApplication.Models
         public string? ManagerComment { get; set; }
         public string? EmployeeComment { get; set; }
         public string? OtherComment { get; set; }
-
-        [BindNever]
+        
+        public long FormId { get; set; }
         public Form Form { get; set; }
     }
 }

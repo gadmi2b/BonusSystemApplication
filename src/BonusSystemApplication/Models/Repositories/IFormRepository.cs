@@ -3,20 +3,27 @@
     public interface IFormRepository
     {
         List<Form> GetForms(List<long> formIds);
-        Form GetFormData(long formId);
-        Form GetIsFreezedAndSignatureData(long formId);
+        Form GetForm(long formId);
+
+
+        Definition GetDefinition(long formId);
+        IList<ObjectiveResult> GetObjectivesResults(long formId);
+        IList<ObjectiveResult> GetObjectives(long formId);
+        IList<ObjectiveResult> GetResults(long formId);
+        Conclusion GetConclustion(long formId);
+
+
+
+        Form GetIsFreezedAndSignatures(long formId);
         Form GetObjectivesResultsData(long formId);
 
-        List<long> GetLocalAccessFormIds(long userId);
+        List<long> GetFormIdsWhereLocalAccess(long userId);
 
-        //IQueryable<Form> GetDefinition(long formId);
-        //IQueryable<Form> GetObjectives(long formId);
-        //IQueryable<Form> GetResults(long formId);
-        //IQueryable<Form> GetConclusion(long formId);
 
         void CreateForm(Form form);
         void UpdateFormSignatures(Form form);
         void UpdateFormObjectivesResults(Form form);
         void DeleteForm(long id);
+
     }
 }

@@ -10,7 +10,6 @@ namespace BonusSystemApplication.Models
         public Result Result { get; set; }
 
         public long FormId { get; set; }
-        [BindNever]
         public Form Form { get; set; }
     }
 }

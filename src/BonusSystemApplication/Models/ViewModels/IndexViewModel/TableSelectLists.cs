@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.SqlClient.Server;
-using System.Globalization;
-using System.Linq;
 
-namespace BonusSystemApplication.Models.ViewModels.Index
+namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class TableSelectLists
     {
@@ -14,7 +11,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
         public List<SelectListItem> DepartmentSelectListItems { get; set; }
         public List<SelectListItem> TeamSelectListItems { get; set; }
         public List<SelectListItem> WorkprojectSelectListItems { get; set; }
-        
+
 
         public TableSelectLists(FormDataAvailable formDataAvailable,
                                 UserSelections userSelections)
@@ -22,17 +19,17 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             EmployeeSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableEmployees,
                                                              userSelections.SelectedEmployees);
             PeriodSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePeriods,
-                                                             userSelections.SelectedPeriods);
+                                                           userSelections.SelectedPeriods);
             YearSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableYears,
-                                                             userSelections.SelectedYears);
+                                                         userSelections.SelectedYears);
             PermissionSelectListItems = PrepareSelectListItems(formDataAvailable.AvailablePermissions,
-                                                             userSelections.SelectedPermissions);
+                                                               userSelections.SelectedPermissions);
             DepartmentSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableDepartments,
-                                                             userSelections.SelectedDepartments);
+                                                               userSelections.SelectedDepartments);
             TeamSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableTeams,
                                                          userSelections.SelectedTeams);
             WorkprojectSelectListItems = PrepareSelectListItems(formDataAvailable.AvailableWorkprojects,
-                                                             userSelections.SelectedWorkprojects);
+                                                                userSelections.SelectedWorkprojects);
         }
 
         private List<SelectListItem> PrepareSelectListItems<T>(List<T> collectionAvailable,
@@ -62,9 +59,8 @@ namespace BonusSystemApplication.Models.ViewModels.Index
             }
             #endregion
 
-            List<SelectListItem> selectListItems = new List<SelectListItem>();
-
             #region Prepare selectListItems
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
             foreach (T availableItem in collectionAvailable)
             {
                 string itemName = expr.Invoke(availableItem);

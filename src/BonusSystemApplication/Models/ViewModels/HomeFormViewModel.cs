@@ -52,11 +52,26 @@ namespace BonusSystemApplication.Models.ViewModels
 
         public HomeFormViewModel(IQueryable<User> usersQuery,
                                  IQueryable<Workproject> workprojectsQuery,
-                                 Form statesAndSignatures)
-            : this(usersQuery, workprojectsQuery)
+                                 Form form)
         {
-            InitilizeStatesAndSignatures(statesAndSignatures);
+            Id = form.Id;
+            IsObjectivesFreezed = form.IsObjectivesFreezed;
+            IsResultsFreezed = form.IsResultsFreezed;
+
+            Definition = new DefinitionViewModel(form.Definition);
+            Conclusion = new ConclusionViewModel(form.Conclusion);
+            Signatures = new SignaturesViewModel(form.Signatures);
+
+            foreach (var objRes in form.ObjectivesResults)
+            {
+                ObjectiveResultViewModel objResViewModel = new ObjectiveResultViewModel(objRes);
+                ObjectivesResults.Add(objResViewModel);
+            }
+
+            InitializeDropdowns(usersQuery, workprojectsQuery);
         }
+
+
         public void InitializeDropdowns(IQueryable<User> usersQuery, IQueryable<Workproject> workprojectsQuery)
         {
             PeriodSelectList = Enum.GetNames(typeof(Periods))

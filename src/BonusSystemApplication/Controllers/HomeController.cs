@@ -5,7 +5,6 @@ using BonusSystemApplication.Models;
 using BonusSystemApplication.Models.Repositories;
 using Microsoft.Data.SqlClient.Server;
 using BonusSystemApplication.Models.ViewModels;
-using BonusSystemApplication.Models.ViewModels.Index;
 using BonusSystemApplication.UserIdentiry;
 using System.Text.Json;
 using BonusSystemApplication.Models.BusinessLogic;
@@ -14,6 +13,7 @@ using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using BonusSystemApplication.Models.ViewModels.IndexViewModel;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -61,32 +61,30 @@ namespace BonusSystemApplication.Controllers
 
             #region Getting form Ids available for User
             //Form Ids where user has Global accesses
-            IEnumerable<long> gAccessFormIds = definitionRepository.GetGlobalAccessFormIds(globalAccesses);
+            IEnumerable<long> formIdsWithGlobalAccess = definitionRepository.GetFormIdsWhereGlobalAccess(globalAccesses);
 
             //Form Ids where user has Local access
-            IEnumerable<long> lAccessFormIds = formRepository.GetLocalAccessFormIds(UserData.UserId);
+            IEnumerable<long> formIdsWithLocalAccess = formRepository.GetFormIdsWhereLocalAccess(UserData.UserId);
 
             //Form Ids where user has any Participation
-            IEnumerable<long> participationFormIds = definitionRepository.GetParticipationFormIds(UserData.UserId);
+            IEnumerable<long> formIdsWithParticipation = definitionRepository.GetFormIdsWhereParticipation(UserData.UserId);
 
-            //Form Ids combination and sorting
-            List<long> availableFormIds = gAccessFormIds
-                                            .Union(lAccessFormIds)
-                                            .Union(participationFormIds)
-                                            .OrderBy(id => id)
-                                            .ToList();
+            //Form Ids unioning and sorting
+            List<long> availableFormIds = formIdsWithParticipation.Union(formIdsWithLocalAccess)
+                                                                  .Union(formIdsWithGlobalAccess)
+                                                                  .OrderBy(id => id)
+                                                                  .ToList();
             #endregion
 
             #region Load data from database into forms and get corrsponding permissions
             FormDataAvailable formDataAvailable = new FormDataAvailable(
-                                    formRepository.GetForms(availableFormIds)
-                                    .ToDictionary(f => f,
-                                                  f => FormDataExtractor.GetPermissions(f,
-                                                                                        UserData.UserId,
-                                                                                        gAccessFormIds,
-                                                                                        lAccessFormIds,
-                                                                                        participationFormIds)));
-
+                           formRepository.GetForms(availableFormIds)
+                          .ToDictionary(form => form,
+                                        form => FormDataExtractor.ExtractPermissions(form,
+                                                                                     UserData.UserId,
+                                                                                     formIdsWithGlobalAccess,
+                                                                                     formIdsWithLocalAccess,
+                                                                                     formIdsWithParticipation)));
             #endregion
 
             UserData.AvailableFormIds = availableFormIds;
@@ -103,12 +101,12 @@ namespace BonusSystemApplication.Controllers
             userSelections.PrepareSelections(formDataAvailable);
             FormDataSorted formDataSorted = new FormDataSorted(formDataAvailable, userSelections);
 
-            #region Prepare TableRows: table content
+            #region Prepare TableRows: table's content
             List<TableRow> tableRows = formDataSorted.SortedFormPermissions
                 .Select(pair => new TableRow
                 {
                     Id = pair.Key.Id,
-                    EmployeeFullName = ($"{pair.Key.Definition.Employee.LastNameEng} {pair.Key.Definition.Employee.FirstNameEng}"),
+                    EmployeeFullName = $"{pair.Key.Definition.Employee.LastNameEng} {pair.Key.Definition.Employee.FirstNameEng}",
                     WorkprojectName = pair.Key.Definition.Workproject?.Name,
                     DepartmentName = pair.Key.Definition.Employee.Department?.Name,
                     TeamName = pair.Key.Definition.Employee.Team?.Name,
@@ -120,7 +118,7 @@ namespace BonusSystemApplication.Controllers
                 .ToList();
             #endregion
 
-            #region Prepare TableSelectLists: dropdowns content
+            #region Prepare TableSelectLists: dropdown's content
             TableSelectLists tableSelectLists = new TableSelectLists(formDataAvailable, userSelections);
             #endregion
 
@@ -135,44 +133,43 @@ namespace BonusSystemApplication.Controllers
             return View(homeIndexViewModel);
         }
 
-        [HttpPost]
-        //[Route("Home/Create/{id:long}")]
-        public IActionResult NewForm(long formId)
-        {
-            if (formId < 0)
-                return RedirectToAction(nameof(Index));
 
-            //------------------- Testing 2 cases ------------------------------------------------------------------
-            // 1: call Update(formId) in formRespository, get Form by Id and update something
-            // 2: call GetFormById(formId) here, change something and update it
-            //    or just read how Update works: the main question is change tracker works on copy of extracted data?
-            //    I guess no... => all save operation should be provided directly in Repository methods
-            //-------------------------------------------------------------------------------------------------------
+        [HttpGet]
+        public IActionResult Edit(long? Id)
+        {
+            #region Validate incoming form id
+            if (Id == null || Id <= 0 ||
+                !UserData.AvailableFormIds.Contains((long)Id))
+            {
+                return NotFound();
+            }
+            #endregion
 
             #region Getting queries for Users and Workprojects
             IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
             IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
             #endregion
 
-            HomeFormViewModel formViewModel;
-            if (formId == 0)
+            long formId = Convert.ToInt64(Id);
+            Form form = formRepository.GetForm(formId);
+            if (form == null)
             {
-                formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
-            }
-            else
-            {
-                // TODO: load form definition and objectives  (no update in DB here)
-                //       load formViewModel
-                formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
+                return NotFound();
             }
 
-            // TO REMEMBER: a new View will be created here and send to user
-            //              Action Form will be uneffected
-            return View(nameof(Form), formViewModel);
+            return View(new HomeFormViewModel(usersQuery, workprojectsQuery, form));
         }
 
         [HttpPost]
-        public IActionResult Form(HomeFormViewModel formViewModel)
+        public IActionResult Edit(long formId, HomeFormViewModel formViewModel)
+        {
+
+            return View(formViewModel);
+        }
+
+
+        [HttpPost]
+        public IActionResult EditForm(long formId, HomeFormViewModel formViewModel)
         {
             #region Validate incoming form id
             if (formViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formViewModel.Id))
@@ -213,6 +210,34 @@ namespace BonusSystemApplication.Controllers
             //                   provide checks for: Definition, Objectives, Results (recalculate based on Objectives of loaded Form data)
 
             return View(formViewModel);
+        }
+
+        [HttpPost]
+        //[Route("Home/Create/{id:long}")]
+        public IActionResult NewForm(long formId)
+        {
+            if (formId < 0)
+                return RedirectToAction(nameof(Index));
+
+            #region Getting queries for Users and Workprojects
+            IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+            IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
+            #endregion
+
+            HomeFormViewModel formViewModel;
+            if (formId == 0)
+            {
+                formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
+                return View(nameof(EditForm), formViewModel);
+            }
+
+            // TODO: load form definition and objectives  (no update in DB here)
+            //       load formViewModel
+
+
+            formViewModel = new HomeFormViewModel(usersQuery, workprojectsQuery);
+
+            return View(nameof(EditForm), formViewModel);
         }
 
         [HttpPost]

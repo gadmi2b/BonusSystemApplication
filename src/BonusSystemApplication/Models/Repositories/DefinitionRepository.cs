@@ -8,16 +8,18 @@ namespace BonusSystemApplication.Models.Repositories
         private DataContext context;
         public DefinitionRepository(DataContext ctx) => context = ctx;
 
-        public List<long> GetParticipationFormIds(long userId)
+        public List<long> GetFormIdsWhereParticipation(long userId)
         {
-            return context.Definitions.TagWith("Form Ids with Participation access requesting")
+            return context.Definitions
+                .TagWith("Requesting form Ids where user has participation")
                 .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
-                .Select(d => d.Id)
+                .Select(d => d.FormId)
                 .ToList();
         }
-        public List<long> GetGlobalAccessFormIds(IEnumerable<GlobalAccess> globalAccesses)
+        public List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses)
         {
-            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable().TagWith("Form Ids with Global access requesting")
+            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable()
+                .TagWith("Requesting form Ids where user has Global access")
                 .Include(d => d.Employee)
                     .ThenInclude(e => e.Department)
                 .Include(d => d.Employee)
@@ -25,11 +27,11 @@ namespace BonusSystemApplication.Models.Repositories
                 .Include(d => d.Workproject)
                 .AsNoTracking();
 
-            IQueryable<Definition> queryFiltered = null;
+            IQueryable<Definition> queryFiltered = null!;
 
-            foreach (var gAccess in globalAccesses)
+            foreach (var globalAccess in globalAccesses)
             {
-                IQueryable<Definition> query = queryInitial.Where(GetExpressionForGlobalAccess(gAccess));
+                IQueryable<Definition> query = queryInitial.Where(GetGlobalAccessExpression(globalAccess));
 
                 if (query == null)
                 {
@@ -52,13 +54,13 @@ namespace BonusSystemApplication.Models.Repositories
             }
 
             return queryFiltered
-                .Select(d => d.Id)
+                .Select(d => d.FormId)
                 .ToList();
         }
 
         /// <summary>
         /// There are 3 big areas of global access working like filters if presented (from biggest to smallest):
-        /// Department (like engineering at all), Team (like Design or Stress) or just Workproject
+        /// Department (like Engineering at all), Team (like Design or Stress) or just Workproject
         /// If userId is presented in the global accesses without any areas - it will get access to all forms
         /// If only DepartmentId is presented - gets an access to forms from this Department
         /// If TeamId is presented also - gets an access to this Team's forms inside this Department
@@ -66,7 +68,7 @@ namespace BonusSystemApplication.Models.Repositories
         /// </summary>
         /// <param name="gAccess">A Global Access object</param>
         /// <returns>An expression for FormIds quering</returns>
-        private Expression<Func<Definition, bool>> GetExpressionForGlobalAccess(GlobalAccess gAccess)
+        private Expression<Func<Definition, bool>> GetGlobalAccessExpression(GlobalAccess gAccess)
         {
             Expression<Func<Definition, bool>> expr = (Definition d) => false;
 

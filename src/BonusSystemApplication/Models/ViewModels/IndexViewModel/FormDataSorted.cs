@@ -1,7 +1,4 @@
-﻿using BonusSystemApplication.Models.Repositories;
-using BonusSystemApplication.UserIdentiry;
-
-namespace BonusSystemApplication.Models.ViewModels.Index
+﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class FormDataSorted
     {
@@ -16,42 +13,42 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
         public FormDataSorted(FormDataAvailable formDataAvailable, UserSelections userSelections)
         {
-            foreach(Form f in formDataAvailable.AvailableFormPermissions.Keys)
+            foreach (Form form in formDataAvailable.AvailableFormPermissions.Keys)
             {
-                List<Permission> permissions = formDataAvailable.AvailableFormPermissions[f];
-                if (IsFormCanBeShown(f, userSelections, permissions))
+                List<Permission> permissions = formDataAvailable.AvailableFormPermissions[form];
+                if (IsFormCanBeShown(form, userSelections, permissions))
                 {
-                    SortedFormPermissions.Add(f, permissions);
+                    SortedFormPermissions.Add(form, permissions);
                 }
             }
 
             List<Form> sortedForms = SortedFormPermissions.Keys.ToList();
-            SortedEmployees = FormDataExtractor.GetAvailableEmployees(sortedForms);
-            SortedPeriods = FormDataExtractor.GetAvailablePeriods(sortedForms);
-            SortedYears = FormDataExtractor.GetAvailableYears(sortedForms);
-            SortedDepartments = FormDataExtractor.GetAvailableDepartments(sortedForms);
-            SortedTeams = FormDataExtractor.GetAvailableTeams(sortedForms);
-            SortedWorkprojects = FormDataExtractor.GetAvailableWorkprojects(sortedForms);
+            SortedEmployees = FormDataExtractor.ExtractEmployees(sortedForms);
+            SortedPeriods = FormDataExtractor.ExtractPeriods(sortedForms);
+            SortedYears = FormDataExtractor.ExtractYears(sortedForms);
+            SortedDepartments = FormDataExtractor.ExtractDepartments(sortedForms);
+            SortedTeams = FormDataExtractor.ExtractTeams(sortedForms);
+            SortedWorkprojects = FormDataExtractor.ExtractWorkprojects(sortedForms);
 
-            SortedPermissions = FormDataExtractor.GetAvailablePermissions(SortedFormPermissions.Values.ToList());
+            SortedPermissions = FormDataExtractor.ExtractPermissions(SortedFormPermissions.Values.ToList());
         }
 
         private bool IsFormCanBeShown(Form form, UserSelections userSelections, List<Permission> formPermissions)
         {
-            if (isValueSelected(userSelections.SelectedEmployees, $"{form.Definition.Employee.LastNameEng} {form.Definition.Employee.FirstNameEng}") &&
-                isValueSelected(userSelections.SelectedPeriods, form.Definition.Period.ToString()) &&
-                isValueSelected(userSelections.SelectedYears, form.Definition.Year.ToString()) &&
-                isValueSelected(userSelections.SelectedDepartments, form.Definition.Employee.Department.Name) &&
-                isValueSelected(userSelections.SelectedTeams, form.Definition.Employee.Team.Name) &&
-                isValueSelected(userSelections.SelectedWorkprojects, form.Definition.Workproject.Name) &&
-                isValueSelected(userSelections.SelectedPermissions, formPermissions.Select(p => p.ToString()).ToList()))
+            if (IsValueSelected(userSelections.SelectedEmployees, $"{form.Definition.Employee.LastNameEng} {form.Definition.Employee.FirstNameEng}") &&
+                IsValueSelected(userSelections.SelectedPeriods, form.Definition.Period.ToString()) &&
+                IsValueSelected(userSelections.SelectedYears, form.Definition.Year.ToString()) &&
+                IsValueSelected(userSelections.SelectedDepartments, form.Definition.Employee.Department.Name) &&
+                IsValueSelected(userSelections.SelectedTeams, form.Definition.Employee.Team.Name) &&
+                IsValueSelected(userSelections.SelectedWorkprojects, form.Definition.Workproject.Name) &&
+                IsValueSelected(userSelections.SelectedPermissions, formPermissions.Select(p => p.ToString()).ToList()))
             {
                 return true;
             }
 
             return false;
         }
-        private bool isValueSelected(List<string> selectedCollection, string checkValue)
+        private bool IsValueSelected(List<string> selectedCollection, string checkValue)
         {
             if (selectedCollection.Count > 1)   // every selectedCollection has empty string at 0 position
             {
@@ -67,7 +64,7 @@ namespace BonusSystemApplication.Models.ViewModels.Index
 
             return false;
         }
-        private bool isValueSelected(List<string> selectedCollection, List<string> checkValues)
+        private bool IsValueSelected(List<string> selectedCollection, List<string> checkValues)
         {
             if (selectedCollection.Count > 1)   // every selectedCollection has empty string at 0 position
             {

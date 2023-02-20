@@ -1,35 +1,35 @@
 ﻿using BonusSystemApplication.Models.Repositories;
 
-namespace BonusSystemApplication.Models.ViewModels.Index
+namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public static class FormDataExtractor
     {
 
-        public static List<Permission> GetPermissions(Form f,
-                                                long userId,
-                                                IEnumerable<long> gAccessFormIds,
-                                                IEnumerable<long> lAccessFormIds,
-                                                IEnumerable<long> participationFormIds)
+        public static List<Permission> ExtractPermissions(Form form,
+                                                          long userId,
+                                                          IEnumerable<long> formIdsWithGlobalAccess,
+                                                          IEnumerable<long> formIdsWithLocalAccess,
+                                                          IEnumerable<long> formIdsWithParticipation)
         {
             List<Permission> permissions = new List<Permission>();
-            if (gAccessFormIds.Contains(f.Id))
+            if (formIdsWithGlobalAccess.Contains(form.Id))
             {
                 permissions.Add(Permission.GlobalAccess);
             }
-            if (lAccessFormIds.Contains(f.Id))
+            if (formIdsWithLocalAccess.Contains(form.Id))
             {
                 permissions.Add(Permission.LocalAccess);
             }
-            if (participationFormIds.Contains(f.Id))
+            if (formIdsWithParticipation.Contains(form.Id))
             {
-                if (userId == f.Definition.EmployeeId) { permissions.Add(Permission.Employee); }
-                if (userId == f.Definition.ManagerId) { permissions.Add(Permission.Manager); }
-                if (userId == f.Definition.ApproverId) { permissions.Add(Permission.Approver); }
+                if (userId == form.Definition.EmployeeId) { permissions.Add(Permission.Employee); }
+                if (userId == form.Definition.ManagerId) { permissions.Add(Permission.Manager); }
+                if (userId == form.Definition.ApproverId) { permissions.Add(Permission.Approver); }
             }
-
             return permissions;
         }
-        public static List<Permission> GetAvailablePermissions(List<List<Permission>> allPermissions)
+
+        public static List<Permission> ExtractPermissions(List<List<Permission>> allPermissions)
         {
             List<Permission> permissions = new List<Permission>();
             foreach (List<Permission> list in allPermissions)
@@ -42,67 +42,74 @@ namespace BonusSystemApplication.Models.ViewModels.Index
                     }
                 }
             }
+
             return permissions;
         }
-        public static List<string> GetAvailableEmployees(List<Form> forms)
+
+        public static List<string> ExtractEmployees(List<Form> forms)
         {
-            List<string> availableEmployees = new List<string>();
-            availableEmployees = forms
-                .Select(f => ($"{f.Definition.Employee.LastNameEng} {f.Definition.Employee.FirstNameEng}"))
+            List<string> employees = new List<string>();
+            employees = forms
+                .Select(f => $"{f.Definition.Employee.LastNameEng} {f.Definition.Employee.FirstNameEng}")
                 .Distinct()
                 .ToList();
 
-            return availableEmployees;
+            return employees;
         }
-        public static List<Periods> GetAvailablePeriods(List<Form> forms)
+
+        public static List<Periods> ExtractPeriods(List<Form> forms)
         {
-            List<Periods> availablePeriods = new List<Periods>();
-            availablePeriods = forms
+            List<Periods> periods = new List<Periods>();
+            periods = forms
                 .Select(f => f.Definition.Period)
                 .Distinct()
                 .ToList();
 
-            return availablePeriods;
+            return periods;
         }
-        public static List<int> GetAvailableYears(List<Form> forms)
+
+        public static List<int> ExtractYears(List<Form> forms)
         {
-            List<int> availableYears = new List<int>();
-            availableYears = forms
+            List<int> years = new List<int>();
+            years = forms
                 .Select(f => f.Definition.Year)
                 .Distinct()
                 .ToList();
 
-            return availableYears;
+            return years;
         }
-        public static List<string> GetAvailableDepartments(List<Form> forms)
+
+        public static List<string> ExtractDepartments(List<Form> forms)
         {
-            List<string> availableDepartments = new List<string>();
-            availableDepartments = forms
+            List<string> departments = new List<string>();
+            departments = forms
                 .Select(f => f.Definition.Employee.Department.Name)
                 .Distinct()
                 .ToList();
 
-            return availableDepartments;
+            return departments;
         }
-        public static List<string> GetAvailableTeams(List<Form> forms)
+
+        public static List<string> ExtractTeams(List<Form> forms)
         {
-            List<string> availableTeams = new List<string>();
-            availableTeams = forms
+            List<string> teams = new List<string>();
+            teams = forms
                 .Select(f => f.Definition.Employee.Team.Name)
                 .Distinct()
                 .ToList();
 
-            return availableTeams;
+            return teams;
         }
-        public static List<string> GetAvailableWorkprojects(List<Form> forms)
+
+        public static List<string> ExtractWorkprojects(List<Form> forms)
         {
-            List<string> availableWorkprojects = new List<string>();
-            availableWorkprojects = forms
+            List<string> workprojects = new List<string>();
+            workprojects = forms
                 .Select(f => f.Definition.Workproject.Name)
                 .Distinct()
                 .ToList();
 
-            return availableWorkprojects;
+            return workprojects;
         }
     }
 }

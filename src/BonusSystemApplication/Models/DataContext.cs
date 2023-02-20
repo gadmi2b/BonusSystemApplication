@@ -26,32 +26,27 @@ namespace BonusSystemApplication.Models
             {
                 f.HasOne(f => f.Definition)
                  .WithOne(d => d.Form)
-                 .HasForeignKey<Definition>(d => d.Id);
+                 .HasForeignKey<Definition>(d => d.FormId)
+                 .IsRequired()
+                 .OnDelete(DeleteBehavior.Cascade);
 
                 f.HasOne(f => f.Conclusion)
                  .WithOne(c => c.Form)
-                 .HasForeignKey<Conclusion>(c => c.Id);
+                 .HasForeignKey<Conclusion>(c => c.FormId)
+                 .IsRequired()
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                f.HasOne(f => f.Signatures)
+                 .WithOne(s => s.Form)
+                 .HasForeignKey<Signatures>(s => s.FormId)
+                 .IsRequired()
+                 .OnDelete(DeleteBehavior.Cascade);
             });
-
-            modelBuilder.Entity<Form>().ToTable("Forms");
-            modelBuilder.Entity<Definition>().ToTable("Forms");
-            modelBuilder.Entity<Conclusion>().ToTable("Forms");
-
-            //modelBuilder.Entity<Form>().ToTable("Forms");
-            //modelBuilder.Entity<Definition>().ToTable("Forms");
-            //modelBuilder.Entity<Conclusion>().ToTable("Forms");
 
             modelBuilder.Entity<Form>()
                 .HasMany(f => f.ObjectivesResults)
                 .WithOne(o => o.Form)
                 .HasForeignKey(f => f.FormId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Form>()
-                .HasOne(f => f.Signatures)
-                .WithOne(s => s.Form)
-                .HasForeignKey<Signatures>(s => s.FormId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 

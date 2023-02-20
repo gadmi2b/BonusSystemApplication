@@ -25,10 +25,16 @@ namespace BonusSystemApplication.Migrations
             modelBuilder.Entity("BonusSystemApplication.Models.Conclusion", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("EmployeeComment")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FormId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsProposalForBonusPayment")
                         .ValueGeneratedOnAdd()
@@ -46,18 +52,27 @@ namespace BonusSystemApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forms", (string)null);
+                    b.HasIndex("FormId")
+                        .IsUnique();
+
+                    b.ToTable("Conclusions");
                 });
 
             modelBuilder.Entity("BonusSystemApplication.Models.Definition", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long?>("ApproverId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("EmployeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("FormId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("IsWpmHox")
@@ -82,6 +97,9 @@ namespace BonusSystemApplication.Migrations
 
                     b.HasIndex("ApproverId");
 
+                    b.HasIndex("FormId")
+                        .IsUnique();
+
                     b.HasIndex("ManagerId");
 
                     b.HasIndex("WorkprojectId");
@@ -89,7 +107,7 @@ namespace BonusSystemApplication.Migrations
                     b.HasIndex("EmployeeId", "WorkprojectId", "Period", "Year")
                         .IsUnique();
 
-                    b.ToTable("Forms", (string)null);
+                    b.ToTable("Definitions");
                 });
 
             modelBuilder.Entity("BonusSystemApplication.Models.Department", b =>
@@ -138,7 +156,7 @@ namespace BonusSystemApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forms", (string)null);
+                    b.ToTable("Forms");
                 });
 
             modelBuilder.Entity("BonusSystemApplication.Models.GlobalAccess", b =>
@@ -383,7 +401,7 @@ namespace BonusSystemApplication.Migrations
                 {
                     b.HasOne("BonusSystemApplication.Models.Form", "Form")
                         .WithOne("Conclusion")
-                        .HasForeignKey("BonusSystemApplication.Models.Conclusion", "Id")
+                        .HasForeignKey("BonusSystemApplication.Models.Conclusion", "FormId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -405,7 +423,7 @@ namespace BonusSystemApplication.Migrations
 
                     b.HasOne("BonusSystemApplication.Models.Form", "Form")
                         .WithOne("Definition")
-                        .HasForeignKey("BonusSystemApplication.Models.Definition", "Id")
+                        .HasForeignKey("BonusSystemApplication.Models.Definition", "FormId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
