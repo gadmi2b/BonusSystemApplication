@@ -1,5 +1,7 @@
-using BonusSystemApplication.Models;
-using BonusSystemApplication.Models.Repositories;
+using BonusSystemApplication.DAL.EF;
+using BonusSystemApplication.DAL.Entities;
+using BonusSystemApplication.DAL.Interfaces;
+using BonusSystemApplication.DAL.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 

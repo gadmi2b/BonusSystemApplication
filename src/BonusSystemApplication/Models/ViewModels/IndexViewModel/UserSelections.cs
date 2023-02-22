@@ -1,4 +1,6 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
+﻿using BonusSystemApplication.DAL.Entities;
+
+namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class UserSelections
     {
@@ -52,7 +54,6 @@
                     ? false
                     : !formDataAvailable.AvailableEmployees.Contains(item))
                 {
-                    //SelectedEmployees.Remove(item);
                     itemsToRemove.Add(item);
                 }
             }
@@ -67,7 +68,6 @@
                     : Enum.TryParse(item, out Periods result) && !formDataAvailable.AvailablePeriods.Contains(result) ||
                       !Enum.TryParse(item, out result))
                 {
-                    //SelectedPeriods.Remove(item);
                     itemsToRemove.Add(item);
                 }
             }

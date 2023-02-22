@@ -1,4 +1,5 @@
-﻿using BonusSystemApplication.Models.Repositories;
+﻿using BonusSystemApplication.DAL.Entities;
+using BonusSystemApplication.Models.Repositories;
 
 namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {

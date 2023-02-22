@@ -1,9 +1,11 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+﻿using BonusSystemApplication.DAL.Entities;
+
+namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     public class DefinitionViewModel
     {
         public Periods Period { get; set; }
-        public int Year { get; set; } = System.DateTime.Now.Year;
+        public int Year { get; set; } = DateTime.Now.Year;
         public bool IsWpmHox { get; set; }
         public long EmployeeId { get; set; }
         public long? ManagerId { get; set; }

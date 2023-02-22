@@ -1,4 +1,6 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
+﻿using BonusSystemApplication.DAL.Entities;
+
+namespace BonusSystemApplication.Models.ViewModels.IndexViewModel
 {
     public class FormDataAvailable
     {

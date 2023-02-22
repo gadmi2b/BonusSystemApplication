@@ -1,4 +1,5 @@
-﻿using BonusSystemApplication.Models.ViewModels.FormViewModel;
+﻿using BonusSystemApplication.DAL.Entities;
+using BonusSystemApplication.Models.ViewModels.FormViewModel;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BonusSystemApplication.Models.ViewModels

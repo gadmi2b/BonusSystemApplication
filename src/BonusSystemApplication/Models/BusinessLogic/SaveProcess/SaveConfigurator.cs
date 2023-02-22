@@ -1,4 +1,5 @@
-﻿using BonusSystemApplication.Models.Repositories;
+﻿using BonusSystemApplication.DAL.Entities;
+using BonusSystemApplication.DAL.Interfaces;
 using Microsoft.Data.SqlClient.Server;
 
 namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess

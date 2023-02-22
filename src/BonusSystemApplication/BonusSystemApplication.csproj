@@ -18,14 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models\BusinessLogic\FormDataHandler.cs" />
     <Compile Include="Models\BusinessLogic\SaveProcess\SaveConfigurator.cs" />
     <Compile Include="Models\BusinessLogic\SaveProcess\SaveParts.cs" />
-    <Compile Include="Models\BusinessLogic\SignatureProcess\IPropertyLinker.cs" />
-    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinker.cs" />
-    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerFactory.cs" />
-    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyLinkerHandler.cs" />
-    <Compile Include="Models\BusinessLogic\SignatureProcess\PropertyType.cs" />
     <Compile Include="Models\ViewModels\FormViewModel\ConclusionViewModel.cs" />
     <Compile Include="Models\ViewModels\FormViewModel\DefinitionViewModel.cs" />
     <Compile Include="Models\ViewModels\FormViewModel\ObjectiveResultViewModel.cs" />
@@ -87,6 +81,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BLL\Processes\Filtering\" />
+    <Folder Include="BLL\Processes\Promoting\" />
+    <Folder Include="BLL\Processes\Saving\" />
+    <Folder Include="BLL\Infrastructure\" />
+    <Folder Include="BLL\Services\" />
+    <Folder Include="Models\BusinessLogic\SignatureProcess\" />
+    <Folder Include="Models\Repositories\" />
   </ItemGroup>
 
 </Project>

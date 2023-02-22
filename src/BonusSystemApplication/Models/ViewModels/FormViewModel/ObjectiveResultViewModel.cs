@@ -1,4 +1,6 @@
-﻿namespace BonusSystemApplication.Models.ViewModels.FormViewModel
+﻿using BonusSystemApplication.DAL.Entities;
+
+namespace BonusSystemApplication.Models.ViewModels.FormViewModel
 {
     public class ObjectiveResultViewModel
     {

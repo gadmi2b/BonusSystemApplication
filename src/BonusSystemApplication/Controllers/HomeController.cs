@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
-using BonusSystemApplication.Models;
-using BonusSystemApplication.Models.Repositories;
 using Microsoft.Data.SqlClient.Server;
 using BonusSystemApplication.Models.ViewModels;
 using BonusSystemApplication.UserIdentiry;
 using System.Text.Json;
-using BonusSystemApplication.Models.BusinessLogic;
-using BonusSystemApplication.Models.BusinessLogic.SignatureProcess;
 using BonusSystemApplication.Models.BusinessLogic.SaveProcess;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using BonusSystemApplication.Models.ViewModels.FormViewModel;
 using BonusSystemApplication.Models.ViewModels.IndexViewModel;
+using BonusSystemApplication.DAL.Entities;
+using BonusSystemApplication.DAL.Interfaces;
+using BonusSystemApplication.BLL.BusinessModels.SignatureProcess;
+using BonusSystemApplication.BLL.Interfaces;
+using BonusSystemApplication.BLL.Processes.Signing;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -161,9 +162,31 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(long formId, HomeFormViewModel formViewModel)
+        public IActionResult Edit(HomeFormViewModel formViewModel)
         {
+            #region Validate ViewModel
+            if (formViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formViewModel.Id))
+            {
+                return NotFound();
+            }
 
+            if (!ModelState.IsValid)
+            {
+                #region Getting queries for Users and Workprojects
+                IQueryable<User> usersQuery = userGenRepository.GetQueryForAll();
+                IQueryable<Workproject> workprojectsQuery = workprojectGenRepository.GetQueryForAll();
+                #endregion
+
+                formViewModel.InitializeDropdowns(usersQuery, workprojectsQuery);
+                return View(formViewModel);
+            }
+            #endregion
+
+            #region Determine parts allowable to update
+            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatures(formViewModel.Id);
+
+
+            #endregion
             return View(formViewModel);
         }
 
@@ -183,7 +206,7 @@ namespace BonusSystemApplication.Controllers
 
             Form? statesAndSignatures = null;
             if(formViewModel.Id != 0)
-                statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formViewModel.Id);
+                statesAndSignatures = formRepository.GetIsFreezedAndSignatures(formViewModel.Id);
 
             formViewModel.InitilizeStatesAndSignatures(statesAndSignatures);
 
@@ -473,7 +496,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
 
             #region Get form from database and check signature possibility
-            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
+            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatures(formId);
             if(PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
                !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
             {
@@ -533,7 +556,7 @@ namespace BonusSystemApplication.Controllers
             }
 
             #region Getting Form IsFreezed states and all Signatures
-            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatureData(formId);
+            Form statesAndSignatures = formRepository.GetIsFreezedAndSignatures(formId);
             #endregion
 
             if (!ModelState.IsValid)
