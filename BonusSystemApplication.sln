@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DCAA3B12-722C-409A-92D9-F82756241550}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BonusSystemApplication", "src\BonusSystemApplication\BonusSystemApplication.csproj", "{BE6B9D78-E0B1-451C-9049-F7BC6933B586}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2} = {BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1CA54B04-D79E-4881-9E42-F6A19CE309B3}"
 EndProject
@@ -21,9 +24,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "useful code", "useful code"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "useful info", "useful info", "{489DC8A2-4145-464C-98DF-E4B539572C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsefulCode", "useful code\UsefulCode\UsefulCode.csproj", "{6E5F023F-106F-426A-AEDD-C953F6B38C5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsefulCode", "useful code\UsefulCode\UsefulCode.csproj", "{6E5F023F-106F-426A-AEDD-C953F6B38C5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsufulInfo", "useful info\UsufulInfo\UsufulInfo.csproj", "{8979635A-FF7E-4AE9-9C43-00B57F483BC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsufulInfo", "useful info\UsufulInfo\UsufulInfo.csproj", "{8979635A-FF7E-4AE9-9C43-00B57F483BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusSystemApplication.BLL", "src\BonusSystemApplicaition.BLL\BonusSystemApplication.BLL\BonusSystemApplication.BLL.csproj", "{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A} = {CA65444D-1BE3-49E2-8D36-89BAE4A3379A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusSystemApplication.DAL", "src\BonusSystemApplication.DAL\BonusSystemApplication.DAL\BonusSystemApplication.DAL.csproj", "{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +61,14 @@ Global
 		{8979635A-FF7E-4AE9-9C43-00B57F483BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8979635A-FF7E-4AE9-9C43-00B57F483BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8979635A-FF7E-4AE9-9C43-00B57F483BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +81,8 @@ Global
 		{BE5378ED-F1CA-4200-A464-9056317BBC84} = {6E069538-4635-4056-AFAF-F99097D872CA}
 		{6E5F023F-106F-426A-AEDD-C953F6B38C5F} = {AA13EA2E-4C60-4380-B33C-25DB9ADA3C89}
 		{8979635A-FF7E-4AE9-9C43-00B57F483BC0} = {489DC8A2-4145-464C-98DF-E4B539572C35}
+		{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2} = {DCAA3B12-722C-409A-92D9-F82756241550}
+		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A} = {DCAA3B12-722C-409A-92D9-F82756241550}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8735B4D2-A770-4C32-B9EA-63D6B688D79C}

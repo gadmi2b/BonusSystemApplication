@@ -1,15 +1,15 @@
 ﻿using BonusSystemApplication.DAL.Entities;
-using BonusSystemApplication.Models.ViewModels.FormViewModel;
+using BonusSystemApplication.Models.Forms.Edit;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BonusSystemApplication.Models.ViewModels
 {
     public class HomeFormViewModel //Controller name | Action name | ViewModel
     {
-        public DefinitionViewModel Definition { get; set; }
-        public ConclusionViewModel Conclusion { get; set; }
-        public SignaturesViewModel Signatures { get; set; }
-        public IList<ObjectiveResultViewModel> ObjectivesResults { get; set; }
+        public DefinitionVM Definition { get; set; }
+        public ConclusionVM Conclusion { get; set; }
+        public SignaturesVM Signatures { get; set; }
+        public IList<ObjectiveResultVM> ObjectivesResults { get; set; }
 
         public List<SelectListItem> PeriodSelectList { get; set; }
         public List<SelectListItem> EmployeeSelectList { get; set; }
@@ -25,18 +25,18 @@ namespace BonusSystemApplication.Models.ViewModels
                                  IQueryable<Workproject> workprojectsQuery)
         {
             Id = 0;
-            Definition = new DefinitionViewModel();
-            Conclusion = new ConclusionViewModel();
-            Signatures = new SignaturesViewModel
+            Definition = new DefinitionVM();
+            Conclusion = new ConclusionVM();
+            Signatures = new SignaturesVM
             {
                 ForObjectives = new ForObjectives(),
                 ForResults = new ForResults(),
             };
 
-            List<ObjectiveResultViewModel> objectivesResults = new List<ObjectiveResultViewModel>();
+            List<ObjectiveResultVM> objectivesResults = new List<ObjectiveResultVM>();
             for (int i = 0; i < 10; i++)
             {
-                ObjectiveResultViewModel objectiveResult = new ObjectiveResultViewModel()
+                ObjectiveResultVM objectiveResult = new ObjectiveResultVM()
                 {
                     Row = i + 1,
                     Objective = new Objective(),
@@ -59,13 +59,13 @@ namespace BonusSystemApplication.Models.ViewModels
             IsObjectivesFreezed = form.IsObjectivesFreezed;
             IsResultsFreezed = form.IsResultsFreezed;
 
-            Definition = new DefinitionViewModel(form.Definition);
-            Conclusion = new ConclusionViewModel(form.Conclusion);
-            Signatures = new SignaturesViewModel(form.Signatures);
+            Definition = new DefinitionVM(form.Definition);
+            Conclusion = new ConclusionVM(form.Conclusion);
+            Signatures = new SignaturesVM(form.Signatures);
 
             foreach (var objRes in form.ObjectivesResults)
             {
-                ObjectiveResultViewModel objResViewModel = new ObjectiveResultViewModel(objRes);
+                ObjectiveResultVM objResViewModel = new ObjectiveResultVM(objRes);
                 ObjectivesResults.Add(objResViewModel);
             }
 
@@ -102,7 +102,7 @@ namespace BonusSystemApplication.Models.ViewModels
         {
             if(statesAndSignatures == null)
             {
-                Signatures = new SignaturesViewModel
+                Signatures = new SignaturesVM
                 {
                     ForObjectives = new ForObjectives(),
                     ForResults = new ForResults(),
@@ -112,7 +112,7 @@ namespace BonusSystemApplication.Models.ViewModels
             }
             else
             {
-                Signatures = new SignaturesViewModel(statesAndSignatures.Signatures);
+                Signatures = new SignaturesVM(statesAndSignatures.Signatures);
                 IsObjectivesFreezed = statesAndSignatures.IsObjectivesFreezed;
                 IsResultsFreezed = statesAndSignatures.IsResultsFreezed;
             }
