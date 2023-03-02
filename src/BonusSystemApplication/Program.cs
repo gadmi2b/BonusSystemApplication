@@ -19,15 +19,14 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conne
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 builder.Services.AddTransient<IFormsService, FormsService>();
 
-builder.Services.AddTransient<IGenericRepository<User>, GenericRepository<User>>();
-builder.Services.AddTransient<IGenericRepository<Workproject>, GenericRepository<Workproject>>();
-
 builder.Services.AddTransient<IFormRepository, FormRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IDefinitionRepository, DefinitionRepository>();
+builder.Services.AddTransient<IConclusionRepository, ConclusionRepository>();
+builder.Services.AddTransient<ISignaturesRepository, SignaturesRepository>();
 builder.Services.AddTransient<IWorkprojectRepository, WorkprojectRepository>();
 builder.Services.AddTransient<IGlobalAccessRepository, GlobalAccessRepository>();
-
+builder.Services.AddTransient<IObjectiveResultRepository, ObjectiveResultRepository>();
 
 var app = builder.Build();
 
@@ -40,9 +39,7 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-
 //--------------------------------------------- REGISTER MIDDLEWARE HERE ---------------------------------------------
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -51,8 +48,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -60,7 +55,7 @@ app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Forms}/{action=Index}/{id?}");
+    pattern: "{controller=Form}/{action=Index}/{id?}");
 
 // -------------------------------------------------- UNTILL HERE --------------------------------------------------
 

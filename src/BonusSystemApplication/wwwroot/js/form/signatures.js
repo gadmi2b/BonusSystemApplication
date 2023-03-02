@@ -22,7 +22,7 @@
 
     $.ajax({
       type: "Get",
-      url: "/Home/SignatureProcess",
+      url: "/Form/SignatureProcess",
       data: {
         formId: formId,
         checkboxId: signatureCheckboxId,

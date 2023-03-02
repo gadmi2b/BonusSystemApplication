@@ -10,15 +10,15 @@ namespace BonusSystemApplication.Models.BusinessLogic.SaveProcess
 
         public SaveConfigurator(Form statesAndSignatures)
         {
-            bool isObjectiveSigned = statesAndSignatures.Signatures.ForObjectives.IsSignedByEmployee &&
-                                     statesAndSignatures.Signatures.ForObjectives.IsSignedByManager &&
-                                     statesAndSignatures.Signatures.ForObjectives.IsSignedByApprover;
+            bool isObjectiveSigned = statesAndSignatures.Signatures.ForObjectivesIsSignedByEmployee &&
+                                     statesAndSignatures.Signatures.ForObjectivesIsSignedByManager &&
+                                     statesAndSignatures.Signatures.ForObjectivesIsSignedByApprover;
 
-            bool isResultsSigned = statesAndSignatures.Signatures.ForResults.IsSignedByEmployee &&
-                                   statesAndSignatures.Signatures.ForResults.IsSignedByManager &&
-                                   statesAndSignatures.Signatures.ForResults.IsSignedByApprover;
+            bool isResultsSigned = statesAndSignatures.Signatures.ForResultsIsSignedByEmployee &&
+                                   statesAndSignatures.Signatures.ForResultsIsSignedByManager &&
+                                   statesAndSignatures.Signatures.ForResultsIsSignedByApprover;
 
-            if(isResultsSigned)
+            if (isResultsSigned)
             {
                 // Nothing could be saved
                 Parts = null;

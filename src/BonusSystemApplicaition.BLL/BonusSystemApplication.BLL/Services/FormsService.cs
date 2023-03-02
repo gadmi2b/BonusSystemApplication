@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
+using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.Processes.Filtering;
+using BonusSystemApplication.BLL.Processes.Signing;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
+using BonusSystemApplication.DAL.Repositories;
 using BonusSystemApplication.UserIdentiry;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 
@@ -15,9 +19,6 @@ namespace BonusSystemApplication.BLL.Services
     {
         private readonly ILogger<FormsService> _logger;
         private readonly IMapper _mapper;
-
-        private IGenericRepository<User> _userGenRepository;
-        private IGenericRepository<Workproject> _workprojectGenRepository;
 
         private IFormRepository _formRepository;
         private IUserRepository _userRepository;
@@ -137,6 +138,7 @@ namespace BonusSystemApplication.BLL.Services
             return _mapper.Map<FormDTO>(_formRepository.GetIsFreezedStates(formId));
         }
 
+
         public DefinitionDTO GetDefinitionDTO(long formId)
         {
             return _mapper.Map<DefinitionDTO>(_definitionRepository.GetDefinition(formId));
@@ -153,6 +155,7 @@ namespace BonusSystemApplication.BLL.Services
         {
             return _mapper.Map<IList<ObjectiveResultDTO>>(_objectiveResultRepository.GetObjectivesResults(formId));
         }
+
 
         public List<SelectListItem> GetUsersNames()
         {
@@ -183,6 +186,94 @@ namespace BonusSystemApplication.BLL.Services
                                       Text = s,
                                   })
                                   .ToList();
+        }
+
+
+        public string GetWorkprojectDescription(long workprojectId)
+        {
+            string? description = _workprojectRepository.GetWorkprojectData(workprojectId).Description;
+            if (description != null) return description;
+            else return string.Empty;
+        }
+        public EmployeeDTO GetEmployeeDTO(long userId)
+        {
+            return _mapper.Map<EmployeeDTO>(_userRepository.GetUserData(userId));
+        }
+
+        public Dictionary<string, object> UpdateAndReturnSignatures(long formId,
+                                                                    string checkboxId,
+                                                                    bool isCheckboxChecked)
+        {
+            if (string.IsNullOrEmpty(checkboxId))
+            {
+                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                                              $"Signature data is not affected.", "");
+            }
+
+            #region Determine which properties were affected. Getting affected PropertyLinker
+            foreach (PropertyType type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
+            {
+                IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
+                if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, checkboxId))
+                {
+                    break;
+                }
+            }
+
+            if (PropertyLinkerHandler.AffectedPropertyLinker == null)
+            {
+                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                                              $"Neither objectives nor results are involved into signature process.", "");
+            }
+            #endregion
+
+            #region Get property-value pairs which should be saved in Database
+            Dictionary<string, object> propertiesValues =
+                PropertyLinkerHandler.GetPropertiesValues(checkboxId, isCheckboxChecked);
+
+            if (propertiesValues.Count == 0)
+            {
+                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                                              $"Signature data is not affected.", "");
+            }
+            #endregion
+
+            #region Get form from database and check signature possibility
+            Form statesAndSignatures = _formRepository.GetIsFreezedAndSignatures(formId);
+
+            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
+               !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
+            {
+                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                                              $"Objectives should be freezed at first.", "");
+            }
+
+            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
+               !FormDataHandler.IsResultsSignaturePossible(statesAndSignatures))
+            {
+                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                                              $"Results should be freezed at first.", "");
+            }
+            #endregion
+
+            #region Fill property-value pair with User signature and Update Form data
+            FormDataHandler.PutUserSignature(ref propertiesValues);
+            FormDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
+            FormDataHandler.UpdateLastSavedFormData(statesAndSignatures);
+            _formRepository.UpdateFormSignatures(statesAndSignatures);
+            #endregion
+
+            return propertiesValues;
+        }
+
+        public FormDTO UpdateForm(DefinitionDTO definition,
+                                  ConclusionDTO conclusion,
+                                  SignaturesDTO signatures,
+                                  IList<ObjectiveResultDTO> objectivesResultsDTO)
+        {
+
+
+            return new FormDTO();
         }
     }
 }

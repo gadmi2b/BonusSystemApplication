@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Models\Index\" />
     <Folder Include="Processes\Promoting\" />
-    <Folder Include="Processes\Saving\" />
   </ItemGroup>
 
   <ItemGroup>

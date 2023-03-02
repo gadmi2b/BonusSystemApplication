@@ -21,13 +21,14 @@ namespace BonusSystemApplication.Mapper
 			CreateMap<DefinitionDTO, DefinitionVM>().ReverseMap();
 			CreateMap<ConclusionDTO, ConclusionVM>().ReverseMap();
 			CreateMap<SignaturesDTO, SignaturesVM>().ReverseMap();
-			CreateMap<ObjectiveResultDTO, ObjectiveResultVM>().ReverseMap();
-			CreateMap<List<ObjectiveResultDTO>, List<ObjectiveResultVM>>().ReverseMap();
 			CreateMap<ObjectiveDTO, ObjectiveVM>().ReverseMap();
 			CreateMap<ResultDTO, ResultVM>().ReverseMap();
+			CreateMap<ObjectiveResultDTO, ObjectiveResultVM>().ReverseMap();
 
-			// Data Access Layer -> Business Logic Layer
-			CreateMap<Definition, DefinitionDTO>();
+            //CreateMap<List<ObjectiveResultDTO>, List<ObjectiveResultVM>>().ReverseMap();
+
+            // Data Access Layer -> Business Logic Layer
+            CreateMap<Definition, DefinitionDTO>();
 			CreateMap<Conclusion, ConclusionDTO>();
 			CreateMap<Signatures, SignaturesDTO>();
 			CreateMap<ObjectiveResult, ObjectiveResultDTO>();

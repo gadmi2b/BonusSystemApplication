@@ -25,5 +25,9 @@ namespace BonusSystemApplication.BLL.Interfaces
 
         string GetWorkprojectDescription(long workprojectId);
         EmployeeDTO GetEmployeeDTO(long userId);
+
+        Dictionary<string, object> UpdateAndReturnSignatures(long formId,
+                                                             string checkboxId,
+                                                             bool isCheckboxChecked);
     }
 }

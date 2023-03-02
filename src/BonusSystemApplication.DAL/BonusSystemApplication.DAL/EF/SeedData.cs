@@ -1,5 +1,6 @@
 ﻿using BonusSystemApplication.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BonusSystemApplication.DAL.EF
 {
@@ -175,12 +176,12 @@ namespace BonusSystemApplication.DAL.EF
 
         private static Signatures[] Signatures =
         {
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
-            new Signatures { ForObjectives = new ForObjectives(), ForResults = new ForResults() },
+            new Signatures { },
+            new Signatures { },
+            new Signatures { },
+            new Signatures { },
+            new Signatures { },
+            new Signatures { },
         };
 
         private static Definition[] Definitions =

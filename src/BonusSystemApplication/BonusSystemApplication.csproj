@@ -7,25 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\BusinessLogic\**" />
-    <Compile Remove="Models\ViewModels\**" />
-    <Content Remove="Models\BusinessLogic\**" />
-    <Content Remove="Models\ViewModels\**" />
-    <EmbeddedResource Remove="Models\BusinessLogic\**" />
-    <EmbeddedResource Remove="Models\ViewModels\**" />
-    <None Remove="Models\BusinessLogic\**" />
-    <None Remove="Models\ViewModels\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Models\BusinessLogic\SaveProcess\SaveConfigurator.cs" />
-    <Compile Include="Models\BusinessLogic\SaveProcess\SaveParts.cs" />
-    <Compile Include="Models\Forms\Edit\SignaturesVM.cs" />
-    <Compile Include="Models\ViewModels\HomeFormViewModel.cs" />
-    <Compile Include="Models\ViewModels\HomeIndexViewModel.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
@@ -63,13 +44,10 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\BusinessLogic\SignatureProcess\" />
-    <Folder Include="Models\Repositories\" />
-    <Folder Include="Models\ViewModels\FormViewModel\" />
-    <Folder Include="Models\ViewModels\IndexViewModel\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

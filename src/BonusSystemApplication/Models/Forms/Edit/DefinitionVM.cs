@@ -19,22 +19,22 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public string WorkprojectDescription { get; set; } = string.Empty;
 
         public DefinitionVM() { }
-        public DefinitionVM(DefinitionDTO source)
-        {
-            Id = source.Id;
+        //public DefinitionVM(DefinitionDTO source)
+        //{
+        //    Id = source.Id;
 
-            Period = source.Period;
-            Year = source.Year;
-            IsWpmHox = source.IsWpmHox;
-            EmployeeId = source.EmployeeId;
-            ManagerId = source.ManagerId;
-            ApproverId = source.ApproverId;
-            WorkprojectId = source.WorkprojectId;
+        //    Period = source.Period;
+        //    Year = source.Year;
+        //    IsWpmHox = source.IsWpmHox;
+        //    EmployeeId = source.EmployeeId;
+        //    ManagerId = source.ManagerId;
+        //    ApproverId = source.ApproverId;
+        //    WorkprojectId = source.WorkprojectId;
 
-            TeamName = source.TeamName;
-            PositionName = source.PositionName;
-            Pid = source.Pid;
-            WorkprojectDescription = source.WorkprojectDescription;
-        }
+        //    TeamName = source.TeamName;
+        //    PositionName = source.PositionName;
+        //    Pid = source.Pid;
+        //    WorkprojectDescription = source.WorkprojectDescription;
+        //}
     }
 }

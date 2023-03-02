@@ -15,18 +15,19 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public string WeightFactor { get; set; } = string.Empty;
         public string KpiUpperLimit { get; set; } = string.Empty;
 
-        public ObjectiveVM(ObjectiveDTO source)
-        {
-            Statement = source.Statement;
-            Description = source.Description;
-            IsKey = source.IsKey;
-            IsMeasurable = source.IsMeasurable;
-            Unit = source.Unit;
-            Threshold = source.Threshold;
-            Target = source.Target;
-            Challenge = source.Challenge;
-            WeightFactor = source.WeightFactor;
-            KpiUpperLimit = source.KpiUpperLimit;
-        }
+        public ObjectiveVM() { }
+        //public ObjectiveVM(ObjectiveDTO source)
+        //{
+        //    Statement = source.Statement;
+        //    Description = source.Description;
+        //    IsKey = source.IsKey;
+        //    IsMeasurable = source.IsMeasurable;
+        //    Unit = source.Unit;
+        //    Threshold = source.Threshold;
+        //    Target = source.Target;
+        //    Challenge = source.Challenge;
+        //    WeightFactor = source.WeightFactor;
+        //    KpiUpperLimit = source.KpiUpperLimit;
+        //}
     }
 }

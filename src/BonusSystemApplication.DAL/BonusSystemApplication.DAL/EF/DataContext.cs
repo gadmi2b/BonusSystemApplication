@@ -5,6 +5,14 @@ namespace BonusSystemApplication.DAL.EF
 {
     public class DataContext : DbContext
     {
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=ppolocaldb");
+        //    }
+        //}
+
         public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
         public DbSet<Form> Forms { get; set; }
         public DbSet<Definition> Definitions { get; set; }

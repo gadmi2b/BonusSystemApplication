@@ -9,12 +9,12 @@ namespace BonusSystemApplication.BLL.DTO.Edit
         public ObjectiveDTO Objective { get; set; }
         public ResultDTO Result { get; set; }
 
-        public ObjectiveResultDTO(ObjectiveResult source)
-        {
-            Id = source.Id;
-            Row = source.Row;
-            Objective = new ObjectiveDTO(source.Objective);
-            Result = new ResultDTO(source.Result);
-        }
+        //public ObjectiveResultDTO(ObjectiveResult source)
+        //{
+        //    Id = source.Id;
+        //    Row = source.Row;
+        //    Objective = new ObjectiveDTO(source.Objective);
+        //    Result = new ResultDTO(source.Result);
+        //}
     }
 }

@@ -1,6 +1,4 @@
-﻿using BonusSystemApplication.BLL.DTO.Edit;
-
-namespace BonusSystemApplication.Models.Forms.Edit
+﻿namespace BonusSystemApplication.Models.Forms.Edit
 {
     public class SignaturesVM
     {
@@ -34,25 +32,26 @@ namespace BonusSystemApplication.Models.Forms.Edit
                    ForResultsIsSignedByApprover;
         }
 
-        public SignaturesVM(SignaturesDTO source)
-        {
-            Id = source.Id;
+        public SignaturesVM() { }
+        //public SignaturesVM(SignaturesDTO source)
+        //{
+        //    Id = source.Id;
 
-            ForObjectivesEmployeeSignature = source.ForObjectivesEmployeeSignature;
-            ForObjectivesIsSignedByEmployee = source.ForObjectivesIsSignedByEmployee;
-            ForObjectivesIsRejectedByEmployee = source.ForObjectivesIsRejectedByEmployee;
-            ForObjectivesManagerSignature = source.ForObjectivesManagerSignature;
-            ForObjectivesIsSignedByManager = source.ForObjectivesIsSignedByManager;
-            ForObjectivesApproverSignature = source.ForObjectivesApproverSignature;
-            ForObjectivesIsSignedByApprover = source.ForObjectivesIsSignedByApprover;
+        //    ForObjectivesEmployeeSignature = source.ForObjectivesEmployeeSignature;
+        //    ForObjectivesIsSignedByEmployee = source.ForObjectivesIsSignedByEmployee;
+        //    ForObjectivesIsRejectedByEmployee = source.ForObjectivesIsRejectedByEmployee;
+        //    ForObjectivesManagerSignature = source.ForObjectivesManagerSignature;
+        //    ForObjectivesIsSignedByManager = source.ForObjectivesIsSignedByManager;
+        //    ForObjectivesApproverSignature = source.ForObjectivesApproverSignature;
+        //    ForObjectivesIsSignedByApprover = source.ForObjectivesIsSignedByApprover;
 
-            ForResultsEmployeeSignature = source.ForResultsEmployeeSignature;
-            ForResultsIsSignedByEmployee = source.ForResultsIsSignedByEmployee;
-            ForResultsIsRejectedByEmployee = source.ForResultsIsRejectedByEmployee;
-            ForResultsManagerSignature = source.ForResultsManagerSignature;
-            ForResultsIsSignedByManager = source.ForResultsIsSignedByManager;
-            ForResultsApproverSignature = source.ForResultsApproverSignature;
-            ForResultsIsSignedByApprover = source.ForResultsIsSignedByApprover;
-        }
+        //    ForResultsEmployeeSignature = source.ForResultsEmployeeSignature;
+        //    ForResultsIsSignedByEmployee = source.ForResultsIsSignedByEmployee;
+        //    ForResultsIsRejectedByEmployee = source.ForResultsIsRejectedByEmployee;
+        //    ForResultsManagerSignature = source.ForResultsManagerSignature;
+        //    ForResultsIsSignedByManager = source.ForResultsIsSignedByManager;
+        //    ForResultsApproverSignature = source.ForResultsApproverSignature;
+        //    ForResultsIsSignedByApprover = source.ForResultsIsSignedByApprover;
+        //}
     }
 }

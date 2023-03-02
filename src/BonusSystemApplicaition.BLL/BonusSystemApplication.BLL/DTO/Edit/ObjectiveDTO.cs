@@ -15,18 +15,18 @@ namespace BonusSystemApplication.BLL.DTO.Edit
         public string WeightFactor { get; set; } = string.Empty;
         public string KpiUpperLimit { get; set; } = string.Empty;
 
-        public ObjectiveDTO(Objective source)
-        {
-            Statement = source.Statement == null ? string.Empty : source.Statement;
-            Description = source.Description == null ? string.Empty : source.Description;
-            IsKey = source.IsKey;
-            IsMeasurable = source.IsMeasurable;
-            Unit = source.Unit == null ? string.Empty : source.Unit;
-            Threshold = source.Threshold == null ? string.Empty : source.Threshold;
-            Target = source.Target == null ? string.Empty : source.Target;
-            Challenge = source.Challenge == null ? string.Empty : source.Challenge;
-            WeightFactor = source.WeightFactor == null ? string.Empty : source.WeightFactor;
-            KpiUpperLimit = source.KpiUpperLimit == null ? string.Empty : source.KpiUpperLimit;
-        }
+        //public ObjectiveDTO(Objective source)
+        //{
+        //    Statement = source.Statement == null ? string.Empty : source.Statement;
+        //    Description = source.Description == null ? string.Empty : source.Description;
+        //    IsKey = source.IsKey;
+        //    IsMeasurable = source.IsMeasurable;
+        //    Unit = source.Unit == null ? string.Empty : source.Unit;
+        //    Threshold = source.Threshold == null ? string.Empty : source.Threshold;
+        //    Target = source.Target == null ? string.Empty : source.Target;
+        //    Challenge = source.Challenge == null ? string.Empty : source.Challenge;
+        //    WeightFactor = source.WeightFactor == null ? string.Empty : source.WeightFactor;
+        //    KpiUpperLimit = source.KpiUpperLimit == null ? string.Empty : source.KpiUpperLimit;
+        //}
     }
 }
