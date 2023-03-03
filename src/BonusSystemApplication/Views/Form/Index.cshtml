@@ -48,7 +48,7 @@ BEM convention: Block Elements Modifiers
   
 
   <content class="content">
-    <form asp-controller="Home" asp-action="Index" method="post" class="content-select-form" id="js-content-select">
+    <form asp-controller="Form" asp-action="Index" method="post" class="content-select-form" id="js-content-select">
         <div class="button-groups__title">Multiselect filters:</div>
         <div class="content-select">
             <label>Employee:</label>
@@ -97,13 +97,13 @@ BEM convention: Block Elements Modifiers
       <div class="button-group--flex">
         <span class="button-group--margin">
           <div class="button-group__title">Work with empty form:</div>
-          <input type="submit" value="Open blank form" asp-controller="Home" asp-action="OpenBlankForm" class="cmn-button" />
+          <input type="submit" value="Open blank form" asp-controller="Form" asp-action="OpenBlankForm" class="cmn-button" />
         </span>
         <span class="button-group--margin">
           <div class="button-group__title">Work based on selected form/forms:</div>
-          <input type="submit" value="Create" asp-controller="Home" asp-action="CreateFormBasedOnSelection" class="cmn-button" id="js-create-button" />
-          <input type="submit" value="Promote" asp-controller="Home" asp-action="PromoteFormsBasedOnSelection" class="cmn-button" />
-          <input type="submit" value="Delete" asp-controller="Home" asp-action="" class="cmn-button" />
+          <input type="submit" value="Create" asp-controller="Form" asp-action="CreateFormBasedOnSelection" class="cmn-button" id="js-create-button" />
+          <input type="submit" value="Promote" asp-controller="Form" asp-action="PromoteFormsBasedOnSelection" class="cmn-button" />
+          <input type="submit" value="Delete" asp-controller="Form" asp-action="" class="cmn-button" />
         </span>
       </div>
 
@@ -125,41 +125,65 @@ BEM convention: Block Elements Modifiers
         <tbody class="content-table__body">
           @for(int i = 0; i < Model.TableRows.Count(); i++)
           {
-            //<tr onclick="window.open('@Url.Action("Create", "Home", new {id=Model.TableRows[i].Id})', '_blank')">
             <tr id="@Model.TableRows[i].Id">
-              <td class="js-unopenable"><input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox" /></td>
-              <td><span>@(i+1)</span></td>
-              <td><span>@Model.TableRows[i].WorkprojectName</span></td>
-              <td><span>@Model.TableRows[i].EmployeeFullName</span></td>
-              <td><span>@Model.TableRows[i].Period</span></td>
-              <td><span>@Model.TableRows[i].Year</span></td>
-              <td><span>@Model.TableRows[i].DepartmentName</span></td>
-              <td><span>@Model.TableRows[i].TeamName</span></td>
-              <td><span>@Model.TableRows[i].LastSavedDateTime</span></td>
-              <td>
-                <span>
+              <td> @*Checkbox*@
+                  <input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox"/>
+              </td>
+              <td> @*(i+1)*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @(i+1)
+                </a>
+              </td>
+              <td> @*WorkprojectName*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].WorkprojectName
+                </a>
+              </td>
+              <td> @*EmployeeFullName*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].EmployeeFullName
+                </a>
+              </td>
+              <td> @*Period*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].Period
+                </a>
+              </td>
+              <td> @*Year*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].Year
+                </a>
+              </td>
+              <td> @*DepartmentName*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].DepartmentName
+                </a>
+              </td>
+              <td> @*TeamName*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].TeamName
+                </a>
+              </td>
+              <td> @*LastSavedDateTime*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
+                  @Model.TableRows[i].LastSavedDateTime
+                </a>
+              </td>
+              <td> @*Permissions*@
+                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
                   @{ string permission = string.Empty; }
-                  @foreach(string s in @Model.TableRows[i].Permissions)
-                  {
-                    if(string.IsNullOrEmpty(permission))
-                    {
+                  @foreach (string s in @Model.TableRows[i].Permissions)
+                    if (string.IsNullOrEmpty(permission))
                       permission = s;
-                    }
                     else
-                    {
                       permission = permission + "; " + s;
-                    }
-                  }
                   @permission
-                </span>
+                </a>
               </td>
             </tr>
           }
         </tbody>
       </table>  
-    </form>
-    <form method="post" asp-controller="Home" asp-action="EditForm" id="js-tableForm">
-      <input type="text" name="formId" value="" hidden />
     </form>
   </content>
 

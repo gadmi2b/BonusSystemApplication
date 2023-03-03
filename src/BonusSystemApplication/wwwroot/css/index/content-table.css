@@ -27,15 +27,15 @@ tr:hover {
 }
 
 
-.content-table--column-nth { /* Row */
+.content-table--column-nth { /* row */
     width: 60px;
 }
 
-.content-table--column-checkbox {
-    width: 30px;
+.content-table--column-checkbox { /* checkbox */
+  width: 30px;
 }
 
-.content-table--column-employee { /* Employee */
+.content-table--column-employee { /* employee */
     width: 210px;
 }
 
@@ -87,7 +87,14 @@ tr:hover {
 }
 
 .content-table__body td {
-    border: 1px solid #999;
-    text-align: center;
-    padding: 4px 4px;
+  border: 1px solid #999;
+  text-align: center;
+}
+
+.content-table__body td a {
+  display: block;
+  padding: 4px 4px;
+
+  color: inherit;
+  text-decoration: inherit;
 }
