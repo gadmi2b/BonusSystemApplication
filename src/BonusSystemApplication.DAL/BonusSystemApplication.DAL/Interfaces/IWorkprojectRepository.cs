@@ -6,5 +6,6 @@ namespace BonusSystemApplication.DAL.Interfaces
     {
         Workproject GetWorkprojectData(long workprojectId);
         List<Workproject> GetWorkprojectsNames();
+        bool IsWorkprojectExists(long workprojectId);
     }
 }

@@ -7,7 +7,11 @@ namespace BonusSystemApplication.DAL.Repositories
     public class UserRepository : IUserRepository
     {
         private DataContext context;
-        public UserRepository(DataContext ctx) => context = ctx;
+        public UserRepository(DataContext ctx)
+        {
+            Console.WriteLine($">>>>>>>>>> DI has created me at: {DateTime.Now}<<<<<<<<<<");
+            context = ctx;
+        }
 
         public User GetUserData(long userId)
         {
@@ -41,6 +45,11 @@ namespace BonusSystemApplication.DAL.Repositories
                     LastNameEng = u.LastNameEng,
                 })
                 .ToList();
+        }
+    
+        public bool IsUserExists(long userId)
+        {
+            return context.Users.Any(u => u.Id == userId);
         }
     }
 }

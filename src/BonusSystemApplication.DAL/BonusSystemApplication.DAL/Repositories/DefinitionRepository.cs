@@ -108,6 +108,16 @@ namespace BonusSystemApplication.DAL.Repositories
                 .ToList();
         }
 
+        public bool IsDefinitionExists(Definition definition)
+        {
+            return context.Definitions
+                        .Any(d => d.EmployeeId == definition.EmployeeId &&
+                                  d.WorkprojectId == definition.WorkprojectId &&
+                                  d.Period == definition.Period &&
+                                  d.Year == definition.Year);
+        }
+
+
         /// <summary>
         /// There are 3 big areas of global access working like filters if presented (from biggest to smallest):
         /// Department (like Engineering at all), Team (like Design or Stress) or just Workproject

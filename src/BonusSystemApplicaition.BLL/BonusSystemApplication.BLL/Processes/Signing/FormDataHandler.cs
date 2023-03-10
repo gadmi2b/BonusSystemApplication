@@ -1,5 +1,5 @@
 ﻿using BonusSystemApplication.DAL.Entities;
-using BonusSystemApplication.UserIdentiry;
+using BonusSystemApplication.BLL.UserIdentiry;
 using System.Reflection;
 
 namespace BonusSystemApplication.BLL.Processes.Signing

@@ -5,7 +5,9 @@ namespace BonusSystemApplication.DAL.Interfaces
     public interface IFormRepository
     {
         List<Form> GetForms(List<long> formIds);
-        Form GetIsFreezedStates(long formId);
+        Form GetStates(long formId);
+        void UpdateStates(Form form);
+
 
         Form GetForm(long formId);
 
@@ -18,15 +20,19 @@ namespace BonusSystemApplication.DAL.Interfaces
 
 
 
-        Form GetIsFreezedAndSignatures(long formId);
+        Form GetStatesAndSignatures(long formId);
         Form GetObjectivesResultsData(long formId);
 
         List<long> GetFormIdsWhereLocalAccess(long userId);
 
 
         void CreateForm(Form form);
-        void UpdateFormSignatures(Form form);
-        void UpdateFormObjectivesResults(Form form);
+
+        void UpdateSignatures(Form form);
+        void UpdateResultsConclusion(Form form);
+        void UpdateConclusionComments(Form form);
+        void UpdateDefinitionObjectivesResultsConclusion(Form form);
+
         void DeleteForm(long id);
 
     }

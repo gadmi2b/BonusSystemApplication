@@ -31,5 +31,9 @@ namespace BonusSystemApplication.DAL.Repositories
                 })
                 .ToList();
         }
+        public bool IsWorkprojectExists(long workprojectId)
+        {
+            return context.Workprojects.Any(w => w.Id == workprojectId);
+        }
     }
 }

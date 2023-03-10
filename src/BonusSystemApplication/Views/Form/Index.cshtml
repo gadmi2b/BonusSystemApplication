@@ -97,7 +97,9 @@ BEM convention: Block Elements Modifiers
       <div class="button-group--flex">
         <span class="button-group--margin">
           <div class="button-group__title">Work with empty form:</div>
-          <input type="submit" value="Open blank form" asp-controller="Form" asp-action="OpenBlankForm" class="cmn-button" />
+          <a asp-controller="Form" asp-action="Edit" asp-route-id="0">
+            <input type="button" value="Open blank form" class="cmn-button" />
+          </a>
         </span>
         <span class="button-group--margin">
           <div class="button-group__title">Work based on selected form/forms:</div>

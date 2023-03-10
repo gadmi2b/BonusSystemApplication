@@ -10,47 +10,9 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext context;
         public FormRepository(DataContext ctx) => context = ctx;
 
-        public List<Form> GetForms(List<long> formIds)
+        public Form GetStates(long formId)
         {
-            return context.Forms.TagWith($"Forms data for Index view: {formIds.Count()} forms total")
-                    .Where(f => formIds.Contains(f.Id))
-                    .Select(f => new Form
-                    {
-                        Id = f.Id,
-                        LastSavedDateTime = f.LastSavedDateTime,
-                        Definition = new Definition
-                        {
-                            Period = f.Definition.Period,
-                            Year = f.Definition.Year,
-                            ApproverId = f.Definition.ApproverId,
-                            ManagerId = f.Definition.ManagerId,
-                            EmployeeId = f.Definition.EmployeeId,
-
-                            Employee = new User
-                            {
-                                LastNameEng = f.Definition.Employee.LastNameEng,
-                                FirstNameEng = f.Definition.Employee.FirstNameEng,
-                                Team = new Team
-                                {
-                                    Name = f.Definition.Employee.Team.Name,
-                                },
-                                Department = new Department
-                                {
-                                    Name = f.Definition.Employee.Department.Name,
-                                },
-                            },
-                            Workproject = new Workproject
-                            {
-                                Id = f.Definition.Workproject.Id,
-                                Name = f.Definition.Workproject.Name,
-                            },
-                        }
-                    })
-                    .ToList();
-        }
-        public Form GetIsFreezedStates(long formId)
-        {
-            return context.Forms.TagWith("Form IsFreezedStates requesting")
+            return context.Forms.TagWith("Form IsFreezed states requesting")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -60,10 +22,9 @@ namespace BonusSystemApplication.DAL.Repositories
                     })
                     .First();
         }
-
         public Form GetForm(long formId) //OK
         {
-            return context.Forms.TagWith("Form data for Form view requesting")
+            return context.Forms.TagWith("Requesting form data")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -121,8 +82,238 @@ namespace BonusSystemApplication.DAL.Repositories
                     })
                     .First();
         }
+        public List<Form> GetForms(List<long> formIds)
+        {
+            return context.Forms.TagWith($"Forms data for Index view: {formIds.Count()} forms total")
+                    .Where(f => formIds.Contains(f.Id))
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        LastSavedDateTime = f.LastSavedDateTime,
+                        Definition = new Definition
+                        {
+                            Period = f.Definition.Period,
+                            Year = f.Definition.Year,
+                            ApproverId = f.Definition.ApproverId,
+                            ManagerId = f.Definition.ManagerId,
+                            EmployeeId = f.Definition.EmployeeId,
+
+                            Employee = new User
+                            {
+                                LastNameEng = f.Definition.Employee.LastNameEng,
+                                FirstNameEng = f.Definition.Employee.FirstNameEng,
+                                Team = new Team
+                                {
+                                    Name = f.Definition.Employee.Team.Name,
+                                },
+                                Department = new Department
+                                {
+                                    Name = f.Definition.Employee.Department.Name,
+                                },
+                            },
+                            Workproject = new Workproject
+                            {
+                                Id = f.Definition.Workproject.Id,
+                                Name = f.Definition.Workproject.Name,
+                            },
+                        }
+                    })
+                    .ToList();
+        }
+        public Form GetStatesAndSignatures(long formId) //OK
+        {
+            Form form = context.Forms.TagWith("IsFreezed and Signatures requesting")
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                        Signatures = f.Signatures,
+                    })
+                    .First();
+            return form;
+        }
+        public List<long> GetFormIdsWhereLocalAccess(long userId)
+        {
+            return context.Forms
+                .TagWith("Requesting form Ids where user has local access")
+                .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
+                .Select(f => f.Id)
+                .ToList();
+
+        }
+
+        public void CreateForm(Form form)
+        {
+            context.Forms.Add(form);
+            context.SaveChanges();
+        }
+
+        public void UpdateStates(Form form)
+        {
+            Form originalForm = context.Forms.TagWith("Form requesting")
+                    .Where(f => f.Id == form.Id)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                        LastSavedDateTime = f.LastSavedDateTime,
+                        LastSavedBy = f.LastSavedBy,
+                    })
+                    .First();
+
+            if(originalForm == null)
+                throw new Exception($"{nameof(FormRepository)}. {nameof(UpdateStates)} Unable to update states. " +
+                                    $"Requested form is not found. Id = {form.Id}");
+
+            originalForm!.IsObjectivesFreezed = form.IsObjectivesFreezed;
+            originalForm!.IsResultsFreezed = form.IsResultsFreezed;
+            originalForm!.LastSavedDateTime = form.LastSavedDateTime;
+            originalForm!.LastSavedBy = form.LastSavedBy;
+
+            context.SaveChanges();
+        }
+        public void UpdateSignatures(Form changedForm)
+        {
+            Form originalForm = context.Forms.Find(changedForm.Id);
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.Signatures = changedForm.Signatures;
+
+            context.SaveChanges();
+        }
+        public void UpdateResultsConclusion(Form changedForm)
+        {
+            Form? originalForm = context.Forms
+                        .Where(f => f.Id == changedForm.Id)
+                        .Select(f => new Form
+                        {
+                            Conclusion = f.Conclusion,
+                            ObjectivesResults = f.ObjectivesResults,
+                        })
+                        .FirstOrDefault();
+
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+
+            originalForm.Conclusion = changedForm.Conclusion;
+            for(int index = 0; index < changedForm.ObjectivesResults.Count; index++)
+            {
+                //if(originalForm.ObjectivesResults[index].Row != changedForm.ObjectivesResults[index].Row)
+                //{
+                //    throw new Exception("One of results is not in line with its objective.");
+                //}
+                originalForm.ObjectivesResults[index].Result = changedForm.ObjectivesResults[index].Result;
+            }
+
+        }
+        public void UpdateConclusionComments(Form changedForm)
+        {
+            Form? originalForm = context.Forms
+                        .Where(f => f.Id == changedForm.Id)
+                        .Select(f => new Form
+                        {
+                            Conclusion = new Conclusion
+                            {
+                                ManagerComment = f.Conclusion.ManagerComment,
+                                EmployeeComment = f.Conclusion.EmployeeComment,
+                                OtherComment = f.Conclusion.OtherComment,
+                            },
+                        })
+                        .FirstOrDefault();
+
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.Conclusion.ManagerComment = changedForm.Conclusion.ManagerComment;
+            originalForm.Conclusion.EmployeeComment = changedForm.Conclusion.EmployeeComment;
+            originalForm.Conclusion.OtherComment = changedForm.Conclusion.OtherComment;
+
+            context.SaveChanges();
+        }
+        public void UpdateDefinitionObjectivesResultsConclusion(Form changedForm)
+        {
+            Form? originalForm = context.Forms
+                        .Where(f => f.Id == changedForm.Id)
+                        .Select(f => new Form
+                        {
+                            Definition = new Definition
+                            {
+                                Year = f.Definition.Year,
+                                Period = f.Definition.Period,
+                                IsWpmHox = f.Definition.IsWpmHox,
+                                ManagerId = f.Definition.ManagerId,
+                                ApproverId = f.Definition.ApproverId,
+                                EmployeeId = f.Definition.EmployeeId,
+                                WorkprojectId = f.Definition.WorkprojectId,
+                            },
+                            Conclusion = f.Conclusion,
+                            ObjectivesResults = f.ObjectivesResults,
+                        })
+                        .FirstOrDefault();
+
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+
+            originalForm.Conclusion = changedForm.Conclusion;
+            originalForm.ObjectivesResults = changedForm.ObjectivesResults;
+
+            originalForm.Definition.Year = changedForm.Definition.Year;
+            originalForm.Definition.Period = changedForm.Definition.Period;
+            originalForm.Definition.IsWpmHox = changedForm.Definition.IsWpmHox;
+            originalForm.Definition.ManagerId = changedForm.Definition.ManagerId;
+            originalForm.Definition.ApproverId = changedForm.Definition.ApproverId;
+            originalForm.Definition.EmployeeId = changedForm.Definition.EmployeeId;
+            originalForm.Definition.WorkprojectId = changedForm.Definition.WorkprojectId;
+
+            context.SaveChanges();
+        }
+
+        public void DeleteForm(long id)
+        {
+            throw new NotImplementedException();
+        }
 
 
+
+        public Form GetObjectivesResultsData(long formId) //OK
+        {
+            Form form = context.Forms
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                        LastSavedBy = f.LastSavedBy,
+                        LastSavedDateTime = f.LastSavedDateTime,
+
+                        ObjectivesResults = f.ObjectivesResults,
+                    })
+                    .First();
+            return form;
+        }
         public Definition GetDefinition(long formId)
         {
             return context.Forms.TagWith($"Get Definition for FormId: {formId}")
@@ -215,86 +406,5 @@ namespace BonusSystemApplication.DAL.Repositories
                     .First();
         }
 
-
-
-        public void CreateForm(Form form)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateFormSignatures(Form changedForm)
-        {
-            Form originalForm = context.Forms.Find(changedForm.Id);
-            if (originalForm == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
-            originalForm.Signatures = changedForm.Signatures;
-
-            context.SaveChanges();
-        }
-
-        public void UpdateFormObjectivesResults(Form changedForm)
-        {
-            Form originalForm = context.Forms.Find(changedForm.Id);
-            if (originalForm == null)
-            {
-                throw new ArgumentNullException();
-            }
-        }
-
-        public void DeleteForm(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Form GetIsFreezedAndSignatures(long formId) //OK
-        {
-            Form form = context.Forms.TagWith("IsFreezed and Signatures requesting")
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Form
-                    {
-                        Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                        LastSavedBy = f.LastSavedBy,
-                        LastSavedDateTime = f.LastSavedDateTime,
-                        Signatures = f.Signatures,
-                    })
-                    .First();
-            return form;
-        }
-
-        public Form GetObjectivesResultsData(long formId) //OK
-        {
-            Form form = context.Forms
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Form
-                    {
-                        Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                        LastSavedBy = f.LastSavedBy,
-                        LastSavedDateTime = f.LastSavedDateTime,
-
-                        ObjectivesResults = f.ObjectivesResults,
-                    })
-                    .First();
-            return form;
-        }
-
-        public List<long> GetFormIdsWhereLocalAccess(long userId)
-        {
-            return context.Forms
-                .TagWith("Requesting form Ids where user has local access")
-                .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
-                .Select(f => f.Id)
-                .ToList();
-
-        }
     }
 }

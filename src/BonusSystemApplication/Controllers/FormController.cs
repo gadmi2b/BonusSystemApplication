@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BonusSystemApplication.UserIdentiry;
+using AutoMapper;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.Models.Forms.Index;
-using AutoMapper;
 using BonusSystemApplication.Models.Forms.Edit;
 using BonusSystemApplication.BLL.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -25,7 +25,6 @@ namespace BonusSystemApplication.Controllers
             _logger = logger;
             _mapper = mapper;
             _formService = formService;
-            UserData.UserId = 7;
         }
 
         public IActionResult Index(UserSelectionsDTO userSelections)
@@ -34,15 +33,14 @@ namespace BonusSystemApplication.Controllers
             return View(formIndexViewModel);
         }
 
-        [HttpGet]
         public IActionResult Edit(long? Id)
         {
             #region Validate incoming form id
-            if (Id == null || Id < 0 ||
-                !UserData.AvailableFormIds.Contains((long)Id))
-            {
-                return NotFound();
-            }
+            //if (Id == null || Id < 0 ||
+            //    !UserData.AvailableFormIds.Contains((long)Id))
+            //{
+            //    return NotFound();
+            //}
             #endregion
 
             long formId = Convert.ToInt64(Id);
@@ -72,92 +70,131 @@ namespace BonusSystemApplication.Controllers
             }
             else
             {
-                FormDTO formDTO = _formService.GetFormDTO(formId);
-                if (formDTO == null)
+                try
                 {
+                    formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
+                }
+                catch (ValidationException ex)
+                {
+                    // TODO: redirect to error page to show error message
                     return NotFound();
                 }
 
-                formEditViewModel.Id = formDTO.Id;
-                formEditViewModel.IsObjectivesFreezed = formDTO.IsObjectivesFreezed;
-                formEditViewModel.IsResultsFreezed = formDTO.IsResultsFreezed;
-                formEditViewModel.Definition = _mapper.Map<DefinitionVM>(_formService.GetDefinitionDTO(formId));
-                formEditViewModel.Conclusion = _mapper.Map<ConclusionVM>(_formService.GetConclusionDTO(formId));
-                formEditViewModel.Signatures = _mapper.Map<SignaturesVM>(_formService.GetSignaturesDTO(formId));
-                formEditViewModel.ObjectivesResults = _mapper.Map<IList<ObjectiveResultVM>>(_formService.GetObjectivesResultsDTO(formId));
+                if (formEditViewModel == null)
+                {
+                    // TODO: redirect to error page to show error message
+                    return NotFound();
+                }
             }
 
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames();
-            formEditViewModel.EmployeeSelectList = _formService.GetUsersNames();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames();
+            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.EmployeeSelectList = _formService.GetUsersNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
 
             return View(formEditViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(FormEditViewModel formEditViewModel)
+        public IActionResult Edit(FormEditViewModel formEditViewModel, string? act, string? type)
         {
             #region Validate ViewModel
-            if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
-            {
-                return NotFound();
-            }
+            //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
+            //{
+            //    return NotFound();
+            //}
+
+            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.EmployeeSelectList = _formService.GetUsersNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
 
             if (!ModelState.IsValid)
             {
-                formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames();
-                formEditViewModel.EmployeeSelectList = _formService.GetUsersNames();
-                formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames();
-                return View(formEditViewModel);
+                //return View(formEditViewModel);
             }
             #endregion
 
-            // TODO: provide Update process
-            //       for any Id same rules, except one (applied in Update method in repository):
-            //       id == 0: create new Form and put it in DB
-            //       id != 0: load formId from DB and update it
+            long formId = formEditViewModel.Id;
+            DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
+            ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
+            SignaturesDTO signaturesDTO = _mapper.Map<SignaturesDTO>(formEditViewModel.Signatures);
+            IList<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<IList<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
 
-            // TODO: check what could be saved: formViewModel.IsStates and Signatures (see SaveProcess())
-            //       launch Update (formViewModel, PartsToSave) method:
-            //       if Id == 0: provide checks for: Definition, Objectives, Results (recalculate based on Objectives of this formViewModel)
-            //       if id != 0: get Form with Id,
-            //                   provide checks for: Definition, Objectives, Results (recalculate based on Objectives of loaded Form data)
+            if (formId == 0 && act != null && type != null)
+            {
+                // TODO: return message: "Please save the form before changing state"
+                return View(formEditViewModel);
+            }
 
-            #region Determine parts allowable to update
-            FormDTO formDTO = _formService.UpdateForm(_mapper.Map<DefinitionDTO>(formEditViewModel.Definition),
-                                                      _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion),
-                                                      _mapper.Map<SignaturesDTO>(formEditViewModel.Signatures),
-                                                      _mapper.Map<IList<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults));
-            #endregion
+            try
+            {
+                #region Create / Update form
+                if (formId == 0)
+                {
+                    _formService.CreateForm(definitionDTO,
+                                            objectiveResultDTOs);
+                }
+                else if (formId > 0)
+                {
+                    _formService.UpdateForm(formId,
+                                            definitionDTO,
+                                            conclusionDTO,
+                                            signaturesDTO,
+                                            objectiveResultDTOs);
+                }
+                #endregion
+
+                #region Change IsFreezed state
+                if (act != null && type != null)
+                {
+                    _formService.ChangeState(act!,
+                                             type!,
+                                             formId);
+
+                    FormDTO formDTO = _formService.GetIsFreezedStates(formEditViewModel.Id);
+                    formEditViewModel.IsObjectivesFreezed = formDTO.IsObjectivesFreezed;
+                    formEditViewModel.IsResultsFreezed = formDTO.IsResultsFreezed;
+                }
+                #endregion
+            }
+            catch (ValidationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+
             return View(formEditViewModel);
-        }
-
-        [HttpPost]
-        public IActionResult OpenBlankForm()
-        {
-            return View("Edit");
         }
         
         [HttpPost]
         public IActionResult CreateFormBasedOnSelection(List<long> selectedFormIds)
         {
             #region Validation of selected form id
-            List<long> itemsToRemove = new List<long>();
-            foreach (long formId in selectedFormIds)
-            {
-                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-                {
-                    itemsToRemove.Add(formId);
-                }
-            }
-            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            itemsToRemove.Clear();
+            //List<long> itemsToRemove = new List<long>();
+            //foreach (long formId in selectedFormIds)
+            //{
+            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
+            //    {
+            //        itemsToRemove.Add(formId);
+            //    }
+            //}
+            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            //itemsToRemove.Clear();
 
-            if (selectedFormIds.Count() == 0)
-            {
-                return RedirectToAction("Index");
-            }
-
+            //if (selectedFormIds.Count() == 0)
+            //{
+            //    return RedirectToAction("Index");
+            //}
             #endregion
 
             #region Creation of a new form based on selected one
@@ -174,21 +211,21 @@ namespace BonusSystemApplication.Controllers
         public IActionResult PromoteSelectedForms(List<long> selectedFormIds)
         {
             #region Validation of selected form ids
-            List<long> itemsToRemove = new List<long>();
-            foreach (long formId in selectedFormIds)
-            {
-                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-                {
-                    itemsToRemove.Add(formId);
-                }
-            }
-            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            itemsToRemove.Clear();
+            //List<long> itemsToRemove = new List<long>();
+            //foreach (long formId in selectedFormIds)
+            //{
+            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
+            //    {
+            //        itemsToRemove.Add(formId);
+            //    }
+            //}
+            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            //itemsToRemove.Clear();
 
-            if (selectedFormIds.Count() == 0)
-            {
-                return RedirectToAction("Index");
-            }
+            //if (selectedFormIds.Count() == 0)
+            //{
+            //    return RedirectToAction("Index");
+            //}
             #endregion
 
             #region Promote selected forms to a new forms
@@ -204,21 +241,21 @@ namespace BonusSystemApplication.Controllers
         public IActionResult DeleteSelectedForms(List<long> selectedFormIds)
         {
             #region Validation of selected form ids
-            List<long> itemsToRemove = new List<long>();
-            foreach (long formId in selectedFormIds)
-            {
-                if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-                {
-                    itemsToRemove.Add(formId);
-                }
-            }
-            selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            itemsToRemove.Clear();
+            //List<long> itemsToRemove = new List<long>();
+            //foreach (long formId in selectedFormIds)
+            //{
+            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
+            //    {
+            //        itemsToRemove.Add(formId);
+            //    }
+            //}
+            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
+            //itemsToRemove.Clear();
 
-            if (selectedFormIds.Count() == 0)
-            {
-                return RedirectToAction("Index");
-            }
+            //if (selectedFormIds.Count() == 0)
+            //{
+            //    return RedirectToAction("Index");
+            //}
             #endregion
 
             // TODO: delete forms with selected ids
@@ -308,24 +345,23 @@ namespace BonusSystemApplication.Controllers
             }
             catch (ValidationException ex)
             {
+                _logger.LogError(ex.Message);
                 return new JsonResult(new
                 {
                     status = "error",
                     message = ex.Message,
                 });
             }
-        }
-        
-        public void ChangeState(long formId)
-        {
-            // TODO: get current formId and user from Session
-            //       check that user has permission to modify form
-
-            // form should be saved
-
-            // to find form by id
-            // extract all states and all signatures into new Form object
-            // invert state and remove corrsponding signatues
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = "An error occured during work of application. " +
+                              "Please contact your system administrator.",
+                });
+            }
         }
 
     }

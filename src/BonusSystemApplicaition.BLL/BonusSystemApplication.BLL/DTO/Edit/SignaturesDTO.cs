@@ -1,6 +1,4 @@
-﻿using BonusSystemApplication.DAL.Entities;
-
-namespace BonusSystemApplication.BLL.DTO.Edit
+﻿namespace BonusSystemApplication.BLL.DTO.Edit
 {
     public class SignaturesDTO
     {
@@ -33,26 +31,5 @@ namespace BonusSystemApplication.BLL.DTO.Edit
                    ForResultsIsSignedByManager &
                    ForResultsIsSignedByApprover;
         }
-
-        //public SignaturesDTO(Signatures source)
-        //{
-        //    Id = source.Id;
-
-        //    ForObjectivesEmployeeSignature = source.ForObjectivesEmployeeSignature == null ? string.Empty : source.ForObjectivesEmployeeSignature;
-        //    ForObjectivesIsSignedByEmployee = source.ForObjectivesIsSignedByEmployee;
-        //    ForObjectivesIsRejectedByEmployee = source.ForObjectivesIsRejectedByEmployee;
-        //    ForObjectivesManagerSignature = source.ForObjectivesManagerSignature == null ? string.Empty : source.ForObjectivesManagerSignature;
-        //    ForObjectivesIsSignedByManager = source.ForObjectivesIsSignedByManager;
-        //    ForObjectivesApproverSignature = source.ForObjectivesApproverSignature == null ? string.Empty : source.ForObjectivesApproverSignature;
-        //    ForObjectivesIsSignedByApprover = source.ForObjectivesIsSignedByApprover;
-
-        //    ForResultsEmployeeSignature = source.ForResultsEmployeeSignature == null ? string.Empty : source.ForResultsEmployeeSignature;
-        //    ForResultsIsSignedByEmployee = source.ForResultsIsSignedByEmployee;
-        //    ForResultsIsRejectedByEmployee = source.ForResultsIsRejectedByEmployee;
-        //    ForResultsManagerSignature = source.ForResultsManagerSignature == null ? string.Empty : source.ForResultsManagerSignature;
-        //    ForResultsIsSignedByManager = source.ForResultsIsSignedByManager;
-        //    ForResultsApproverSignature = source.ForResultsApproverSignature == null ? string.Empty : source.ForResultsApproverSignature;
-        //    ForResultsIsSignedByApprover = source.ForResultsIsSignedByApprover;
-        //}
     }
 }

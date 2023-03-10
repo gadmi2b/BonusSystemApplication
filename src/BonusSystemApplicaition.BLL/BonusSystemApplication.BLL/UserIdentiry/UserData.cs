@@ -1,8 +1,8 @@
-﻿namespace BonusSystemApplication.UserIdentiry
+﻿namespace BonusSystemApplication.BLL.UserIdentiry
 {
     public static class UserData
     {
-        public static long UserId { get; set; }
+        public static long UserId { get; set; } = 7;
         static string UserName { get; set; } = "Current ApplicationUser";
         public static List<long> AvailableFormIds { get; set; } = new List<long>();
 

@@ -211,7 +211,7 @@ BEM convention: Block Elements Modifiers
     @*-------------------------- Content - Signatures --------------------------*@
     <div class="content-signatures">
         @* objectives signature process is forbidden if:
-            objectives is not freezed or results is freezed *@
+           objectives is not freezed or results is freezed *@
         <p>Freeze objectives before validation.</p>
         <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
                 disabled="@(!Model.IsObjectivesFreezed ||
@@ -256,7 +256,7 @@ BEM convention: Block Elements Modifiers
         </fieldset>
 
         @* results signature process is forbidden if:
-            objectives is not freezed or results is not freezed*@
+           objectives is not freezed or results is not freezed*@
         <p>Freeze results before validation.</p>
         <fieldset class="content-signatures-block" id="js-signatureBlockResults"
                 disabled="@(!Model.IsObjectivesFreezed ||
@@ -305,24 +305,31 @@ BEM convention: Block Elements Modifiers
   <sidebar class="sidebar sidebar--padding">
     <div class="button-group">
         <p class="button-group__title">Objectives:</p>
-        <input type="submit" value="Freeze" onclick="changeState()" class="cmn-button button--width"
-                disabled="@(Model.IsObjectivesFreezed)" />
-        <input type="submit" value="Unfreeze" asp-controller="Form" asp-action="Unfreeze" class="cmn-button button--width"
-                disabled="@(!Model.IsObjectivesFreezed)" />
+@*        <input type="submit" value="Freeze" onclick="changeState()" class="cmn-button button--width"
+                disabled="@(Model.IsObjectivesFreezed)" />*@
+        <input disabled="@(Model.IsObjectivesFreezed)"
+               form="content-form" type="submit" value="Freeze" class="cmn-button button--width"
+               asp-controller="Form" asp-action="Edit" asp-route-act="freeze" asp-route-type="objectives"/>
+        <input disabled="@(!Model.IsObjectivesFreezed)"
+               form="content-form" type="submit" value="Unfreeze" class="cmn-button button--width"
+               asp-controller="Form" asp-action="Edit" asp-route-act="unfreeze" asp-route-type="objectives"/>
     </div>
     <div class="button-group">
         <p class="button-group__title">Results:</p>
-        <input type="submit" value="Freeze" asp-controller="Form" asp-action="Freeze" class="cmn-button button--width"
-               disabled="@(!Model.IsObjectivesFreezed ||
-                            Model.IsResultsFreezed)" />
-      <input type="submit" value="Unfreeze" asp-controller="Form" asp-action="Unfreeze" class="cmn-button button--width"
-               disabled="@(!Model.IsObjectivesFreezed ||
-                           !Model.IsResultsFreezed)"/>
+        <input disabled="@(!Model.IsObjectivesFreezed || Model.IsResultsFreezed)"
+               form="content-form" type="submit" value="Freeze" class="cmn-button button--width"
+               asp-controller="Form" asp-action="Edit" asp-route-act="freeze" asp-route-type="results"/>
+        <input disabled="@(!Model.IsObjectivesFreezed || !Model.IsResultsFreezed)"
+               form="content-form" type="submit" value="Unfreeze" class="cmn-button button--width"
+               asp-controller="Form" asp-action="Edit" asp-route-act="unfreeze" asp-route-type="results"/>
     </div>
     <div class="button-group">
         <p class="button-group__line"></p>
-        <input type="submit" value="Save" form="content-form" asp-controller="Form" asp-action="SaveProcess" class="cmn-button button--width" />
-        <input type="submit" value="Search" asp-controller="Form" asp-action="Index" class="cmn-button button--width" />
+        <input form="content-form" type="submit" value="Save" class="cmn-button button--width"
+               asp-controller="Form" asp-action="Edit" />
+        <a asp-controller="Form" asp-action="Index">
+          <input type="button" value="Search" class="cmn-button button--width"/>
+        </a>
     </div>
   </sidebar>
 

@@ -3,14 +3,13 @@ using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.BLL.Interfaces;
+using BonusSystemApplication.BLL.Processes.CreatingUpdating;
 using BonusSystemApplication.BLL.Processes.Filtering;
 using BonusSystemApplication.BLL.Processes.Signing;
+using BonusSystemApplication.BLL.UserIdentiry;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
-using BonusSystemApplication.DAL.Repositories;
-using BonusSystemApplication.UserIdentiry;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BonusSystemApplication.BLL.Services
@@ -54,8 +53,6 @@ namespace BonusSystemApplication.BLL.Services
             _conclusionRepository = conclusionRepo;
             _signaturesRepository = signaturesRepo;
             _objectiveResultRepository = objectiveResultRepo;
-
-            UserData.UserId = 7;
         }
 
         public FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections)
@@ -135,9 +132,40 @@ namespace BonusSystemApplication.BLL.Services
         }
         public FormDTO GetFormDTO(long formId)
         {
-            return _mapper.Map<FormDTO>(_formRepository.GetIsFreezedStates(formId));
-        }
+            FormDTO formDTO = new FormDTO();
+            try
+            {
+                formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Method: {nameof(GetFormDTO)}. Params: {nameof(formId)} = {formId} " +
+                                 $"EF msg: {ex.Message}", "");
+                throw new ValidationException("Unable to get form data. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.", "");
+            }
 
+            return formDTO;
+        }
+        public FormDTO GetIsFreezedStates(long formId)
+        {
+            FormDTO formDTO = new FormDTO();
+            try
+            {
+                formDTO = _mapper.Map<FormDTO>(_formRepository.GetStates(formId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Method: {nameof(GetIsFreezedStates)}. Params: {nameof(formId)} = {formId} " +
+                                 $"EF msg: {ex.Message}", "");
+                throw new ValidationException("Unable to get form data. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.", "");
+            }
+
+            return formDTO;
+        }
 
         public DefinitionDTO GetDefinitionDTO(long formId)
         {
@@ -157,35 +185,23 @@ namespace BonusSystemApplication.BLL.Services
         }
 
 
-        public List<SelectListItem> GetUsersNames()
+        public Dictionary<string,string> GetUsersNames()
         {
             return _userRepository.GetUsersNames()
-                                  .Select(u => new SelectListItem
-                                  {
-                                      Value = u.Id.ToString(),
-                                      Text = $"{u.LastNameEng} {u.FirstNameEng}",
-                                  })
-                                  .ToList();
+                                  .ToDictionary(u => u.Id.ToString(),
+                                                u => $"{u.LastNameEng} {u.FirstNameEng}");
         }
-        public List<SelectListItem> GetWorkprojectsNames()
+        public Dictionary<string, string> GetWorkprojectsNames()
         {
             return _workprojectRepository.GetWorkprojectsNames()
-                                  .Select(w => new SelectListItem
-                                  {
-                                      Value = w.Id.ToString(),
-                                      Text = w.Name,
-                                  })
-                                  .ToList();
+                                  .ToDictionary(w => w.Id.ToString(),
+                                                 w => w.Name);
         }
-        public List<SelectListItem> GetPeriodsNames()
+        public Dictionary<string, string> GetPeriodsNames()
         {
             return Enum.GetNames(typeof(Periods))
-                                  .Select(s => new SelectListItem
-                                  {
-                                      Value = s,
-                                      Text = s,
-                                  })
-                                  .ToList();
+                                  .ToDictionary(s => s,
+                                                s => s);
         }
 
 
@@ -206,7 +222,7 @@ namespace BonusSystemApplication.BLL.Services
         {
             if (string.IsNullOrEmpty(checkboxId))
             {
-                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                throw new ValidationException($"Signature process is not possible. " +
                                               $"Signature data is not affected.", "");
             }
 
@@ -222,7 +238,7 @@ namespace BonusSystemApplication.BLL.Services
 
             if (PropertyLinkerHandler.AffectedPropertyLinker == null)
             {
-                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                throw new ValidationException($"Signature process is not possible. " +
                                               $"Neither objectives nor results are involved into signature process.", "");
             }
             #endregion
@@ -233,25 +249,25 @@ namespace BonusSystemApplication.BLL.Services
 
             if (propertiesValues.Count == 0)
             {
-                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                throw new ValidationException($"Signature process is not possible. " +
                                               $"Signature data is not affected.", "");
             }
             #endregion
 
             #region Get form from database and check signature possibility
-            Form statesAndSignatures = _formRepository.GetIsFreezedAndSignatures(formId);
+            Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
                !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
             {
-                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                throw new ValidationException($"Signature process is not possible. " +
                                               $"Objectives should be freezed at first.", "");
             }
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
                !FormDataHandler.IsResultsSignaturePossible(statesAndSignatures))
             {
-                throw new ValidationException($"{DateTime.Now}: Signature process is not possible. " +
+                throw new ValidationException($"Signature process is not possible. " +
                                               $"Results should be freezed at first.", "");
             }
             #endregion
@@ -260,20 +276,336 @@ namespace BonusSystemApplication.BLL.Services
             FormDataHandler.PutUserSignature(ref propertiesValues);
             FormDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
             FormDataHandler.UpdateLastSavedFormData(statesAndSignatures);
-            _formRepository.UpdateFormSignatures(statesAndSignatures);
+
+            try
+            {
+                _formRepository.UpdateSignatures(statesAndSignatures);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"{nameof(FormsService)}. {nameof(UpdateAndReturnSignatures)}. " +
+                                 $"EF error message: {ex.Message}");
+                throw new ValidationException("Unable to save changes. " +
+                                              "Try again, and if the problem persists, " +
+                                              "Contact your system administrator.", "");
+            }
+            catch (Exception ex)
+            {
+                // TODO: add error handling
+
+                throw new Exception($"{nameof(FormsService)}. {nameof(UpdateAndReturnSignatures)}. Not handled commnon exception: " +
+                                    $"{ex.Message}");
+                //return new Dictionary<string, object>();
+            }
+
             #endregion
 
             return propertiesValues;
         }
 
-        public FormDTO UpdateForm(DefinitionDTO definition,
-                                  ConclusionDTO conclusion,
-                                  SignaturesDTO signatures,
-                                  IList<ObjectiveResultDTO> objectivesResultsDTO)
+        public void UpdateForm(long formId,
+                               DefinitionDTO definition,
+                               ConclusionDTO conclusion,
+                               SignaturesDTO signatures,
+                               IList<ObjectiveResultDTO> objectivesResults)
         {
+            // TODO: provide Update process
+            //       for any Id same rules, except one (applied in Update method in repository):
+            //       id == 0: create new Form and put it in DB
+            //       id != 0: load formId from DB and update it
 
+            // TODO: check what could be saved: formViewModel.IsStates and Signatures (see SaveProcess())
+            //       launch Update (formViewModel, PartsToSave) method:
+            //       if Id == 0: provide checks for: Definition, Objectives, Results (recalculate based on Objectives of this formViewModel)
+            //       if id != 0: get Form with Id,
+            //                   provide checks for: Definition, Objectives, Results (recalculate based on Objectives of loaded Form data)
 
-            return new FormDTO();
+            if (formId == 0)
+            {
+                return;
+            }
+
+            FormDTO statesAndSignatures = _mapper.Map<FormDTO>(_formRepository.GetStatesAndSignatures(formId));
+
+            if (statesAndSignatures.Signatures.IsResultsSigned)
+            {
+                // Nothing could be saved
+                return;
+            }
+            else if (statesAndSignatures.IsResultsFreezed)
+            {
+                // Conclusion's comments could be saved
+                _formRepository.UpdateConclusionComments(new Form
+                {
+                    LastSavedBy = UserData.GetUserName(),
+                    LastSavedDateTime = DateTime.Now,
+                    Conclusion = new Conclusion
+                    {
+                        ManagerComment = conclusion.ManagerComment,
+                        EmployeeComment = conclusion.EmployeeComment,
+                        OtherComment = conclusion.OtherComment,
+                    }
+                });
+            }
+            else if (statesAndSignatures.Signatures.IsObjectivesSigned ||
+                     statesAndSignatures.IsObjectivesFreezed)
+            {
+                // Results & Conclusion could be saved
+                _formRepository.UpdateResultsConclusion(new Form
+                {
+                    LastSavedDateTime = DateTime.Now,
+                    LastSavedBy = UserData.GetUserName(),
+                    Conclusion = _mapper.Map<Conclusion>(conclusion),
+                    ObjectivesResults = _mapper.Map<List<ObjectiveResult>>(objectivesResults),
+                });
+            }
+            else
+            {
+                // Definition & Objectives & Results & Conclusion could be saved:
+                // Definition & Objectives are taken from viewmodel
+                // Results: achieved is taken from viewmodel, others recalculated
+                // Conclusion: Comments are taken from viewmodel, IsProposalForBonusPayment and OverallKPI recalculated
+
+                _formRepository.UpdateDefinitionObjectivesResultsConclusion(new Form
+                {
+                    LastSavedDateTime = DateTime.Now,
+                    LastSavedBy = UserData.GetUserName(),
+
+                    Definition = _mapper.Map<Definition>(definition),
+                    Conclusion = _mapper.Map<Conclusion>(conclusion),
+                    ObjectivesResults = _mapper.Map<List<ObjectiveResult>>(objectivesResults),
+                });
+            }
+
+            // TODO: validate saved objects
+            // TODO: update tables
+
+        }
+
+        public void CreateForm(DefinitionDTO definition,
+                               IList<ObjectiveResultDTO> objectivesResults)
+        {
+            try
+            {
+                DefinitionValidator definitionValidator = new DefinitionValidator(_mapper,
+                                                                                  _userRepository,
+                                                                                  _definitionRepository,
+                                                                                  _workprojectRepository,
+                                                                                  definition);
+                definitionValidator.ValidateInputPresence();
+                definitionValidator.ValidateInputCombinationForCreate();
+
+                _formRepository.CreateForm(new Form
+                {
+                    Id = 0,
+                    LastSavedBy = UserData.GetUserName(),
+                    LastSavedDateTime = DateTime.Now,
+                    Definition = _mapper.Map<Definition>(definition),
+                    ObjectivesResults = _mapper.Map<List<ObjectiveResult>>(objectivesResults),
+                    Conclusion = new Conclusion(),
+                    Signatures = new Signatures(),
+                });
+            }
+            catch (ValidationException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Method: {nameof(CreateForm)}. " +
+                                 $"Message: {ex.Message}", "");
+                throw new ValidationException("Unable to create new form. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.", "");
+            }
+        }
+
+        /// <summary>
+        /// In according to request changes IsFreezed states for Form.
+        /// Before Unfreezing states it drops collected signatures as well.
+        /// </summary>
+        /// <param name="act">freeze or unfreeze</param>
+        /// <param name="type">objectives or results</param>
+        /// <param name="formId">id of Form to operate</param>
+        /// <exception cref="ValidationException"></exception>
+        public void ChangeState(string act,
+                                string type,
+                                long formId)
+        {
+            FormDTO formDTO = _mapper.Map<FormDTO>(_formRepository.GetStates(formId));
+            formDTO.LastSavedDateTime = DateTime.Now;
+            formDTO.LastSavedBy = UserData.GetUserName();
+
+            #region Freezing Objectives/Results
+            if (act == "freeze" && type == "objectives")
+            {
+                if (formDTO.IsObjectivesFreezed)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}, " +
+                                       $"{nameof(act)} = {act}, " +
+                                       $"{nameof(type)} = {type}. ",
+                                       $"Unable to freeze Objectives. Objectives are already freezed. ", "");
+                    return;
+                }
+
+                if (formDTO.IsResultsFreezed)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}, " +
+                                       $"{nameof(act)} = {act}, " +
+                                       $"{nameof(type)} = {type}. ",
+                                       $"Unable to freeze Objectives. Results are already freezed. ", "");
+                    return;
+                }
+
+                // TODO: check if Definition are ready to be freezed
+                // TODO: check if Objectives are ready to be freezed
+                //       at least n'th objectives are filled
+
+                formDTO.IsObjectivesFreezed = true;
+                _formRepository.UpdateStates(_mapper.Map<Form>(formDTO));
+                return;
+            }
+
+            if (act == "freeze" && type == "results")
+            {
+                if (!formDTO.IsObjectivesFreezed)
+                {
+                    _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
+                                       $"Unable to freeze Results. Objectives are not freezed. " +
+                                       $"{nameof(formId)} = {formId}, {nameof(act)} = {act}, {nameof(type)} = {type}", "");
+                    return;
+                }
+
+                if (formDTO.IsResultsFreezed)
+                {
+                    _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
+                                       $"Unable to freeze Results. Results are already freezed. " +
+                                       $"{nameof(formId)} = {formId}, {nameof(act)} = {act}, {nameof(type)} = {type}", "");
+                    return;
+                }
+
+                // TODO: check if Results are ready to be freezed
+                //       each result for each objective is filled properly
+
+                formDTO.IsResultsFreezed = true;
+                try
+                {
+                    _formRepository.UpdateStates(_mapper.Map<Form>(formDTO));
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. " +
+                                       $"Called method: {nameof(_formRepository.UpdateStates)}. " +
+                                       $"Params: " +
+                                       $"{nameof(formDTO.Id)} = {formDTO.Id}, " +
+                                       $"{nameof(formDTO.LastSavedBy)} = {formDTO.LastSavedBy}, " +
+                                       $"{nameof(formDTO.LastSavedDateTime)} = {formDTO.LastSavedDateTime}, " +
+                                       $"{nameof(formDTO.IsObjectivesFreezed)} = {formDTO.IsObjectivesFreezed}, " +
+                                       $"{nameof(formDTO.IsResultsFreezed)} = {formDTO.IsResultsFreezed}. " +
+                                       $"Message: {ex.Message}", "");
+
+                    throw new ValidationException("Unable to change state of form. " +
+                                                  "Try again, and if the problem persists, " +
+                                                  "see your system administrator.", "");
+                }
+
+                return;
+            }
+            #endregion
+
+            #region Unfreezing Objectives/Results
+            if (act == "unfreeze" && type == "objectives")
+            {
+                if (!formDTO.IsObjectivesFreezed)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}, " +
+                                       $"{nameof(act)} = {act}, " +
+                                       $"{nameof(type)} = {type}. ",
+                                       $"Unable to unfreeze Objectives. Objectives are not freezed. ", "");
+                    return;
+                }
+
+                // Drop all signatures
+                try
+                {
+                    _signaturesRepository.DropSignatures(formId);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. " +
+                                       $"Called method: {nameof(_signaturesRepository.DropSignatures)}. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}. " +
+                                       $"Message: {ex.Message}", "");
+
+                    throw new ValidationException("Unable to change state of form. " +
+                                                  "Try again, and if the problem persists, " +
+                                                  "see your system administrator.", "");
+                }
+
+                formDTO.IsObjectivesFreezed = false;
+                formDTO.IsResultsFreezed = false;       // results are also should be unfreezed
+
+                _formRepository.UpdateStates(_mapper.Map<Form>(formDTO));
+                return;
+            }
+
+            if (act == "unfreeze" && type == "results")
+            {
+                if (!formDTO.IsObjectivesFreezed)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}, " +
+                                       $"{nameof(act)} = {act}, " +
+                                       $"{nameof(type)} = {type}. " +
+                                       $"Unable to unfreeze Results. Objectives are not freezed. ", "");
+                    return;
+                }
+
+                if (!formDTO.IsResultsFreezed)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}, " +
+                                       $"{nameof(act)} = {act}, " +
+                                       $"{nameof(type)} = {type}. " +
+                                       $"Unable to unfreeze Results. Results are not freezed. ", "");
+                    return;
+                }
+
+                // Drop signatures for results only
+                try
+                {
+                    _signaturesRepository.DropSignaturesForResults(formId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Method: {nameof(ChangeState)}. " +
+                                       $"Called method: {nameof(_signaturesRepository.DropSignaturesForResults)}. " +
+                                       $"Params: " +
+                                       $"{nameof(formId)} = {formId}. " +
+                                       $"Message: {ex.Message}", "");
+
+                    throw new ValidationException("Unable to change state of form. " +
+                                                  "Try again, and if the problem persists, " +
+                                                  "see your system administrator.", "");
+                }
+
+                formDTO.IsResultsFreezed = false;
+                _formRepository.UpdateStates(_mapper.Map<Form>(formDTO));
+                return;
+            }
+            #endregion
+
+            _logger.LogWarning($"Method: {nameof(ChangeState)}. Unknown call. " +
+                               $"Params: {nameof(act)} = {act}, {nameof(type)} = {type}.");
         }
     }
 }
