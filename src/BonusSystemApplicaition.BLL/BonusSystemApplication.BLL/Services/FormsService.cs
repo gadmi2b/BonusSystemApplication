@@ -3,7 +3,7 @@ using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.BLL.Interfaces;
-using BonusSystemApplication.BLL.Processes.CreatingUpdating;
+using BonusSystemApplication.BLL.Processes.Updating;
 using BonusSystemApplication.BLL.Processes.Filtering;
 using BonusSystemApplication.BLL.Processes.Signing;
 using BonusSystemApplication.BLL.UserIdentiry;
@@ -167,17 +167,17 @@ namespace BonusSystemApplication.BLL.Services
             return formDTO;
         }
 
-        public DefinitionDTO GetDefinitionDTO(long formId)
+        public DefinitionDTO GetDefinitionDTO(long defintionId)
         {
-            return _mapper.Map<DefinitionDTO>(_definitionRepository.GetDefinition(formId));
+            return _mapper.Map<DefinitionDTO>(_definitionRepository.GetDefinitionFull(defintionId));
         }
-        public ConclusionDTO GetConclusionDTO(long formId)
+        public ConclusionDTO GetConclusionDTO(long conclusionId)
         {
-            return _mapper.Map<ConclusionDTO>(_conclusionRepository.GetConclusion(formId));
+            return _mapper.Map<ConclusionDTO>(_conclusionRepository.GetConclusion(conclusionId));
         }
-        public SignaturesDTO GetSignaturesDTO(long formId)
+        public SignaturesDTO GetSignaturesDTO(long signaturesId)
         {
-            return _mapper.Map<SignaturesDTO>(_signaturesRepository.GetSignatures(formId));
+            return _mapper.Map<SignaturesDTO>(_signaturesRepository.GetSignatures(signaturesId));
         }
         public IList<ObjectiveResultDTO> GetObjectivesResultsDTO(long formId)
         {
@@ -309,17 +309,11 @@ namespace BonusSystemApplication.BLL.Services
                                SignaturesDTO signatures,
                                IList<ObjectiveResultDTO> objectivesResults)
         {
-            // TODO: provide Update process
-            //       for any Id same rules, except one (applied in Update method in repository):
-            //       id == 0: create new Form and put it in DB
-            //       id != 0: load formId from DB and update it
-
             // TODO: check what could be saved: formViewModel.IsStates and Signatures (see SaveProcess())
             //       launch Update (formViewModel, PartsToSave) method:
             //       if Id == 0: provide checks for: Definition, Objectives, Results (recalculate based on Objectives of this formViewModel)
             //       if id != 0: get Form with Id,
             //                   provide checks for: Definition, Objectives, Results (recalculate based on Objectives of loaded Form data)
-
             if (formId == 0)
             {
                 return;
@@ -335,6 +329,7 @@ namespace BonusSystemApplication.BLL.Services
             else if (statesAndSignatures.IsResultsFreezed)
             {
                 // Conclusion's comments could be saved
+                // nothing to check
                 _formRepository.UpdateConclusionComments(new Form
                 {
                     LastSavedBy = UserData.GetUserName(),
@@ -351,6 +346,7 @@ namespace BonusSystemApplication.BLL.Services
                      statesAndSignatures.IsObjectivesFreezed)
             {
                 // Results & Conclusion could be saved
+                // TODO: check Results and Conclustion
                 _formRepository.UpdateResultsConclusion(new Form
                 {
                     LastSavedDateTime = DateTime.Now,
@@ -365,6 +361,9 @@ namespace BonusSystemApplication.BLL.Services
                 // Definition & Objectives are taken from viewmodel
                 // Results: achieved is taken from viewmodel, others recalculated
                 // Conclusion: Comments are taken from viewmodel, IsProposalForBonusPayment and OverallKPI recalculated
+
+                // TODO: validate definition
+
 
                 _formRepository.UpdateDefinitionObjectivesResultsConclusion(new Form
                 {
@@ -387,13 +386,14 @@ namespace BonusSystemApplication.BLL.Services
         {
             try
             {
-                DefinitionValidator definitionValidator = new DefinitionValidator(_mapper,
+                long formId = 0;
+                DefinitionValidator definitionValidator = new DefinitionValidator(formId,
+                                                                                  _mapper,
                                                                                   _userRepository,
                                                                                   _definitionRepository,
                                                                                   _workprojectRepository,
                                                                                   definition);
-                definitionValidator.ValidateInputPresence();
-                definitionValidator.ValidateInputCombinationForCreate();
+                definitionValidator.ValidateCreateProcess();
 
                 _formRepository.CreateForm(new Form
                 {
@@ -461,11 +461,26 @@ namespace BonusSystemApplication.BLL.Services
                     return;
                 }
 
-                // TODO: check if Definition are ready to be freezed
+                // check if Definition is ready to be freezed
+                DefinitionValidator definitionValidator = new DefinitionValidator(formId, _mapper, _definitionRepository);
+                try
+                {
+                    definitionValidator.ValidateChangeStateProcess();
+                }
+                catch (ValidationException ex)
+                {
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+
+                }
                 // TODO: check if Objectives are ready to be freezed
                 //       at least n'th objectives are filled
 
-                formDTO.IsObjectivesFreezed = true;
+
+
+                    formDTO.IsObjectivesFreezed = true;
                 _formRepository.UpdateStates(_mapper.Map<Form>(formDTO));
                 return;
             }

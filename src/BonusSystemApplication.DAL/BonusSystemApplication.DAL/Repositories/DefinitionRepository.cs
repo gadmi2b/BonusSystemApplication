@@ -8,12 +8,18 @@ namespace BonusSystemApplication.DAL.Repositories
 {
     public class DefinitionRepository : IDefinitionRepository
     {
-        private DataContext context;
-        public DefinitionRepository(DataContext ctx) => context = ctx;
+        private DataContext _context;
+        public DefinitionRepository(DataContext ctx) => _context = ctx;
 
         public Definition GetDefinition(long formId)
         {
-            return context.Definitions.TagWith($"Get Definition for FormId: {formId}")
+            return _context.Definitions.TagWith($"Get Definition for FormId: {formId}")
+                    .Where(d => d.FormId == formId)
+                    .First();
+        }
+        public Definition GetDefinitionFull(long formId)
+        {
+            return _context.Definitions.TagWith($"Get full Definition for FormId: {formId}")
                     .Where(d => d.FormId == formId)
                     .Select(d => new Definition
                     {
@@ -60,7 +66,7 @@ namespace BonusSystemApplication.DAL.Repositories
 
         public List<long> GetFormIdsWhereParticipation(long userId)
         {
-            return context.Definitions
+            return _context.Definitions
                 .TagWith("Requesting form Ids where user has participation")
                 .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
                 .Select(d => d.FormId)
@@ -68,7 +74,7 @@ namespace BonusSystemApplication.DAL.Repositories
         }
         public List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses)
         {
-            IQueryable<Definition> queryInitial = context.Definitions.AsQueryable()
+            IQueryable<Definition> queryInitial = _context.Definitions.AsQueryable()
                 .TagWith("Requesting form Ids where user has Global access")
                 .Include(d => d.Employee)
                     .ThenInclude(e => e.Department)
@@ -108,13 +114,25 @@ namespace BonusSystemApplication.DAL.Repositories
                 .ToList();
         }
 
-        public bool IsDefinitionExists(Definition definition)
+        public bool IsExistWithSamePropertyCombination(Definition definition, long formId)
         {
-            return context.Definitions
-                        .Any(d => d.EmployeeId == definition.EmployeeId &&
-                                  d.WorkprojectId == definition.WorkprojectId &&
-                                  d.Period == definition.Period &&
-                                  d.Year == definition.Year);
+            long originalFormId = _context.Definitions
+                        .Where(d => d.EmployeeId == definition.EmployeeId &&
+                                    d.WorkprojectId == definition.WorkprojectId &&
+                                    d.Period == definition.Period &&
+                                    d.Year == definition.Year)
+                        .Select(d => d.FormId)
+                        .FirstOrDefault();
+
+            if (originalFormId == 0 ||
+                originalFormId == formId)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
 

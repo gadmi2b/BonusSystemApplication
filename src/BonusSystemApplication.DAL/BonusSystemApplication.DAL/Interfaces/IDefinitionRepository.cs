@@ -8,6 +8,7 @@ namespace BonusSystemApplication.DAL.Interfaces
         List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses);
 
         Definition GetDefinition(long formId);
-        bool IsDefinitionExists(Definition definition);
+        Definition GetDefinitionFull(long formId);
+        bool IsExistWithSamePropertyCombination(Definition definition, long formId);
     }
 }

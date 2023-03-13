@@ -18,10 +18,7 @@ namespace BonusSystemApplication.DAL.Interfaces
         IList<ObjectiveResult> GetResults(long formId);
         Conclusion GetConclustion(long formId);
 
-
-
         Form GetStatesAndSignatures(long formId);
-        Form GetObjectivesResultsData(long formId);
 
         List<long> GetFormIdsWhereLocalAccess(long userId);
 

@@ -12,15 +12,15 @@ namespace BonusSystemApplication.DAL.Repositories
 
         public Conclusion GetConclusion(long formId)
         {
-            return context.Forms.TagWith($"Get Conclusion for FormId: {formId}")
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Conclusion
+            return context.Conclusions.TagWith($"Get Conclusion for FormId: {formId}")
+                    .Where(c => c.FormId == formId)
+                    .Select(c => new Conclusion
                     {
-                        OverallKpi = f.Conclusion.OverallKpi,
-                        IsProposalForBonusPayment = f.Conclusion.IsProposalForBonusPayment,
-                        ManagerComment = f.Conclusion.ManagerComment,
-                        EmployeeComment = f.Conclusion.EmployeeComment,
-                        OtherComment = f.Conclusion.OtherComment,
+                        OverallKpi = c.OverallKpi,
+                        IsProposalForBonusPayment = c.IsProposalForBonusPayment,
+                        ManagerComment = c.ManagerComment,
+                        EmployeeComment = c.EmployeeComment,
+                        OtherComment = c.OtherComment,
                     })
                     .First();
         }

@@ -162,7 +162,7 @@ namespace BonusSystemApplication.Controllers
                                              type!,
                                              formId);
 
-                    FormDTO formDTO = _formService.GetIsFreezedStates(formEditViewModel.Id);
+                    FormDTO formDTO = _formService.GetIsFreezedStates(formId);
                     formEditViewModel.IsObjectivesFreezed = formDTO.IsObjectivesFreezed;
                     formEditViewModel.IsResultsFreezed = formDTO.IsResultsFreezed;
                 }

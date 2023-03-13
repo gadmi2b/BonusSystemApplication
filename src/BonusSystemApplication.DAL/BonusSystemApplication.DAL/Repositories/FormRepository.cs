@@ -10,18 +10,6 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext context;
         public FormRepository(DataContext ctx) => context = ctx;
 
-        public Form GetStates(long formId)
-        {
-            return context.Forms.TagWith("Form IsFreezed states requesting")
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Form
-                    {
-                        Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                    })
-                    .First();
-        }
         public Form GetForm(long formId) //OK
         {
             return context.Forms.TagWith("Requesting form data")
@@ -119,6 +107,18 @@ namespace BonusSystemApplication.DAL.Repositories
                         }
                     })
                     .ToList();
+        }
+        public Form GetStates(long formId)
+        {
+            return context.Forms.TagWith("Form IsFreezed states requesting")
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Form
+                    {
+                        Id = f.Id,
+                        IsObjectivesFreezed = f.IsObjectivesFreezed,
+                        IsResultsFreezed = f.IsResultsFreezed,
+                    })
+                    .First();
         }
         public Form GetStatesAndSignatures(long formId) //OK
         {
@@ -297,22 +297,50 @@ namespace BonusSystemApplication.DAL.Repositories
 
 
 
-        public Form GetObjectivesResultsData(long formId) //OK
+        public IList<ObjectiveResult> GetObjectivesResults(long formId)
         {
-            Form form = context.Forms
+            return context.Forms.TagWith($"Get Definition for FormId: {formId}")
                     .Where(f => f.Id == formId)
-                    .Select(f => new Form
+                    .Select(f => f.ObjectivesResults)
+                    .First();
+        }
+        public IList<ObjectiveResult> GetObjectives(long formId)
+        {
+            return (IList<ObjectiveResult>)context.Forms.TagWith($"Get Objectives for FormId: {formId}")
+                    .Where(f => f.Id == formId)
+                    .Select(f => f.ObjectivesResults.AsQueryable()
+                        .Select(or => new ObjectiveResult
+                        {
+                            Row = or.Row,
+                            Objective = or.Objective
+                        }))
+                        .ToList();
+        }
+        public IList<ObjectiveResult> GetResults(long formId)
+        {
+            return (IList<ObjectiveResult>)context.Forms.TagWith($"Get Results for FormId: {formId}")
+                    .Where(f => f.Id == formId)
+                    .Select(f => f.ObjectivesResults.AsQueryable()
+                        .Select(or => new ObjectiveResult
+                        {
+                            Row = or.Row,
+                            Result = or.Result
+                        }))
+                        .ToList();
+        }
+        public Conclusion GetConclustion(long formId)
+        {
+            return context.Forms.TagWith($"Get Conclusion for FormId: {formId}")
+                    .Where(f => f.Id == formId)
+                    .Select(f => new Conclusion
                     {
-                        Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                        LastSavedBy = f.LastSavedBy,
-                        LastSavedDateTime = f.LastSavedDateTime,
-
-                        ObjectivesResults = f.ObjectivesResults,
+                        OverallKpi = f.Conclusion.OverallKpi,
+                        IsProposalForBonusPayment = f.Conclusion.IsProposalForBonusPayment,
+                        ManagerComment = f.Conclusion.ManagerComment,
+                        EmployeeComment = f.Conclusion.EmployeeComment,
+                        OtherComment = f.Conclusion.OtherComment,
                     })
                     .First();
-            return form;
         }
         public Definition GetDefinition(long formId)
         {
@@ -357,51 +385,6 @@ namespace BonusSystemApplication.DAL.Repositories
                             Name = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Name,
                             Description = f.Definition.Workproject == null ? string.Empty : f.Definition.Workproject.Description,
                         },
-                    })
-                    .First();
-        }
-        public IList<ObjectiveResult> GetObjectivesResults(long formId)
-        {
-            return context.Forms.TagWith($"Get Definition for FormId: {formId}")
-                    .Where(f => f.Id == formId)
-                    .Select(f => f.ObjectivesResults)
-                    .First();
-        }
-        public IList<ObjectiveResult> GetObjectives(long formId)
-        {
-            return (IList<ObjectiveResult>)context.Forms.TagWith($"Get Objectives for FormId: {formId}")
-                    .Where(f => f.Id == formId)
-                    .Select(f => f.ObjectivesResults.AsQueryable()
-                        .Select(or => new ObjectiveResult
-                        {
-                            Row = or.Row,
-                            Objective = or.Objective
-                        }))
-                        .ToList();
-        }
-        public IList<ObjectiveResult> GetResults(long formId)
-        {
-            return (IList<ObjectiveResult>)context.Forms.TagWith($"Get Results for FormId: {formId}")
-                    .Where(f => f.Id == formId)
-                    .Select(f => f.ObjectivesResults.AsQueryable()
-                        .Select(or => new ObjectiveResult
-                        {
-                            Row = or.Row,
-                            Result = or.Result
-                        }))
-                        .ToList();
-        }
-        public Conclusion GetConclustion(long formId)
-        {
-            return context.Forms.TagWith($"Get Conclusion for FormId: {formId}")
-                    .Where(f => f.Id == formId)
-                    .Select(f => new Conclusion
-                    {
-                        OverallKpi = f.Conclusion.OverallKpi,
-                        IsProposalForBonusPayment = f.Conclusion.IsProposalForBonusPayment,
-                        ManagerComment = f.Conclusion.ManagerComment,
-                        EmployeeComment = f.Conclusion.EmployeeComment,
-                        OtherComment = f.Conclusion.OtherComment,
                     })
                     .First();
         }
