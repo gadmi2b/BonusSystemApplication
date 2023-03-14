@@ -3,7 +3,6 @@ using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.BLL.Interfaces;
-using BonusSystemApplication.BLL.Processes.Updating;
 using BonusSystemApplication.BLL.Processes.Filtering;
 using BonusSystemApplication.BLL.Processes.Signing;
 using BonusSystemApplication.BLL.UserIdentiry;
@@ -11,6 +10,7 @@ using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using BonusSystemApplication.BLL.Processes;
 
 namespace BonusSystemApplication.BLL.Services
 {

@@ -3,9 +3,8 @@ using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
-using Microsoft.Data.SqlClient.Server;
 
-namespace BonusSystemApplication.BLL.Processes.Updating
+namespace BonusSystemApplication.BLL.Processes
 {
     internal class DefinitionValidator
     {
