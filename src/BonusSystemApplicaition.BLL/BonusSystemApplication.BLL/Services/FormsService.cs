@@ -135,6 +135,7 @@ namespace BonusSystemApplication.BLL.Services
             FormDTO formDTO = new FormDTO();
             try
             {
+                Form form = _formRepository.GetForm(formId);
                 formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
             }
             catch (Exception ex)
@@ -146,6 +147,7 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.", "");
             }
 
+            PrepareFormDTOForPresentation(formDTO);
             return formDTO;
         }
         public FormDTO GetIsFreezedStates(long formId)
@@ -621,6 +623,28 @@ namespace BonusSystemApplication.BLL.Services
 
             _logger.LogWarning($"Method: {nameof(ChangeState)}. Unknown call. " +
                                $"Params: {nameof(act)} = {act}, {nameof(type)} = {type}.");
+        }
+
+
+        private void PrepareFormDTOForPresentation(FormDTO formDTO)
+        {
+            #region Prepare Objectives and Results
+            for (int i = 0; i < formDTO.ObjectivesResults.Count; i++)
+            {
+                if (!formDTO.ObjectivesResults[i].Objective.IsMeasurable)
+                {
+                    if (formDTO.ObjectivesResults[i].Objective.Target == null)
+                        formDTO.ObjectivesResults[i].Objective.Target = "N/A";
+
+                    if (formDTO.ObjectivesResults[i].Objective.Challenge == null)
+                        formDTO.ObjectivesResults[i].Objective.Challenge = "N/A";
+
+                    if (!formDTO.ObjectivesResults[i].Objective.IsKey)
+                        if (formDTO.ObjectivesResults[i].Objective.Threshold == null)
+                            formDTO.ObjectivesResults[i].Objective.Threshold = "N/A";
+                }
+            }
+            #endregion region
         }
     }
 }

@@ -115,11 +115,7 @@ namespace BonusSystemApplication.DAL.EF
             #region ObjectiveResult configuring
             modelBuilder.Entity<ObjectiveResult>(or =>
             {
-                or.OwnsOne(or => or.Objective, o =>
-                {
-                    o.Property(o => o.IsKey).HasDefaultValue(true);
-                    o.Property(o => o.IsMeasurable).HasDefaultValue(true);
-                });
+                or.OwnsOne(or => or.Objective);
                 or.Navigation(or => or.Objective).IsRequired();
 
                 or.OwnsOne(or => or.Result);

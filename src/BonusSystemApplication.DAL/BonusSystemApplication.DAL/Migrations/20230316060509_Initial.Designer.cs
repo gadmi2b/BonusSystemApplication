@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BonusSystemApplication.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230302053202_Initial")]
+    [Migration("20230316060509_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -570,39 +570,35 @@ namespace BonusSystemApplication.DAL.Migrations
                             b1.Property<long>("ObjectiveResultId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<string>("Challenge")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("Challenge")
+                                .HasColumnType("float");
 
                             b1.Property<string>("Description")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<bool>("IsKey")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
-                                .HasDefaultValue(true);
+                                .HasColumnType("bit");
 
                             b1.Property<bool>("IsMeasurable")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
-                                .HasDefaultValue(true);
+                                .HasColumnType("bit");
 
-                            b1.Property<string>("KpiUpperLimit")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("KpiUpperLimit")
+                                .HasColumnType("float");
 
                             b1.Property<string>("Statement")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("Target")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("Target")
+                                .HasColumnType("float");
 
-                            b1.Property<string>("Threshold")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("Threshold")
+                                .HasColumnType("float");
 
                             b1.Property<string>("Unit")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("WeightFactor")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("WeightFactor")
+                                .HasColumnType("float");
 
                             b1.HasKey("ObjectiveResultId");
 
@@ -617,14 +613,14 @@ namespace BonusSystemApplication.DAL.Migrations
                             b1.Property<long>("ObjectiveResultId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<string>("Achieved")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("Achieved")
+                                .HasColumnType("float");
 
                             b1.Property<string>("KeyCheck")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("Kpi")
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double?>("Kpi")
+                                .HasColumnType("float");
 
                             b1.HasKey("ObjectiveResultId");
 

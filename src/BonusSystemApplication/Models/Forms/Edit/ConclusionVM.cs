@@ -12,15 +12,5 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public string OtherComment { get; set; } = string.Empty;
 
         public ConclusionVM() { }
-        //public ConclusionVM(ConclusionDTO source)
-        //{
-        //    Id = source.Id;
-
-        //    OverallKpi = source.OverallKpi;
-        //    IsProposalForBonusPayment = source.IsProposalForBonusPayment;
-        //    ManagerComment = source.ManagerComment;
-        //    EmployeeComment = source.EmployeeComment;
-        //    OtherComment = source.OtherComment;
-        //}
     }
 }

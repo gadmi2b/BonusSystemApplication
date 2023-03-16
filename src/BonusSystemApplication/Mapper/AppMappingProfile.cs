@@ -34,12 +34,14 @@ namespace BonusSystemApplication.Mapper
 				.ForPath(dest => dest.Definition.PositionName, opt => opt.MapFrom(src => src.Definition.Employee.Position.NameEng))
 				.ForPath(dest => dest.Definition.WorkprojectDescription, opt => opt.MapFrom(src => src.Definition.Workproject.Description));
 
-			CreateMap<Definition, DefinitionDTO>();
+			CreateMap<Definition, DefinitionDTO>().ReverseMap();
 			CreateMap<Conclusion, ConclusionDTO>().ReverseMap();
-			CreateMap<Signatures, SignaturesDTO>();
-			CreateMap<ObjectiveResult, ObjectiveResultDTO>();
-			CreateMap<Objective, ObjectiveDTO>();
-			CreateMap<Result, ResultDTO>();
-		}
+			CreateMap<Signatures, SignaturesDTO>().ReverseMap();
+			CreateMap<ObjectiveResult, ObjectiveResultDTO>().ReverseMap();
+			CreateMap<Objective, ObjectiveDTO>().ReverseMap();
+			CreateMap<Result, ResultDTO>().ReverseMap();
+
+            CreateMap<MyTest, MyTestDTO>().ReverseMap();
+        }
 	}
 }

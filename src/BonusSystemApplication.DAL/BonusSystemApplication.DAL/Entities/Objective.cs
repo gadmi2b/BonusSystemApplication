@@ -7,10 +7,10 @@
         public bool IsKey { get; set; } = true;
         public bool IsMeasurable { get; set; } = true;
         public string? Unit { get; set; }
-        public string? Threshold { get; set; }
-        public string? Target { get; set; }
-        public string? Challenge { get; set; }
-        public string? WeightFactor { get; set; }
-        public string? KpiUpperLimit { get; set; }
+        public double? Threshold { get; set; }
+        public double? Target { get; set; }
+        public double? Challenge { get; set; }
+        public double? WeightFactor { get; set; }
+        public double? KpiUpperLimit { get; set; }
     }
 }

@@ -3,7 +3,7 @@
     public class Result
     {
         public string? KeyCheck { get; set; }
-        public string? Achieved { get; set; }
-        public string? Kpi { get; set; }
+        public double? Achieved { get; set; }
+        public double? Kpi { get; set; }
     }
 }

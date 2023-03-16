@@ -5,15 +5,9 @@ namespace BonusSystemApplication.Models.Forms.Edit
     public class ResultVM
     {
         public string KeyCheck { get; set; } = string.Empty;
-        public string Achieved { get; set; } = string.Empty;
-        public string Kpi { get; set; } = string.Empty;
+        public string? Achieved { get; set; } = null;
+        public string? Kpi { get; set; } = null;
 
         public ResultVM() { }
-        //public ResultVM(ResultDTO source)
-        //{
-        //    KeyCheck = source.KeyCheck;
-        //    Achieved = source.Achieved;
-        //    Kpi = source.Kpi;
-        //}
     }
 }

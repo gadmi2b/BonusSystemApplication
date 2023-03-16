@@ -33,25 +33,5 @@
         }
 
         public SignaturesVM() { }
-        //public SignaturesVM(SignaturesDTO source)
-        //{
-        //    Id = source.Id;
-
-        //    ForObjectivesEmployeeSignature = source.ForObjectivesEmployeeSignature;
-        //    ForObjectivesIsSignedByEmployee = source.ForObjectivesIsSignedByEmployee;
-        //    ForObjectivesIsRejectedByEmployee = source.ForObjectivesIsRejectedByEmployee;
-        //    ForObjectivesManagerSignature = source.ForObjectivesManagerSignature;
-        //    ForObjectivesIsSignedByManager = source.ForObjectivesIsSignedByManager;
-        //    ForObjectivesApproverSignature = source.ForObjectivesApproverSignature;
-        //    ForObjectivesIsSignedByApprover = source.ForObjectivesIsSignedByApprover;
-
-        //    ForResultsEmployeeSignature = source.ForResultsEmployeeSignature;
-        //    ForResultsIsSignedByEmployee = source.ForResultsIsSignedByEmployee;
-        //    ForResultsIsRejectedByEmployee = source.ForResultsIsRejectedByEmployee;
-        //    ForResultsManagerSignature = source.ForResultsManagerSignature;
-        //    ForResultsIsSignedByManager = source.ForResultsIsSignedByManager;
-        //    ForResultsApproverSignature = source.ForResultsApproverSignature;
-        //    ForResultsIsSignedByApprover = source.ForResultsIsSignedByApprover;
-        //}
     }
 }

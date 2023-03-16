@@ -8,13 +8,13 @@ namespace BonusSystemApplication.BLL.Processes
     internal class ObjectiveResultValidator
     {
         private int _minRequiredObjectivesResultsQuantity { get; } = 7;
-        private int _minWeightFactor { get; } = 0;
-        private int _maxWeightFactor { get; } = 40;
-        private int _minKpiUpperLimit { get; } = 108;
-        private int _maxKpiUpperLimitMeasurable { get; } = 120;
-        private int _maxKpiUpperLimitNonMeasurable { get; } = 115;
-        private int _requiredSumWeighFactor { get; } = 100;
-        private int _minSumKpiUpperLimit { get; } = 114;
+        private double _minWeightFactor { get; } = 0;
+        private double _maxWeightFactor { get; } = 40;
+        private double _minKpiUpperLimit { get; } = 108;
+        private double _maxKpiUpperLimitMeasurable { get; } = 120;
+        private double _maxKpiUpperLimitNonMeasurable { get; } = 115;
+        private double _requiredSumWeighFactor { get; } = 100;
+        private double _minSumKpiUpperLimit { get; } = 114;
 
         private string _stdUnit { get; } = "KPI Value, %";
         private string _stdTarget { get; } = "N/A";
@@ -57,11 +57,14 @@ namespace BonusSystemApplication.BLL.Processes
                 throw;
             }
 
+            PrepareConversionStringsToDouble(ref objectiveResultDTOs);
+
             int objectivesCounter = 0;
-            int sumWeightFactor = 0;
-            int sumKpiUpperLimit = 0;
+            double sumWeightFactor = 0;
+            double sumKpiUpperLimit = 0;
             foreach (ObjectiveResultDTO or in objectiveResultDTOs)
             {
+                #region Objectives checking
                 if (string.IsNullOrEmpty(or.Objective.Statement) ||
                     string.IsNullOrEmpty(or.Objective.Description))
                 {
@@ -74,7 +77,7 @@ namespace BonusSystemApplication.BLL.Processes
                                                   $"There is objective in row {or.Row} without specified Unit",
                                                   $"{nameof(or.Objective.Unit)}");
                 // WeightFactor is number
-                if (!Int32.TryParse(or.Objective.WeightFactor, out int weightFactor))
+                if (!Double.TryParse(or.Objective.WeightFactor, out double weightFactor))
                     throw new ValidationException($"The form's state could't be changed. " +
                                                   $"Row: {or.Row}. {nameof(or.Objective.WeightFactor)} must be a number.",
                                                   $"{nameof(or.Objective.WeightFactor)}");
@@ -86,7 +89,7 @@ namespace BonusSystemApplication.BLL.Processes
                                                   $"{_minWeightFactor} and {_maxWeightFactor}",
                                                   $"{nameof(or.Objective.WeightFactor)}");
                 // KpiUpperLimit is number
-                if (!Int32.TryParse(or.Objective.KpiUpperLimit, out int kpiUpperLimit))
+                if (!Double.TryParse(or.Objective.KpiUpperLimit, out double kpiUpperLimit))
                     throw new ValidationException($"The form's state could't be changed. " +
                                                   $"Row: {or.Row}. {nameof(or.Objective.KpiUpperLimit)} must be a number.",
                                                   $"{nameof(or.Objective.KpiUpperLimit)}");
@@ -145,7 +148,21 @@ namespace BonusSystemApplication.BLL.Processes
 
                 sumWeightFactor = sumWeightFactor + weightFactor;
                 sumKpiUpperLimit = sumKpiUpperLimit + kpiUpperLimit;
+                #endregion
 
+                #region Results checking
+                // Achieved is number
+                if (!Double.TryParse(or.Result.Achieved, out double achieved))
+                    throw new ValidationException($"The form's state could't be changed. " +
+                                                  $"Row: {or.Row}. {nameof(or.Result.Achieved)} must be a number.",
+                                                  $"{nameof(or.Result.Achieved)}");
+                // Kpi is number
+                if (!Double.TryParse(or.Result.Kpi, out double kpi))
+                    throw new ValidationException($"The form's state could't be changed. " +
+                                                  $"Row: {or.Row}. {nameof(or.Result.Kpi)} must be a number.",
+                                                  $"{nameof(or.Result.Kpi)}");
+
+                #endregion
             }
             // Minimum objectives should be filled (contain statements and definition)
             if (objectivesCounter < _minRequiredObjectivesResultsQuantity)
@@ -177,6 +194,49 @@ namespace BonusSystemApplication.BLL.Processes
         public void ValidateResultsChangeStateProcess()
         {
 
+        }
+    
+
+        /// <summary>
+        /// Checks inside objectives and results all string values which should be converted to double and
+        /// if only single comma deliminator persists in value - replaces it by point deliminator.
+        /// </summary>
+        /// <param name="objectiveResultDTOs"></param>
+        private void PrepareConversionStringsToDouble(ref List<ObjectiveResultDTO> objectiveResultDTOs)
+        {
+            for (int i = 0; i < objectiveResultDTOs.Count; i++)
+            {
+                if (objectiveResultDTOs[i].Objective.IsMeasurable)
+                {
+                    objectiveResultDTOs[i].Objective.Threshold = PrepareString(objectiveResultDTOs[i].Objective.Threshold);
+                    objectiveResultDTOs[i].Objective.Target = PrepareString(objectiveResultDTOs[i].Objective.Target);
+                    objectiveResultDTOs[i].Objective.Challenge = PrepareString(objectiveResultDTOs[i].Objective.Challenge);
+                }
+                else if (objectiveResultDTOs[i].Objective.IsKey)
+                {
+                    objectiveResultDTOs[i].Objective.Threshold = PrepareString(objectiveResultDTOs[i].Objective.Threshold);
+                }
+
+                objectiveResultDTOs[i].Objective.KpiUpperLimit = PrepareString(objectiveResultDTOs[i].Objective.KpiUpperLimit);
+                objectiveResultDTOs[i].Objective.WeightFactor = PrepareString(objectiveResultDTOs[i].Objective.WeightFactor);
+
+                objectiveResultDTOs[i].Result.Achieved = PrepareString(objectiveResultDTOs[i].Result.Achieved);
+                objectiveResultDTOs[i].Result.Kpi = PrepareString(objectiveResultDTOs[i].Result.Kpi);
+            }
+        }
+        private string? PrepareString(string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            if (value == "N/A")
+                return null;
+
+            string[] parts = value.Split(',');
+            if (parts.Length != 2)
+                return value;
+
+            return $"{parts[0]}.{parts[1]}";
         }
     }
 }

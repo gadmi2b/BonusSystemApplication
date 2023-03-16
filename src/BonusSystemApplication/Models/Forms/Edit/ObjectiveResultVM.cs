@@ -10,12 +10,5 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public ResultVM Result { get; set; }
 
         public ObjectiveResultVM() { }
-        //public ObjectiveResultVM(ObjectiveResultDTO source)
-        //{
-        //    Id = source.Id;
-        //    Row = source.Row;
-        //    Objective = new ObjectiveVM(source.Objective);
-        //    Result = new ResultVM(source.Result);
-        //}
     }
 }
