@@ -10,7 +10,7 @@
         public string Year { get; set; } = string.Empty;
         public string Period { get; set; } = string.Empty;
         public List<string> Permissions { get; set; } = new List<string>();
-        public DateTime? LastSavedDateTime { get; set; }
+        public DateTime? LastSavedAt { get; set; }
 
         public bool IsChecked { get; set; } = false;
     }

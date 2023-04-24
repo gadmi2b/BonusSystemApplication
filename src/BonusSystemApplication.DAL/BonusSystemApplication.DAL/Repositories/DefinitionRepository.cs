@@ -114,13 +114,17 @@ namespace BonusSystemApplication.DAL.Repositories
                 .ToList();
         }
 
-        public bool IsExistWithSamePropertyCombination(Definition definition, long formId)
+        public bool IsExistWithSamePropertyCombination(long formId,
+                                                       long employeeId,
+                                                       long workprojectId,
+                                                       int year,
+                                                       Periods period)
         {
             long originalFormId = _context.Definitions
-                        .Where(d => d.EmployeeId == definition.EmployeeId &&
-                                    d.WorkprojectId == definition.WorkprojectId &&
-                                    d.Period == definition.Period &&
-                                    d.Year == definition.Year)
+                        .Where(d => d.EmployeeId == employeeId &&
+                                    d.WorkprojectId == workprojectId &&
+                                    d.Period == period &&
+                                    d.Year == year)
                         .Select(d => d.FormId)
                         .FirstOrDefault();
 
@@ -161,13 +165,13 @@ namespace BonusSystemApplication.DAL.Repositories
             else if (gAccess.WorkprojectId == null)
             {
                 expr = (d) => d.Employee.DepartmentId == gAccess.DepartmentId &&
-                                         d.Employee.TeamId == gAccess.TeamId;
+                              d.Employee.TeamId == gAccess.TeamId;
             }
             else
             {
                 expr = (d) => d.Employee.DepartmentId == gAccess.DepartmentId &&
-                                         d.Employee.TeamId == gAccess.TeamId &&
-                                         d.WorkprojectId == gAccess.WorkprojectId;
+                              d.Employee.TeamId == gAccess.TeamId &&
+                              d.WorkprojectId == gAccess.WorkprojectId;
             }
 
             return expr;

@@ -11,7 +11,7 @@
         public bool ForObjectivesIsSignedByManager { get; set; }
         public string ForObjectivesApproverSignature { get; set; } = string.Empty;
         public bool ForObjectivesIsSignedByApprover { get; set; }
-        public bool IsObjectivesSigned
+        public bool AreObjectivesSigned
         {
             get => ForObjectivesIsSignedByEmployee &
                    ForObjectivesIsSignedByManager &
@@ -25,7 +25,7 @@
         public bool ForResultsIsSignedByManager { get; set; }
         public string ForResultsApproverSignature { get; set; } = string.Empty;
         public bool ForResultsIsSignedByApprover { get; set; }
-        public bool IsResultsSigned
+        public bool AreResultsSigned
         {
             get => ForResultsIsSignedByEmployee &
                    ForResultsIsSignedByManager &

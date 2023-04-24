@@ -201,19 +201,19 @@ BEM convention: Block Elements Modifiers
       <p>Freeze objectives before validation.</p>
       <fieldset class="content-signatures-block" id="js-signatureBlockObjectives" disabled>
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsObjectivesSignedByEmployee">Employee:</label>
-          <input asp-for="IsObjectivesSignedByEmployee" type="checkbox"/>
+          <label asp-for="AreObjectivesSignedByEmployee">Employee:</label>
+          <input asp-for="AreObjectivesSignedByEmployee" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ObjectivesEmployeeSignature</span>
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsObjectivesSignedByManager">Direct Manager:</label>
-          <input asp-for="IsObjectivesSignedByManager" type="checkbox"/>
+          <label asp-for="AreObjectivesSignedByManager">Direct Manager:</label>
+          <input asp-for="AreObjectivesSignedByManager" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ObjectivesManagerSignature</span>
 
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsObjectivesSignedByApprover">Approved by:</label>
-          <input asp-for="IsObjectivesSignedByApprover" type="checkbox"/>
+          <label asp-for="AreObjectivesSignedByApprover">Approved by:</label>
+          <input asp-for="AreObjectivesSignedByApprover" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ObjectivesApproverSignature</span>
         <div class="content-signatures-block__checkbox">
@@ -226,19 +226,19 @@ BEM convention: Block Elements Modifiers
       <p>Freeze results before validation.</p>
       <fieldset class="content-signatures-block" id="js-signatureBlockResults" disabled>
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsResultsSignedByEmployee">Employee:</label>
-          <input asp-for="IsResultsSignedByEmployee" type="checkbox"/>
+          <label asp-for="AreResultsSignedByEmployee">Employee:</label>
+          <input asp-for="AreResultsSignedByEmployee" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ResultsEmployeeSignature</span>
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsResultsSignedByManager">Direct Manager:</label>
-          <input asp-for="IsResultsSignedByManager" type="checkbox"/>
+          <label asp-for="AreResultsSignedByManager">Direct Manager:</label>
+          <input asp-for="AreResultsSignedByManager" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ResultsManagerSignature</span>
 
         <div class="content-signatures-block__checkbox">
-          <label asp-for="IsResultsSignedByApprover">Approved by:</label>
-          <input asp-for="IsResultsSignedByApprover" type="checkbox"/>
+          <label asp-for="AreResultsSignedByApprover">Approved by:</label>
+          <input asp-for="AreResultsSignedByApprover" type="checkbox"/>
         </div>
         <span class="content-signatures-block__signature">@Model.ResultsApproverSignature</span>
         <div class="content-signatures-block__checkbox">

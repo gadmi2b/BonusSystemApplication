@@ -8,7 +8,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
     {
         public static bool IsObjectivesSignaturePossible(Form form)
         {
-            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            if (form.AreObjectivesFrozen && !form.AreResultsFrozen)
             {
                 return true;
             }
@@ -16,7 +16,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
         }
         public static bool IsResultsSignaturePossible(Form form)
         {
-            if (form.IsObjectivesFreezed && form.IsResultsFreezed)
+            if (form.AreObjectivesFrozen && form.AreResultsFrozen)
             {
                 return true;
             }
@@ -78,7 +78,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
         public static void UpdateLastSavedFormData(Form form)
         {
             form.LastSavedBy = UserData.GetUserName();
-            form.LastSavedDateTime = DateTime.Now;
+            form.LastSavedAt = DateTime.Now;
         }
 
         public static void UpdateSignatures(Form form, Dictionary<string, object> propertiesValues)
@@ -114,7 +114,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
 
         private static bool IsObjectivesResultsSavePossible(Form form)
         {
-            if (!form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            if (!form.AreObjectivesFrozen && !form.AreResultsFrozen)
             {
                 return true;
             }
@@ -122,7 +122,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
         }
         private static bool IsResultsSavePossible(Form form)
         {
-            if (form.IsObjectivesFreezed && !form.IsResultsFreezed)
+            if (form.AreObjectivesFrozen && !form.AreResultsFrozen)
             {
                 return true;
             }

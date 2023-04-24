@@ -3,9 +3,9 @@
     public class Form
     {
         public long Id { get; set; }
-        public bool IsObjectivesFreezed { get; set; }
-        public bool IsResultsFreezed { get; set; }
-        public DateTime? LastSavedDateTime { get; set; }
+        public bool AreObjectivesFrozen { get; set; }
+        public bool AreResultsFrozen { get; set; }
+        public DateTime? LastSavedAt { get; set; }
         public string? LastSavedBy { get; set; }
 
         public Definition Definition { get; set; }

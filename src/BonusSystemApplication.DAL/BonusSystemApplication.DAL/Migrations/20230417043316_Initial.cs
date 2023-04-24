@@ -28,9 +28,9 @@ namespace BonusSystemApplication.DAL.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsObjectivesFreezed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    IsResultsFreezed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    LastSavedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AreObjectivesFrozen = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    AreResultsFrozen = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    LastSavedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastSavedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

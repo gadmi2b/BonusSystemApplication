@@ -17,8 +17,8 @@ namespace BonusSystemApplication.DAL.Repositories
                     .Select(f => new Form
                     {
                         Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
+                        AreObjectivesFrozen = f.AreObjectivesFrozen,
+                        AreResultsFrozen = f.AreResultsFrozen,
 
                         //Definition data block
                         Definition = new Definition
@@ -77,7 +77,7 @@ namespace BonusSystemApplication.DAL.Repositories
                     .Select(f => new Form
                     {
                         Id = f.Id,
-                        LastSavedDateTime = f.LastSavedDateTime,
+                        LastSavedAt = f.LastSavedAt,
                         Definition = new Definition
                         {
                             Period = f.Definition.Period,
@@ -110,25 +110,25 @@ namespace BonusSystemApplication.DAL.Repositories
         }
         public Form GetStates(long formId)
         {
-            return context.Forms.TagWith("Form IsFreezed states requesting")
+            return context.Forms.TagWith("Form IsFrozen states requesting")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
                         Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
+                        AreObjectivesFrozen = f.AreObjectivesFrozen,
+                        AreResultsFrozen = f.AreResultsFrozen,
                     })
                     .First();
         }
         public Form GetStatesAndSignatures(long formId) //OK
         {
-            Form form = context.Forms.TagWith("IsFreezed and Signatures requesting")
+            Form form = context.Forms.TagWith("IsFrozen and Signatures requesting")
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
                         Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
+                        AreObjectivesFrozen = f.AreObjectivesFrozen,
+                        AreResultsFrozen = f.AreResultsFrozen,
                         Signatures = f.Signatures,
                     })
                     .First();
@@ -157,9 +157,9 @@ namespace BonusSystemApplication.DAL.Repositories
                     .Select(f => new Form
                     {
                         Id = f.Id,
-                        IsObjectivesFreezed = f.IsObjectivesFreezed,
-                        IsResultsFreezed = f.IsResultsFreezed,
-                        LastSavedDateTime = f.LastSavedDateTime,
+                        AreObjectivesFrozen = f.AreObjectivesFrozen,
+                        AreResultsFrozen = f.AreResultsFrozen,
+                        LastSavedAt = f.LastSavedAt,
                         LastSavedBy = f.LastSavedBy,
                     })
                     .First();
@@ -168,9 +168,9 @@ namespace BonusSystemApplication.DAL.Repositories
                 throw new Exception($"{nameof(FormRepository)}. {nameof(UpdateStates)} Unable to update states. " +
                                     $"Requested form is not found. Id = {form.Id}");
 
-            originalForm!.IsObjectivesFreezed = form.IsObjectivesFreezed;
-            originalForm!.IsResultsFreezed = form.IsResultsFreezed;
-            originalForm!.LastSavedDateTime = form.LastSavedDateTime;
+            originalForm!.AreObjectivesFrozen = form.AreObjectivesFrozen;
+            originalForm!.AreResultsFrozen = form.AreResultsFrozen;
+            originalForm!.LastSavedAt = form.LastSavedAt;
             originalForm!.LastSavedBy = form.LastSavedBy;
 
             context.SaveChanges();
@@ -184,7 +184,7 @@ namespace BonusSystemApplication.DAL.Repositories
             }
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.LastSavedAt = changedForm.LastSavedAt;
             originalForm.Signatures = changedForm.Signatures;
 
             context.SaveChanges();
@@ -206,7 +206,7 @@ namespace BonusSystemApplication.DAL.Repositories
             }
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.LastSavedAt = changedForm.LastSavedAt;
 
             originalForm.Conclusion = changedForm.Conclusion;
             for(int index = 0; index < changedForm.ObjectivesResults.Count; index++)
@@ -240,7 +240,7 @@ namespace BonusSystemApplication.DAL.Repositories
             }
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.LastSavedAt = changedForm.LastSavedAt;
             originalForm.Conclusion.ManagerComment = changedForm.Conclusion.ManagerComment;
             originalForm.Conclusion.EmployeeComment = changedForm.Conclusion.EmployeeComment;
             originalForm.Conclusion.OtherComment = changedForm.Conclusion.OtherComment;
@@ -274,7 +274,7 @@ namespace BonusSystemApplication.DAL.Repositories
             }
 
             originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedDateTime = changedForm.LastSavedDateTime;
+            originalForm.LastSavedAt = changedForm.LastSavedAt;
 
             originalForm.Conclusion = changedForm.Conclusion;
             originalForm.ObjectivesResults = changedForm.ObjectivesResults;

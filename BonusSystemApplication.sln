@@ -28,12 +28,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsefulCode", "useful code\U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsufulInfo", "useful info\UsufulInfo\UsufulInfo.csproj", "{8979635A-FF7E-4AE9-9C43-00B57F483BC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusSystemApplication.BLL", "src\BonusSystemApplicaition.BLL\BonusSystemApplication.BLL\BonusSystemApplication.BLL.csproj", "{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BonusSystemApplication.BLL", "src\BonusSystemApplicaition.BLL\BonusSystemApplication.BLL\BonusSystemApplication.BLL.csproj", "{BE8AB68A-4BDF-46A2-8C94-1E3BCA935AC2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CA65444D-1BE3-49E2-8D36-89BAE4A3379A} = {CA65444D-1BE3-49E2-8D36-89BAE4A3379A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusSystemApplication.DAL", "src\BonusSystemApplication.DAL\BonusSystemApplication.DAL\BonusSystemApplication.DAL.csproj", "{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BonusSystemApplication.DAL", "src\BonusSystemApplication.DAL\BonusSystemApplication.DAL\BonusSystemApplication.DAL.csproj", "{CA65444D-1BE3-49E2-8D36-89BAE4A3379A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

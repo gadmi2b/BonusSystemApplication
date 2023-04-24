@@ -37,6 +37,7 @@ namespace BonusSystemApplication.BLL.DTO.Index
             SelectedDepartments = SelectedDepartments.Distinct().ToList();
             SelectedTeams = SelectedTeams.Distinct().ToList();
             SelectedWorkprojects = SelectedWorkprojects.Distinct().ToList();
+
         }
         private void SetStandardOrder(List<string> SelectedCollection)
         {

@@ -2,6 +2,9 @@
 
 namespace BonusSystemApplication.BLL.Processes.Filtering
 {
+    /// <summary>
+    /// contains all available forms data for current user
+    /// </summary>
     public class FormDataAvailable
     {
         public Dictionary<Form, List<Permission>> AvailableFormPermissions { get; }

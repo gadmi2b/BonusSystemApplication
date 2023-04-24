@@ -50,8 +50,8 @@ namespace BonusSystemApplication.DAL.EF
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Form>().Property(f => f.IsObjectivesFreezed).HasDefaultValue(false);
-            modelBuilder.Entity<Form>().Property(f => f.IsResultsFreezed).HasDefaultValue(false);
+            modelBuilder.Entity<Form>().Property(f => f.AreObjectivesFrozen).HasDefaultValue(false);
+            modelBuilder.Entity<Form>().Property(f => f.AreResultsFrozen).HasDefaultValue(false);
             #endregion
 
             #region Definition configuring
@@ -138,16 +138,13 @@ namespace BonusSystemApplication.DAL.EF
             #endregion
 
             #region Workproject configuring
-
             modelBuilder.Entity<Workproject>().HasIndex(w => w.Name).IsUnique();
             modelBuilder.Entity<Workproject>().Property(w => w.Name).IsRequired();
 
             modelBuilder.Entity<Workproject>().Property(w => w.IsActive).HasDefaultValue(true);
-
             #endregion
 
             #region User configuring
-
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Department)
                 .WithMany(d => d.Users)
@@ -178,27 +175,21 @@ namespace BonusSystemApplication.DAL.EF
             #endregion
 
             #region Department configuring
-
             modelBuilder.Entity<Department>().HasIndex(d => d.Name).IsUnique();
             modelBuilder.Entity<Department>().Property(d => d.Name).IsRequired();
-
             #endregion
 
             #region Position configuring
-
             modelBuilder.Entity<Position>().HasIndex(p => p.NameEng).IsUnique();
             modelBuilder.Entity<Position>().Property(p => p.NameEng).IsRequired();
 
             modelBuilder.Entity<Position>().HasIndex(p => p.NameRus).IsUnique();
             modelBuilder.Entity<Position>().Property(p => p.NameRus).IsRequired();
-
             #endregion
 
             #region Team configuring
-
             modelBuilder.Entity<Team>().HasIndex(t => t.Name).IsUnique();
             modelBuilder.Entity<Team>().Property(t => t.Name).IsRequired();
-
             #endregion
 
         }

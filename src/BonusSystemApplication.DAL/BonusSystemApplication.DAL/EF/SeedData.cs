@@ -186,13 +186,13 @@ namespace BonusSystemApplication.DAL.EF
 
         private static Definition[] Definitions =
         {
-            new Definition { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2021 },
-            new Definition { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
-            new Definition { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2021 },
-            new Definition { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021 },
+            new Definition { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2023 },
+            new Definition { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023 },
+            new Definition { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2023 },
+            new Definition { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023 },
 
-            new Definition { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
-            new Definition { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2021, IsWpmHox = true },
+            new Definition { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023, IsWpmHox = true },
+            new Definition { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2023, IsWpmHox = true },
         };
 
         private static Conclusion[] Conclusions =

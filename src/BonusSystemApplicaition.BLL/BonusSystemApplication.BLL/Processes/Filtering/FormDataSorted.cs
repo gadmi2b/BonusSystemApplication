@@ -3,6 +3,9 @@ using BonusSystemApplication.DAL.Entities;
 
 namespace BonusSystemApplication.BLL.Processes.Filtering
 {
+    /// <summary>
+    /// contains sorted forms data by user selections
+    /// </summary>
     public class FormDataSorted
     {
         public Dictionary<Form, List<Permission>> SortedFormPermissions { get; } = new Dictionary<Form, List<Permission>>();

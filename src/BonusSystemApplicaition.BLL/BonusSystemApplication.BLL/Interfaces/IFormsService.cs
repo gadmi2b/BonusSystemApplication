@@ -8,27 +8,27 @@ namespace BonusSystemApplication.BLL.Interfaces
     {
         FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections);
         FormDTO GetFormDTO(long formId);
-        FormDTO GetIsFreezedStates(long formId);
+        FormDTO GetIsFrozenStates(long formId);
 
         DefinitionDTO GetDefinitionDTO(long formId);
         ConclusionDTO GetConclusionDTO(long formId);
         SignaturesDTO GetSignaturesDTO(long formId);
         IList<ObjectiveResultDTO> GetObjectivesResultsDTO(long formId);
 
-        Dictionary<string, string> GetUsersNames();
-        Dictionary<string, string> GetPeriodsNames();
-        Dictionary<string, string> GetWorkprojectsNames();
+        Dictionary<string, string> GetWorkprojectIdsNames();
+        Dictionary<string, string> GetUserIdsNames();
+        List<string> GetPeriodNames();
 
         void UpdateForm(long formId,
                         DefinitionDTO definition,
                         ConclusionDTO conclusion,
-                        SignaturesDTO signatures,
-                        IList<ObjectiveResultDTO> objectivesResultsDTO);
+                        List<ObjectiveResultDTO> objectivesResultsDTO);
         void CreateForm(DefinitionDTO definition,
-                        IList<ObjectiveResultDTO> objectivesResultsDTO);
-        void ChangeState(string act,
-                         string type,
-                         long formId);
+                        ConclusionDTO conclusion,
+                        List<ObjectiveResultDTO> objectivesResultsDTO);
+        void ChangeState(long formId,
+                         string act,
+                         string type);
 
         string GetWorkprojectDescription(long workprojectId);
         EmployeeDTO GetEmployeeDTO(long userId);

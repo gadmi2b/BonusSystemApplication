@@ -6,6 +6,7 @@ using BonusSystemApplication.DAL.Interfaces;
 using BonusSystemApplication.DAL.Repositories;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.Services;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,7 @@ if (app.Environment.IsDevelopment())
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Froms/Error");
+    app.UseExceptionHandler("/Forms/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -59,4 +60,5 @@ app.MapControllerRoute(
 
 // -------------------------------------------------- UNTILL HERE --------------------------------------------------
 
+//Process.Start("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "https://localhost:5000");
 app.Run();

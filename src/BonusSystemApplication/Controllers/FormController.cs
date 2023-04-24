@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using AutoMapper;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.DTO.Edit;
+using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.Models.Forms.Index;
 using BonusSystemApplication.Models.Forms.Edit;
-using BonusSystemApplication.BLL.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -49,8 +49,8 @@ namespace BonusSystemApplication.Controllers
             if (formId == 0)
             {
                 formEditViewModel.Id = 0;
-                formEditViewModel.IsResultsFreezed = false;
-                formEditViewModel.IsObjectivesFreezed = false;
+                formEditViewModel.AreResultsFrozen = false;
+                formEditViewModel.AreObjectivesFrozen = false;
                 formEditViewModel.Definition = new DefinitionVM();
                 formEditViewModel.Conclusion = new ConclusionVM();
                 formEditViewModel.Signatures = new SignaturesVM();
@@ -87,21 +87,21 @@ namespace BonusSystemApplication.Controllers
                 }
             }
 
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames()
+            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
                                         .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
                                         .ToList();
-            formEditViewModel.EmployeeSelectList = _formService.GetUsersNames()
+            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
                                         .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
                                         .ToList();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
+                                        .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
 
             return View(formEditViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(FormEditViewModel formEditViewModel, string? act, string? type)
+        public IActionResult Edit(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
         {
             #region Validate ViewModel
             //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
@@ -109,14 +109,14 @@ namespace BonusSystemApplication.Controllers
             //    return NotFound();
             //}
 
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectsNames()
+            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
                                         .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
                                         .ToList();
-            formEditViewModel.EmployeeSelectList = _formService.GetUsersNames()
+            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
                                         .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
                                         .ToList();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
+                                        .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
 
             if (!ModelState.IsValid)
@@ -128,10 +128,11 @@ namespace BonusSystemApplication.Controllers
             long formId = formEditViewModel.Id;
             DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
             ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
-            SignaturesDTO signaturesDTO = _mapper.Map<SignaturesDTO>(formEditViewModel.Signatures);
-            IList<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<IList<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
+            List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
 
-            if (formId == 0 && act != null && type != null)
+            if (formId == 0 &&
+                changeToState != null &&
+                objectivesOrResults != null)
             {
                 // TODO: return message: "Please save the form before changing state"
                 return View(formEditViewModel);
@@ -143,6 +144,7 @@ namespace BonusSystemApplication.Controllers
                 if (formId == 0)
                 {
                     _formService.CreateForm(definitionDTO,
+                                            conclusionDTO,
                                             objectiveResultDTOs);
                 }
                 else if (formId > 0)
@@ -150,21 +152,20 @@ namespace BonusSystemApplication.Controllers
                     _formService.UpdateForm(formId,
                                             definitionDTO,
                                             conclusionDTO,
-                                            signaturesDTO,
                                             objectiveResultDTOs);
                 }
                 #endregion
 
-                #region Change IsFreezed state
-                if (act != null && type != null)
+                #region Change IsFrozen state
+                if (changeToState != null && objectivesOrResults != null)
                 {
-                    _formService.ChangeState(act!,
-                                             type!,
-                                             formId);
+                    _formService.ChangeState(formId,
+                                             changeToState,
+                                             objectivesOrResults);
 
-                    FormDTO formDTO = _formService.GetIsFreezedStates(formId);
-                    formEditViewModel.IsObjectivesFreezed = formDTO.IsObjectivesFreezed;
-                    formEditViewModel.IsResultsFreezed = formDTO.IsResultsFreezed;
+                    FormDTO formDTO = _formService.GetIsFrozenStates(formId);
+                    formEditViewModel.AreObjectivesFrozen = formDTO.AreObjectivesFrozen;
+                    formEditViewModel.AreResultsFrozen = formDTO.AreResultsFrozen;
                 }
                 #endregion
             }
@@ -359,7 +360,7 @@ namespace BonusSystemApplication.Controllers
                 {
                     status = "error",
                     message = "An error occured during work of application. " +
-                              "Please contact your system administrator.",
+                              "Please see your system administrator.",
                 });
             }
         }

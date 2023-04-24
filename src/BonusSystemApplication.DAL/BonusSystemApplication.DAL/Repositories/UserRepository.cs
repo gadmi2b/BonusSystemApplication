@@ -9,7 +9,7 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext context;
         public UserRepository(DataContext ctx)
         {
-            Console.WriteLine($">>>>>>>>>> DI has created me at: {DateTime.Now}<<<<<<<<<<");
+            Console.WriteLine($">>>>>>>>>> DI has created me at: {DateTime.Now} <<<<<<<<<<");
             context = ctx;
         }
 
@@ -47,7 +47,7 @@ namespace BonusSystemApplication.DAL.Repositories
                 .ToList();
         }
     
-        public bool IsUserExists(long userId)
+        public bool IsUserExist(long userId)
         {
             return context.Users.Any(u => u.Id == userId);
         }

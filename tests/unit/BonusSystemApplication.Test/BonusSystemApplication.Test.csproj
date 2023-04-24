@@ -21,4 +21,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\BonusSystemApplicaition.BLL\BonusSystemApplication.BLL\BonusSystemApplication.BLL.csproj" />
+    <ProjectReference Include="..\..\..\src\BonusSystemApplication.DAL\BonusSystemApplication.DAL\BonusSystemApplication.DAL.csproj" />
+    <ProjectReference Include="..\..\..\src\BonusSystemApplication\BonusSystemApplication.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,8 +5,8 @@ namespace BonusSystemApplication.Models.Forms.Edit
     public class FormEditViewModel
     {
         public long Id { get; set; }
-        public bool IsObjectivesFreezed { get; set; }
-        public bool IsResultsFreezed { get; set; }
+        public bool AreObjectivesFrozen { get; set; }
+        public bool AreResultsFrozen { get; set; }
 
         public DefinitionVM Definition { get; set; }
         public ConclusionVM Conclusion { get; set; }

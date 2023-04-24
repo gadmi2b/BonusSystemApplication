@@ -9,6 +9,10 @@ namespace BonusSystemApplication.DAL.Interfaces
 
         Definition GetDefinition(long formId);
         Definition GetDefinitionFull(long formId);
-        bool IsExistWithSamePropertyCombination(Definition definition, long formId);
+        bool IsExistWithSamePropertyCombination(long formId,
+                                                long employeeId,
+                                                long workprojectId,
+                                                int year,
+                                                Periods period);
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BonusSystemApplication.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230316060509_Initial")]
+    [Migration("20230417043316_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,21 +140,21 @@ namespace BonusSystemApplication.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<bool>("IsObjectivesFreezed")
+                    b.Property<bool>("AreObjectivesFrozen")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("IsResultsFreezed")
+                    b.Property<bool>("AreResultsFrozen")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastSavedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastSavedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastSavedDateTime")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

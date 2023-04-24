@@ -6,6 +6,6 @@ namespace BonusSystemApplication.DAL.Interfaces
     {
         User GetUserData(long userId);
         List<User> GetUsersNames();
-        bool IsUserExists(long userId);
+        bool IsUserExist(long userId);
     }
 }

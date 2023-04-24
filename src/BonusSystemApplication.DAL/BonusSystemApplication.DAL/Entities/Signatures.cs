@@ -14,7 +14,7 @@ namespace BonusSystemApplication.DAL.Entities
         public string? ForObjectivesApproverSignature { get; set; }
         public bool ForObjectivesIsSignedByApprover { get; set; }
         [NotMapped]
-        public bool IsObjectivesSigned
+        public bool AreObjectivesSigned
         {
             get => ForObjectivesIsSignedByEmployee &
                    ForObjectivesIsSignedByManager &
@@ -29,7 +29,7 @@ namespace BonusSystemApplication.DAL.Entities
         public string? ForResultsApproverSignature { get; set; }
         public bool ForResultsIsSignedByApprover { get; set; }
         [NotMapped]
-        public bool IsResultsSigned
+        public bool AreResultsSigned
         {
             get => ForResultsIsSignedByEmployee &
                    ForResultsIsSignedByManager &

@@ -494,11 +494,11 @@ function checkProposalForBonusPaymentState() {
   const isProposalForBonusYes = document.getElementById("js-IsProposalForBonusPaymentYes")
   const isProposalForBonusNo = document.getElementById("js-IsProposalForBonusPaymentNo")
 
-  // if objectives aren't freezed or results are already freezed
-  const isObjectivesFreezedValue = Table.getValueById("js-isObjectivesFreezed");
-  const isResultsFreezedValue = Table.getValueById("js-isResultsFreezed");
-  if (!isObjectivesFreezedValue || isObjectivesFreezedValue === "False" ||
-       isResultsFreezedValue === "True") {
+  // if objectives aren't frozen or results are already frozen
+  const areObjectivesFrozenValue = Table.getValueById("js-areObjectivesFrozen");
+  const areResultsFrozenValue = Table.getValueById("js-areResultsFrozen");
+  if (!areObjectivesFrozenValue || areObjectivesFrozenValue === "False" ||
+       areResultsFrozenValue === "True") {
 
     enableElement(isProposalForBonusYes, false);
     enableElement(isProposalForBonusNo, false);
@@ -537,11 +537,11 @@ function checkProposalForBonusPaymentState() {
 //  const objectivesBlock = document.getElementById("js-signatureBlockObjectives");
 //  const resultsBlock = document.getElementById("js-signatureBlockResults");
 
-//  const isObjectivesFreezedValue = Table.getValueById("js-isObjectivesFreezed");
-//  const isResultsFreezedValue = Table.getValueById("js-isResultsFreezed");
+//  const areObjectivesFrozenValue = Table.getValueById("js-areObjectivesFrozen");
+//  const areResultsFrozenValue = Table.getValueById("js-areResultsFrozen");
 
-//  // if objectives aren't freezed - both blocks must be disabled
-//  if (!isObjectivesFreezedValue || isObjectivesFreezedValue === "False") {
+//  // if objectives aren't frozen - both blocks must be disabled
+//  if (!areObjectivesFrozenValue || areObjectivesFrozenValue === "False") {
 //    enableElement(objectivesBlock, false);
 //    enableElement(resultsBlock, false);
 //    return;
@@ -549,8 +549,8 @@ function checkProposalForBonusPaymentState() {
 //    enableElement(objectivesBlock, true);
 //  }
 
-//  // if results aren't freezed - results signature block must be disabled
-//  if (!isResultsFreezedValue || isResultsFreezedValue === "False") {
+//  // if results aren't frozen - results signature block must be disabled
+//  if (!areResultsFrozenValue || areResultsFrozenValue === "False") {
 //    enableElement(resultsBlock, false);
 //    return;
 //  } else {
