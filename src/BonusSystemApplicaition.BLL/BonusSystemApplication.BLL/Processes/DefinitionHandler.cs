@@ -64,8 +64,7 @@ namespace BonusSystemApplication.BLL.Processes
                                                                          definitionDTO.Year,
                                                                          period))
                 throw new ValidationException("Unable to update form. " +
-                                              "Another form with selected employee, workproject, period and year is already exist.",
-                                              "");
+                                              "Another form with selected employee, workproject, period and year is already exist.");
             #endregion
 
             #region Additional properties are permitted values

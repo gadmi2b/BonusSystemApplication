@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using AutoMapper;
-using BonusSystemApplication.BLL.Interfaces;
-using BonusSystemApplication.BLL.DTO.Index;
-using BonusSystemApplication.BLL.DTO.Edit;
-using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.Models.Forms.Index;
 using BonusSystemApplication.Models.Forms.Edit;
+using BonusSystemApplication.BLL.DTO.Edit;
+using BonusSystemApplication.BLL.DTO.Index;
+using BonusSystemApplication.BLL.Interfaces;
+using BonusSystemApplication.BLL.Infrastructure;
+using BonusSystemApplication.BLL.Services;
 
 //using Newtonsoft.Json.Serialization;
 
@@ -72,12 +73,12 @@ namespace BonusSystemApplication.Controllers
             {
                 try
                 {
-                    formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
+                formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
                 }
                 catch (ValidationException ex)
                 {
                     // TODO: redirect to error page to show error message
-                    return NotFound();
+                return NotFound();
                 }
 
                 if (formEditViewModel == null)
@@ -171,7 +172,7 @@ namespace BonusSystemApplication.Controllers
             }
             catch (ValidationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError(ex.Property, ex.Message);
             }
 
             return View(formEditViewModel);

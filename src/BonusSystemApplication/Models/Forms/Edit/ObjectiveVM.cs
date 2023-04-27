@@ -1,4 +1,5 @@
 ﻿using BonusSystemApplication.BLL.DTO.Edit;
+using System.ComponentModel.DataAnnotations;
 
 namespace BonusSystemApplication.Models.Forms.Edit
 {

@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
-using BonusSystemApplication.BLL.Infrastructure;
-using BonusSystemApplication.BLL.Interfaces;
-using BonusSystemApplication.BLL.Processes.Filtering;
+using BonusSystemApplication.BLL.Processes;
 using BonusSystemApplication.BLL.Processes.Signing;
+using BonusSystemApplication.BLL.Processes.Filtering;
+using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.UserIdentiry;
+using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using BonusSystemApplication.BLL.Processes;
 
 namespace BonusSystemApplication.BLL.Services
 {
@@ -34,12 +34,12 @@ namespace BonusSystemApplication.BLL.Services
                             IMapper mapper,
                             IFormRepository formRepo,
                             IUserRepository userRepo,
-                            IWorkprojectRepository workprojectRepo,
                             IDefinitionRepository definitionRepo,
                             IConclusionRepository conclusionRepo,
                             ISignaturesRepository signaturesRepo,
-                            IObjectiveResultRepository objectiveResultRepo,
-                            IGlobalAccessRepository globalAccessRepo)
+                            IWorkprojectRepository workprojectRepo,
+                            IGlobalAccessRepository globalAccessRepo,
+                            IObjectiveResultRepository objectiveResultRepo)
         {
             _logger = logger;
             _mapper = mapper;
@@ -146,7 +146,7 @@ namespace BonusSystemApplication.BLL.Services
                                  $"EF msg: {ex.Message}", "");
                 throw new ValidationException("Unable to get form data. " +
                                               "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
+                                              "see your system administrator.");
             }
 
             PrepareFormDTOForPresentation(formDTO);
@@ -165,7 +165,7 @@ namespace BonusSystemApplication.BLL.Services
                                  $"EF msg: {ex.Message}", "");
                 throw new ValidationException("Unable to get form data. " +
                                               "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
+                                              "see your system administrator.");
             }
 
             return formDTO;
@@ -228,7 +228,7 @@ namespace BonusSystemApplication.BLL.Services
             if (string.IsNullOrEmpty(checkboxId))
             {
                 throw new ValidationException($"Signature process is not possible. " +
-                                              $"Signature data is not affected.", "");
+                                              $"Signature data is not affected.");
             }
 
             #region Determine which properties were affected. Getting affected PropertyLinker
@@ -244,7 +244,7 @@ namespace BonusSystemApplication.BLL.Services
             if (PropertyLinkerHandler.AffectedPropertyLinker == null)
             {
                 throw new ValidationException($"Signature process is not possible. " +
-                                              $"Neither objectives nor results are involved into signature process.", "");
+                                              $"Neither objectives nor results are involved into signature process.");
             }
             #endregion
 
@@ -255,7 +255,7 @@ namespace BonusSystemApplication.BLL.Services
             if (propertiesValues.Count == 0)
             {
                 throw new ValidationException($"Signature process is not possible. " +
-                                              $"Signature data is not affected.", "");
+                                              $"Signature data is not affected.");
             }
             #endregion
 
@@ -266,14 +266,14 @@ namespace BonusSystemApplication.BLL.Services
                !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
             {
                 throw new ValidationException($"Signature process is not possible. " +
-                                              $"Objectives should be frozen at first.", "");
+                                              $"Objectives should be frozen at first.");
             }
 
             if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
                !FormDataHandler.IsResultsSignaturePossible(statesAndSignatures))
             {
                 throw new ValidationException($"Signature process is not possible. " +
-                                              $"Results should be frozen at first.", "");
+                                              $"Results should be frozen at first.");
             }
             #endregion
 
@@ -286,23 +286,21 @@ namespace BonusSystemApplication.BLL.Services
             {
                 _formRepository.UpdateSignatures(statesAndSignatures);
             }
-            catch (DbUpdateException ex)
+            catch (ValidationException ex)
             {
-                _logger.LogError($"{nameof(FormsService)}. {nameof(UpdateAndReturnSignatures)}. " +
-                                 $"EF error message: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is DbUpdateException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
                 throw new ValidationException("Unable to save changes. " +
                                               "Try again, and if the problem persists, " +
-                                              "Contact your system administrator.", "");
+                                              "see your system administrator.");
             }
-            catch (Exception ex)
-            {
-                // TODO: add error handling
-
-                throw new Exception($"{nameof(FormsService)}. {nameof(UpdateAndReturnSignatures)}. Not handled commnon exception: " +
-                                    $"{ex.Message}");
-                //return new Dictionary<string, object>();
-            }
-
             #endregion
 
             return propertiesValues;
@@ -314,14 +312,14 @@ namespace BonusSystemApplication.BLL.Services
                                List<ObjectiveResultDTO> objectiveResultDTOs)
         {
             if (formId <= 0)
-                throw new ValidationException($"Unable to update form. Unknown form.", "");
+                throw new ValidationException($"Unable to update form. Unknown form.");
 
             try
             {
                 Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
 
                 if (statesAndSignatures.Signatures.AreResultsSigned)
-                    throw new ValidationException("Unable to update form. Results are already signed.", "");
+                    throw new ValidationException("Unable to update form. Results are already signed.");
 
                 if (statesAndSignatures.AreResultsFrozen)
                 {
@@ -391,25 +389,16 @@ namespace BonusSystemApplication.BLL.Services
             {
                 throw;
             }
-            catch (ArgumentNullException ex)
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is DbUpdateException)
             {
-                _logger.LogCritical($"Message: {ex.Message}.\n" +
-                                    $"StackTrace: {ex.StackTrace}.\n" +
-                                    $"TargetSite = {ex.TargetSite}.\n");
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
 
                 throw new ValidationException("Unable to update form. " +
                                               "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogCritical($"Message: {ex.Message}.\n" +
-                                    $"StackTrace: {ex.StackTrace}.\n" +
-                                    $"TargetSite = {ex.TargetSite}.\n");
-
-                throw new ValidationException("Unable to update form. " +
-                                              "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
+                                              "see your system administrator.");
             }
         }
 
@@ -417,13 +406,13 @@ namespace BonusSystemApplication.BLL.Services
                                ConclusionDTO conclusionDTO,
                                List<ObjectiveResultDTO> objectiveResultDTOs)
         {
-            long formId = 0;
-            DefinitionHandler definitionHandler = new DefinitionHandler(formId,
-                                                                        _userRepository,
-                                                                        _definitionRepository,
-                                                                        _workprojectRepository);
             try
             {
+                long formId = 0;
+                DefinitionHandler definitionHandler = new DefinitionHandler(formId,
+                                                                            _userRepository,
+                                                                            _definitionRepository,
+                                                                            _workprojectRepository);
                 definitionHandler.HandleUpdateProcess(definitionDTO);
 
                 ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
@@ -445,33 +434,26 @@ namespace BonusSystemApplication.BLL.Services
             }
             catch (ValidationException ex)
             {
+                _logger.LogDebug($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
                 throw;
             }
-            catch (ArgumentNullException ex)
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is DbUpdateException)
             {
-                _logger.LogCritical($"Message: {ex.Message}.\n" +
-                                    $"StackTrace: {ex.StackTrace}.\n" +
-                                    $"TargetSite = {ex.TargetSite}.\n");
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
 
                 throw new ValidationException("Unable to create form. " +
                                               "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogCritical($"Message: {ex.Message}.\n" +
-                                    $"StackTrace: {ex.StackTrace}.\n" +
-                                    $"TargetSite = {ex.TargetSite}.\n");
-
-                throw new ValidationException("Unable to create form. " +
-                                              "Try again, and if the problem persists, " +
-                                              "see your system administrator.", "");
+                                              "see your system administrator.");
             }
         }
 
         /// <summary>
-        /// Changes IsFrozen states for Form.
-        /// Before Unfreezing states it drops collected signatures as well.
+        /// Changes IsFrozen states for Form and drops collected signatures as well
         /// </summary>
         /// <param name="formId">id of Form to operate</param>
         /// <param name="changeToState">freeze or unfreeze</param>
@@ -481,192 +463,181 @@ namespace BonusSystemApplication.BLL.Services
                                 string changeToState,
                                 string objectivesOrResults)
         {
-            Form formStates = _formRepository.GetStates(formId);
-
-            #region Freezing Objectives
-            if (changeToState == "freeze" && objectivesOrResults == "objectives")
+            try
             {
-                if (formStates.AreObjectivesFrozen)
+                Form formStates = _formRepository.GetStates(formId);
+
+                #region Freezing Objectives
+                if (changeToState == "freeze" && objectivesOrResults == "objectives")
                 {
-                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                       $"Params: " +
-                                       $"{nameof(formId)} = {formId}, " +
-                                       $"{nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                       $"Unable to freeze Objectives. Objectives are already frozen. ", "");
+                    if (formStates.AreObjectivesFrozen)
+                    {
+                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                           $"Params: " +
+                                           $"{nameof(formId)} = {formId}, " +
+                                           $"{nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
+                                           $"Unable to freeze Objectives. Objectives are already frozen. ", "");
+                        return;
+                    }
+                    if (formStates.AreResultsFrozen)
+                    {
+                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                           $"Params: " +
+                                           $"{nameof(formId)} = {formId}, " +
+                                           $"{nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
+                                           $"Unable to freeze Objectives. Results are already frozen. ", "");
+                        return;
+                    }
+
+                    // check if Definition is ready to be frozen
+                    Definition definition = _definitionRepository.GetDefinition(formId);
+                    DefinitionHandler definitionValidator = new DefinitionHandler();
+                    definitionValidator.HandleChangeStateProcess(definition);
+
+                    // check if Objectives are ready to be frozen
+                    List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
+                    ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
+                    objectivesResultsHandler.ValidateObjectivesChangeStateProcess(objectiveResults);
+
+                    _formRepository.UpdateStates(new Form
+                    {
+                        Id = formId,
+                        LastSavedAt = DateTime.Now,
+                        LastSavedBy = UserData.GetUserName(),
+                        AreObjectivesFrozen = true,
+                        AreResultsFrozen = formStates.AreResultsFrozen,
+                    });
                     return;
                 }
-                if (formStates.AreResultsFrozen)
+                #endregion
+
+                #region Freezing Results
+                if (changeToState == "freeze" && objectivesOrResults == "results")
                 {
-                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                       $"Params: " +
-                                       $"{nameof(formId)} = {formId}, " +
-                                       $"{nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                       $"Unable to freeze Objectives. Results are already frozen. ", "");
+                    if (!formStates.AreObjectivesFrozen)
+                    {
+                        _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
+                                           $"Unable to freeze Results. Objectives are not frozen. " +
+                                           $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
+                        return;
+                    }
+                    if (formStates.AreResultsFrozen)
+                    {
+                        _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
+                                           $"Unable to freeze Results. Results are already frozen. " +
+                                           $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
+                        return;
+                    }
+
+                    // check if Results are ready to be frozen
+                    List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
+                    ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
+                    objectivesResultsHandler.ValidateResultsChangeStateProcess(objectiveResults);
+
+                    _formRepository.UpdateStates(new Form
+                    {
+                        LastSavedAt = DateTime.Now,
+                        LastSavedBy = UserData.GetUserName(),
+                        AreObjectivesFrozen = formStates.AreObjectivesFrozen,
+                        AreResultsFrozen = true,
+                    });
                     return;
                 }
+                #endregion
 
-                // check if Definition is ready to be frozen
-                Definition definition = _definitionRepository.GetDefinition(formId);
-                DefinitionHandler definitionValidator = new DefinitionHandler();
-                definitionValidator.HandleChangeStateProcess(definition);
-
-                // check if Objectives are ready to be frozen
-                List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
-                ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
-                objectivesResultsHandler.ValidateObjectivesChangeStateProcess(objectiveResults);
-
-                _formRepository.UpdateStates(new Form
+                #region Unfreezing Objectives
+                if (changeToState == "unfreeze" && objectivesOrResults == "objectives")
                 {
-                    LastSavedAt = DateTime.Now,
-                    LastSavedBy = UserData.GetUserName(),
-                    AreObjectivesFrozen = true,
-                    AreResultsFrozen = formStates.AreResultsFrozen,
-                });
-                return;
+                    if (!formStates.AreObjectivesFrozen)
+                    {
+                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                           $"Params: " +
+                                           $"{nameof(formId)} = {formId}, " +
+                                           $"{nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
+                                           $"Unable to unfreeze Objectives. Objectives are not frozen. ", "");
+                        return;
+                    }
+
+                    // Drop all signatures
+                    _signaturesRepository.DropSignatures(formId);
+
+                    _formRepository.UpdateStates(new Form
+                    {
+                        LastSavedAt = DateTime.Now,
+                        LastSavedBy = UserData.GetUserName(),
+                        AreObjectivesFrozen = false,
+                        AreResultsFrozen = false,
+                    });
+                    return;
+                }
+                #endregion
+
+                #region Unfreezing Results
+                if (changeToState == "unfreeze" && objectivesOrResults == "results")
+                {
+                    if (!formStates.AreObjectivesFrozen)
+                    {
+                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                           $"Params: " +
+                                           $"{nameof(formId)} = {formId}, " +
+                                           $"{nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
+                                           $"Unable to unfreeze Results. Objectives are not frozen. ", "");
+                        return;
+                    }
+                    if (!formStates.AreResultsFrozen)
+                    {
+                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
+                                           $"Params: " +
+                                           $"{nameof(formId)} = {formId}, " +
+                                           $"{nameof(changeToState)} = {changeToState}, " +
+                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
+                                           $"Unable to unfreeze Results. Results are not frozen. ", "");
+                        return;
+                    }
+
+                    // Drop signatures for Results only
+                    _signaturesRepository.DropSignaturesForResults(formId);
+
+                    _formRepository.UpdateStates(new Form
+                    {
+                        LastSavedAt = DateTime.Now,
+                        LastSavedBy = UserData.GetUserName(),
+                        AreObjectivesFrozen = formStates.AreObjectivesFrozen,
+                        AreResultsFrozen = false,
+                    });
+                    return;
+                }
+                #endregion
+
+                _logger.LogWarning($"Method: {nameof(ChangeState)}. Unknown call. " +
+                                   $"Params: {nameof(changeToState)} = {changeToState}, " +
+                                   $"{nameof(objectivesOrResults)} = {objectivesOrResults}.");
             }
-            #endregion
-
-            #region Freezing Results
-            if (changeToState == "freeze" && objectivesOrResults == "results")
+            catch (ValidationException ex)
             {
-                if (!formStates.AreObjectivesFrozen)
-                {
-                    _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
-                                       $"Unable to freeze Results. Objectives are not frozen. " +
-                                       $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
-                    return;
-                }
-                if (formStates.AreResultsFrozen)
-                {
-                    _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
-                                       $"Unable to freeze Results. Results are already frozen. " +
-                                       $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
-                    return;
-                }
-
-                // check if Results are ready to be frozen
-                List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
-                ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
-                objectivesResultsHandler.ValidateResultsChangeStateProcess(objectiveResults);
-
-                _formRepository.UpdateStates(new Form
-                {
-                    LastSavedAt = DateTime.Now,
-                    LastSavedBy = UserData.GetUserName(),
-                    AreObjectivesFrozen = formStates.AreObjectivesFrozen,
-                    AreResultsFrozen = true,
-                });
-                return;
-
-                //    _logger.LogWarning($"Method: {nameof(ChangeState)}. " +
-                //                       $"Called method: {nameof(_formRepository.UpdateStates)}. " +
-                //                       $"Params: " +
-                //                       $"{nameof(formDTO.Id)} = {formDTO.Id}, " +
-                //                       $"{nameof(formDTO.LastSavedBy)} = {formDTO.LastSavedBy}, " +
-                //                       $"{nameof(formDTO.LastSavedAt)} = {formDTO.LastSavedAt}, " +
-                //                       $"{nameof(formDTO.AreObjectivesFrozen)} = {formDTO.AreObjectivesFrozen}, " +
-                //                       $"{nameof(formDTO.AreResultsFrozen)} = {formDTO.AreResultsFrozen}. " +
-                //                       $"Message: {ex.Message}", "");
-
-                //    throw new ValidationException("Unable to change state of form. " +
-                //                                  "Try again, and if the problem persists, " +
-                //                                  "see your system administrator.", "");
+                _logger.LogDebug($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+                throw;
             }
-            #endregion
-
-            #region Unfreezing Objectives
-            if (changeToState == "unfreeze" && objectivesOrResults == "objectives")
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is InvalidOperationException ||
+                                       ex is DbUpdateException)
             {
-                if (!formStates.AreObjectivesFrozen)
-                {
-                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                       $"Params: " +
-                                       $"{nameof(formId)} = {formId}, " +
-                                       $"{nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                       $"Unable to unfreeze Objectives. Objectives are not frozen. ", "");
-                    return;
-                }
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
 
-                // Drop all signatures
-                _signaturesRepository.DropSignatures(formId);
-
-                //_logger.LogWarning($"Method: {nameof(ChangeState)}. " +
-                //                   $"Called method: {nameof(_signaturesRepository.DropSignatures)}. " +
-                //                   $"Params: " +
-                //                   $"{nameof(formId)} = {formId}. " +
-                //                   $"Message: {ex.Message}", "");
-
-                //throw new ValidationException("Unable to change state of form. " +
-                //                              "Try again, and if the problem persists, " +
-                //                              "see your system administrator.", "");
-
-                _formRepository.UpdateStates(new Form
-                {
-                    LastSavedAt = DateTime.Now,
-                    LastSavedBy = UserData.GetUserName(),
-                    AreObjectivesFrozen = false,
-                    AreResultsFrozen = false,
-                });
-                return;
+                throw new ValidationException("Unable to change state. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
             }
-            #endregion
-
-            #region Unfreezing Results
-            if (changeToState == "unfreeze" && objectivesOrResults == "results")
-            {
-                if (!formStates.AreObjectivesFrozen)
-                {
-                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                       $"Params: " +
-                                       $"{nameof(formId)} = {formId}, " +
-                                       $"{nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
-                                       $"Unable to unfreeze Results. Objectives are not frozen. ", "");
-                    return;
-                }
-                if (!formStates.AreResultsFrozen)
-                {
-                    _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                       $"Params: " +
-                                       $"{nameof(formId)} = {formId}, " +
-                                       $"{nameof(changeToState)} = {changeToState}, " +
-                                       $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
-                                       $"Unable to unfreeze Results. Results are not frozen. ", "");
-                    return;
-                }
-
-                // Drop signatures for Results only
-                _signaturesRepository.DropSignaturesForResults(formId);
-
-                //_logger.LogWarning($"Method: {nameof(ChangeState)}. " +
-                //                   $"Called method: {nameof(_signaturesRepository.DropSignaturesForResults)}. " +
-                //                   $"Params: " +
-                //                   $"{nameof(formId)} = {formId}. " +
-                //                   $"Message: {ex.Message}", "");
-
-                //throw new ValidationException("Unable to change state of form. " +
-                //                              "Try again, and if the problem persists, " +
-                //                              "see your system administrator.", "");
-
-                _formRepository.UpdateStates(new Form
-                {
-                    LastSavedAt = DateTime.Now,
-                    LastSavedBy = UserData.GetUserName(),
-                    AreObjectivesFrozen = formStates.AreObjectivesFrozen,
-                    AreResultsFrozen = false,
-                });
-                return;
-            }
-            #endregion
-
-            _logger.LogWarning($"Method: {nameof(ChangeState)}. Unknown call. " +
-                               $"Params: {nameof(changeToState)} = {changeToState}, " +
-                               $"{nameof(objectivesOrResults)} = {objectivesOrResults}.");
         }
 
 

@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using BonusSystemApplication.Mapper;
+using BonusSystemApplication.BLL.Interfaces;
+using BonusSystemApplication.BLL.Services;
 using BonusSystemApplication.DAL.EF;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
 using BonusSystemApplication.DAL.Repositories;
-using BonusSystemApplication.BLL.Interfaces;
-using BonusSystemApplication.BLL.Services;
-using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 

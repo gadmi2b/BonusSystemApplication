@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BonusSystemApplication.Models.Forms.Edit
 {
@@ -13,8 +15,11 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public SignaturesVM Signatures { get; set; }
         public IList<ObjectiveResultVM> ObjectivesResults { get; set; }
 
+        [ValidateNever]
         public List<SelectListItem> PeriodSelectList { get; set; }
+        [ValidateNever]
         public List<SelectListItem> EmployeeSelectList { get; set; }
+        [ValidateNever]
         public List<SelectListItem> WorkprojectSelectList { get; set; }
     }
 }

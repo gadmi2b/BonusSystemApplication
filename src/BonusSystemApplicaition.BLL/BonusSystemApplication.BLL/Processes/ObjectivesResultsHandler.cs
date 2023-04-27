@@ -61,8 +61,7 @@ namespace BonusSystemApplication.BLL.Processes
                 if (objectivesCounter > _maxObjectivesResults)
                     throw new ValidationException($"Unable to update form. " +
                                                   $"To many objectives were filled. " +
-                                                  $"Maximum allowable number of objectives are: {_maxObjectivesResults}",
-                                                  "");
+                                                  $"Maximum allowable number of objectives are: {_maxObjectivesResults}");
 
                 threshold = TryGetNullableDoubleFromNullableString(or.Objective.Threshold, or.Row, nameof(or.Objective.Threshold));
                 target = TryGetNullableDoubleFromNullableString(or.Objective.Target, or.Row, nameof(or.Objective.Target));
@@ -232,8 +231,7 @@ namespace BonusSystemApplication.BLL.Processes
                 if (objectivesCounter > _maxObjectivesResults)
                     throw new ValidationException($"Unable to update form. " +
                                                   $"To many objectives were filled. " +
-                                                  $"Maximum allowable number of objectives are: {_maxObjectivesResults}",
-                                                  "");
+                                                  $"Maximum allowable number of objectives are: {_maxObjectivesResults}");
                 #region Check if row correctly filled or empty
                 if (isShouldBeFilled)
                 {
@@ -280,8 +278,6 @@ namespace BonusSystemApplication.BLL.Processes
                     MustBeNullOrEmpty(or.Objective.KpiUpperLimit, or.Row, nameof(or.Objective.KpiUpperLimit));
                 }
                 #endregion
-
-                objectivesCounter++;
 
                 sumWeightFactor = CountNullableValuesSum(sumWeightFactor, or.Objective.WeightFactor);
                 sumKpiUpperLimit = CountNullableValuesSum(sumKpiUpperLimit, or.Objective.KpiUpperLimit);
@@ -530,8 +526,9 @@ namespace BonusSystemApplication.BLL.Processes
         {
             if (threshold == null || target == null || challenge == null)
                 throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. Unable to check Threshold-Target-Challenge monotonic sequence.",
-                                              $"");
+                                              $"Row: {row}. Unable to check " +
+                                              $"{nameof(Objective.Threshold)}-{nameof(Objective.Target)}-{nameof(Objective.Challenge)} " +
+                                              $"monotonic sequence.");
             // MonotonicSequence means that all three values
             // should be successively increased or decreased
             if (target >= Math.Max((double)threshold, (double)challenge) ||
@@ -547,7 +544,7 @@ namespace BonusSystemApplication.BLL.Processes
                 property < lowerLimit)
                 throw new ValidationException($"Unable to update form. " +
                                               $"Current {propertyName} ({property}) " +
-                                              $"is less than {lowerLimit}", "");
+                                              $"is less than {lowerLimit}");
         }
         private void MustBeEqualTo(double? property, double requiredValue, string propertyName)
         {
@@ -555,7 +552,7 @@ namespace BonusSystemApplication.BLL.Processes
                 property != requiredValue)
                 throw new ValidationException($"Unable to update form. " +
                                               $"Current sum of {propertyName} ({property}) " +
-                                              $"is not equal to {requiredValue}", "");
+                                              $"is not equal to {requiredValue}");
         }
     }
 }

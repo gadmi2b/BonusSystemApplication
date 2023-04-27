@@ -1,0 +1,10 @@
+*** Validation ***
+  theare two parts of validation: user input validation on PL (Presentation layer) and business rules on Service Layer (BLL).
+  there are several ways to implement validation process:
+  - [Decoupling the Service Layer]: https://learn.microsoft.com/en-us/aspnet/mvc/overview/older-versions-1/models-data/validating-with-a-service-layer-cs#decoupling-the-service-layer and because model state is a part of runtime its necessary to
+      - create controller without passing service to it
+      - create service and pass controller's model state (as wrapper implemented IValidationDictionary) to it
+      - inject service into product controller via DI mechanism
+    BUT this method mixed two logic concerns: validation logic with the service logic
+  - [Throwing custom exceptions]: BLL will throw an exception if service logic is violated.
+    Exceptions are for exceptional cases only, and violating of business rules is exceptional case.

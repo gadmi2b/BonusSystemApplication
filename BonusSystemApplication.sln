@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DCAA3B12-722C-409A-92D9-F82756241550}"
+	ProjectSection(SolutionItems) = preProject
+		Comments.txt = Comments.txt
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BonusSystemApplication", "src\BonusSystemApplication\BonusSystemApplication.csproj", "{BE6B9D78-E0B1-451C-9049-F7BC6933B586}"
 	ProjectSection(ProjectDependencies) = postProject

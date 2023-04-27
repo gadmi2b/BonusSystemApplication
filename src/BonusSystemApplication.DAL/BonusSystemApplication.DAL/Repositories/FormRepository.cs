@@ -137,10 +137,10 @@ namespace BonusSystemApplication.DAL.Repositories
         public List<long> GetFormIdsWhereLocalAccess(long userId)
         {
             return context.Forms
-                .TagWith("Requesting form Ids where user has local access")
-                .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
-                .Select(f => f.Id)
-                .ToList();
+                    .TagWith("Requesting form Ids where user has local access")
+                    .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
+                    .Select(f => f.Id)
+                    .ToList();
 
         }
 
@@ -154,19 +154,12 @@ namespace BonusSystemApplication.DAL.Repositories
         {
             Form originalForm = context.Forms.TagWith("Form requesting")
                     .Where(f => f.Id == form.Id)
-                    .Select(f => new Form
-                    {
-                        Id = f.Id,
-                        AreObjectivesFrozen = f.AreObjectivesFrozen,
-                        AreResultsFrozen = f.AreResultsFrozen,
-                        LastSavedAt = f.LastSavedAt,
-                        LastSavedBy = f.LastSavedBy,
-                    })
-                    .First();
+                    .First();   
 
-            if(originalForm == null)
-                throw new Exception($"{nameof(FormRepository)}. {nameof(UpdateStates)} Unable to update states. " +
-                                    $"Requested form is not found. Id = {form.Id}");
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             originalForm!.AreObjectivesFrozen = form.AreObjectivesFrozen;
             originalForm!.AreResultsFrozen = form.AreResultsFrozen;
@@ -175,6 +168,7 @@ namespace BonusSystemApplication.DAL.Repositories
 
             context.SaveChanges();
         }
+
         public void UpdateSignatures(Form changedForm)
         {
             Form originalForm = context.Forms.Find(changedForm.Id);
@@ -189,50 +183,13 @@ namespace BonusSystemApplication.DAL.Repositories
 
             context.SaveChanges();
         }
-        public void UpdateResultsConclusion(Form changedForm)
-        {
-            Form? originalForm = context.Forms
-                        .Where(f => f.Id == changedForm.Id)
-                        .Select(f => new Form
-                        {
-                            Conclusion = f.Conclusion,
-                            ObjectivesResults = f.ObjectivesResults,
-                        })
-                        .FirstOrDefault();
 
-            if (originalForm == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            originalForm.LastSavedBy = changedForm.LastSavedBy;
-            originalForm.LastSavedAt = changedForm.LastSavedAt;
-
-            originalForm.Conclusion = changedForm.Conclusion;
-            for(int index = 0; index < changedForm.ObjectivesResults.Count; index++)
-            {
-                //if(originalForm.ObjectivesResults[index].Row != changedForm.ObjectivesResults[index].Row)
-                //{
-                //    throw new Exception("One of results is not in line with its objective.");
-                //}
-                originalForm.ObjectivesResults[index].Result = changedForm.ObjectivesResults[index].Result;
-            }
-
-        }
         public void UpdateConclusionComments(Form changedForm)
         {
             Form? originalForm = context.Forms
+                        .Include(f => f.Conclusion)
                         .Where(f => f.Id == changedForm.Id)
-                        .Select(f => new Form
-                        {
-                            Conclusion = new Conclusion
-                            {
-                                ManagerComment = f.Conclusion.ManagerComment,
-                                EmployeeComment = f.Conclusion.EmployeeComment,
-                                OtherComment = f.Conclusion.OtherComment,
-                            },
-                        })
-                        .FirstOrDefault();
+                        .First();
 
             if (originalForm == null)
             {
@@ -247,26 +204,14 @@ namespace BonusSystemApplication.DAL.Repositories
 
             context.SaveChanges();
         }
-        public void UpdateDefinitionObjectivesResultsConclusion(Form changedForm)
+
+        public void UpdateResultsConclusion(Form changedForm)
         {
             Form? originalForm = context.Forms
+                        .Include(f => f.Conclusion)
+                        .Include(f => f.ObjectivesResults)
                         .Where(f => f.Id == changedForm.Id)
-                        .Select(f => new Form
-                        {
-                            Definition = new Definition
-                            {
-                                Year = f.Definition.Year,
-                                Period = f.Definition.Period,
-                                IsWpmHox = f.Definition.IsWpmHox,
-                                ManagerId = f.Definition.ManagerId,
-                                ApproverId = f.Definition.ApproverId,
-                                EmployeeId = f.Definition.EmployeeId,
-                                WorkprojectId = f.Definition.WorkprojectId,
-                            },
-                            Conclusion = f.Conclusion,
-                            ObjectivesResults = f.ObjectivesResults,
-                        })
-                        .FirstOrDefault();
+                        .First();
 
             if (originalForm == null)
             {
@@ -277,7 +222,30 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm.LastSavedAt = changedForm.LastSavedAt;
 
             originalForm.Conclusion = changedForm.Conclusion;
-            originalForm.ObjectivesResults = changedForm.ObjectivesResults;
+            for(int index = 0; index < changedForm.ObjectivesResults.Count; index++)
+            {
+                originalForm.ObjectivesResults[index].Result = changedForm.ObjectivesResults[index].Result;
+            }
+
+            context.SaveChanges();
+        }
+        public void UpdateDefinitionObjectivesResultsConclusion(Form changedForm)
+        {
+            // TODO: add AsNoTracking to all requests to avoid .Signatures to be loaded
+            Form? originalForm = context.Forms
+                        .Include(f => f.Definition)
+                        .Include(f => f.Conclusion)
+                        .Include(f => f.ObjectivesResults)
+                        .Where(f => f.Id == changedForm.Id)
+                        .First();
+
+            if (originalForm == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            originalForm.LastSavedBy = changedForm.LastSavedBy;
+            originalForm.LastSavedAt = changedForm.LastSavedAt;
 
             originalForm.Definition.Year = changedForm.Definition.Year;
             originalForm.Definition.Period = changedForm.Definition.Period;
@@ -287,6 +255,9 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm.Definition.EmployeeId = changedForm.Definition.EmployeeId;
             originalForm.Definition.WorkprojectId = changedForm.Definition.WorkprojectId;
 
+            originalForm.Conclusion = changedForm.Conclusion;
+            originalForm.ObjectivesResults = changedForm.ObjectivesResults;
+
             context.SaveChanges();
         }
 
@@ -294,8 +265,6 @@ namespace BonusSystemApplication.DAL.Repositories
         {
             throw new NotImplementedException();
         }
-
-
 
         public IList<ObjectiveResult> GetObjectivesResults(long formId)
         {
