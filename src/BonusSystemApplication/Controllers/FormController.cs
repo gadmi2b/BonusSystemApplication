@@ -73,12 +73,12 @@ namespace BonusSystemApplication.Controllers
             {
                 try
                 {
-                formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
+                    formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
                 }
                 catch (ValidationException ex)
                 {
                     // TODO: redirect to error page to show error message
-                return NotFound();
+                    return NotFound();
                 }
 
                 if (formEditViewModel == null)
@@ -102,7 +102,8 @@ namespace BonusSystemApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
+        [Route("Form/Edit")]
+        public IActionResult ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
         {
             #region Validate ViewModel
             //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
@@ -119,7 +120,6 @@ namespace BonusSystemApplication.Controllers
             formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
                                         .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
-
             if (!ModelState.IsValid)
             {
                 //return View(formEditViewModel);
@@ -131,43 +131,35 @@ namespace BonusSystemApplication.Controllers
             ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
             List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
 
-            if (formId == 0 &&
-                changeToState != null &&
-                objectivesOrResults != null)
-            {
-                // TODO: return message: "Please save the form before changing state"
-                return View(formEditViewModel);
-            }
-
             try
             {
-                #region Create / Update form
-                if (formId == 0)
-                {
-                    _formService.CreateForm(definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
-                }
-                else if (formId > 0)
-                {
-                    _formService.UpdateForm(formId,
-                                            definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
-                }
-                #endregion
-
                 #region Change IsFrozen state
                 if (changeToState != null && objectivesOrResults != null)
                 {
-                    _formService.ChangeState(formId,
-                                             changeToState,
-                                             objectivesOrResults);
+                    if (formId == 0)
+                    {
+                        throw new ValidationException("Please save the form before changing state");
+                    }
 
-                    FormDTO formDTO = _formService.GetIsFrozenStates(formId);
-                    formEditViewModel.AreObjectivesFrozen = formDTO.AreObjectivesFrozen;
-                    formEditViewModel.AreResultsFrozen = formDTO.AreResultsFrozen;
+                    if (changeToState == "frozen")
+                    {
+                        _formService.UpdateForm(formId,
+                                                definitionDTO,
+                                                conclusionDTO,
+                                                objectiveResultDTOs);
+                        _formService.ChangeState(formId,
+                                                 changeToState,
+                                                 objectivesOrResults);
+                    }
+                    else if (changeToState == "unfrozen")
+                    {
+                        _formService.ChangeState(formId,
+                                                 changeToState,
+                                                 objectivesOrResults);
+                    }
                 }
+
+                return RedirectToAction(nameof(Edit), new { Id = formId });
                 #endregion
             }
             catch (ValidationException ex)
@@ -175,9 +167,64 @@ namespace BonusSystemApplication.Controllers
                 ModelState.AddModelError(ex.Property, ex.Message);
             }
 
-            return View(formEditViewModel);
+            return View(nameof(Edit), formEditViewModel);
         }
-        
+
+        [HttpPost]
+        public IActionResult Edit(FormEditViewModel formEditViewModel)
+        {
+            #region Validate ViewModel
+            //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
+            //{
+            //    return NotFound();
+            //}
+
+            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
+                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
+                                        .ToList();
+            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
+                                        .Select(d => new SelectListItem { Value = d, Text = d })
+                                        .ToList();
+            if (!ModelState.IsValid)
+            {
+                //return View(formEditViewModel);
+            }
+            #endregion
+
+            long formId = formEditViewModel.Id;
+            DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
+            ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
+            List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
+
+            try
+            {
+                if (formId > 0)
+                {
+                    _formService.UpdateForm(formId,
+                                            definitionDTO,
+                                            conclusionDTO,
+                                            objectiveResultDTOs);
+                    return RedirectToAction(nameof(Edit), new { Id = formId });
+                }
+                else
+                {
+                    _formService.CreateForm(definitionDTO,
+                                            conclusionDTO,
+                                            objectiveResultDTOs);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (ValidationException ex)
+            {
+                ModelState.AddModelError(ex.Property, ex.Message);
+            }
+
+            return View(nameof(Edit), formEditViewModel);
+        }
+
         [HttpPost]
         public IActionResult CreateFormBasedOnSelection(List<long> selectedFormIds)
         {
@@ -365,6 +412,5 @@ namespace BonusSystemApplication.Controllers
                 });
             }
         }
-
     }
 }

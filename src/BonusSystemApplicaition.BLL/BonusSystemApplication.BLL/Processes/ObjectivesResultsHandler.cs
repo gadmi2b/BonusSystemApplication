@@ -59,7 +59,7 @@ namespace BonusSystemApplication.BLL.Processes
                 objectivesCounter++;
 
                 if (objectivesCounter > _maxObjectivesResults)
-                    throw new ValidationException($"Unable to update form. " +
+                    throw new ValidationException($"Unable to perform operation. " +
                                                   $"To many objectives were filled. " +
                                                   $"Maximum allowable number of objectives are: {_maxObjectivesResults}");
 
@@ -168,7 +168,7 @@ namespace BonusSystemApplication.BLL.Processes
                                      achieved);
 
                 _objectiveResultDTOs[index].Result.KeyCheck = keyCheck;
-                _objectiveResultDTOs[index].Result.Kpi = kpi.ToString();
+                _objectiveResultDTOs[index].Result.Kpi = CastNullableStringFromNullableDouble(kpi);
             }
         }
 
@@ -203,8 +203,8 @@ namespace BonusSystemApplication.BLL.Processes
                 {
                     if (string.IsNullOrEmpty(or.Objective.Description))
                     {
-                        throw new ValidationException($"Unable to update form. " +
-                                                      $"There is objective in row {or.Row} without specified {nameof(or.Objective.Description)}",
+                        throw new ValidationException($"Unable to perform operation. " +
+                                                      $"There is objective #{or.Row} without specified {nameof(or.Objective.Description)}",
                                                       $"{nameof(or.Objective.Description)}");
                     }
                     else // both statement or description are filled
@@ -217,8 +217,8 @@ namespace BonusSystemApplication.BLL.Processes
                 {
                     if (!string.IsNullOrEmpty(or.Objective.Description))
                     {
-                        throw new ValidationException($"Unable to update form. " +
-                                                      $"There is objective in row {or.Row} without specified {nameof(or.Objective.Statement)}",
+                        throw new ValidationException($"Unable to perform operation. " +
+                                                      $"There is objective #{or.Row} without specified {nameof(or.Objective.Statement)}",
                                                       $"{nameof(or.Objective.Statement)}");
                     }
                     else // both statement or description are not filled
@@ -229,7 +229,7 @@ namespace BonusSystemApplication.BLL.Processes
                 #endregion
                 
                 if (objectivesCounter > _maxObjectivesResults)
-                    throw new ValidationException($"Unable to update form. " +
+                    throw new ValidationException($"Unable to perform operation. " +
                                                   $"To many objectives were filled. " +
                                                   $"Maximum allowable number of objectives are: {_maxObjectivesResults}");
                 #region Check if row correctly filled or empty
@@ -355,8 +355,8 @@ namespace BonusSystemApplication.BLL.Processes
             if (double.TryParse(property, out double temp))
                 return temp;
 
-            throw new ValidationException($"Unable to update form. " +
-                                          $"Row: {row}. {propertyName} must be a number.",
+            throw new ValidationException($"Unable to perform operation. " +
+                                          $"Objective #{row}. {propertyName} must be a number.",
                                           $"{propertyName}");
         }
         private string? CastNullableStringFromNullableDouble(double? property)
@@ -487,29 +487,29 @@ namespace BonusSystemApplication.BLL.Processes
         private void MustBeNullOrEmpty(double? property, int row, string propertyName)
         {
             if (property != null)
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be empty",
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be empty",
                                               $"{propertyName}");
         }
         private void MustBeNullOrEmpty(string? property, int? row, string? propertyName)
         {
             if (!string.IsNullOrEmpty(property))
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be empty.",
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be empty.",
                                               $"{propertyName}");
         }
         private void MustNotBeNullOrEmpty(double? property, int row, string propertyName)
         {
             if (property == null)
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be filled.",
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be filled.",
                                               $"{propertyName}");
         }
         private void MustNotBeNullOrEmpty(string? property, int row, string propertyName)
         {
             if (string.IsNullOrEmpty(property))
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be filled.",
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be filled.",
                                               $"{propertyName}");
         }
         private void MustBeLimited(double? property, double lowerLimit, double upperLimit, int row, string propertyName)
@@ -517,24 +517,24 @@ namespace BonusSystemApplication.BLL.Processes
             if (property == null ||
                 property < lowerLimit ||
                 property > upperLimit)
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be between: " +
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be between: " +
                                               $"{lowerLimit} and {upperLimit}",
                                               $"{propertyName}");
         }
         private void MustBeMonotonicSequence(double? threshold, double? target, double? challenge, int row, string propertyName)
         {
             if (threshold == null || target == null || challenge == null)
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. Unable to check " +
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. Unable to check " +
                                               $"{nameof(Objective.Threshold)}-{nameof(Objective.Target)}-{nameof(Objective.Challenge)} " +
                                               $"monotonic sequence.");
             // MonotonicSequence means that all three values
             // should be successively increased or decreased
             if (target >= Math.Max((double)threshold, (double)challenge) ||
                 target <= Math.Min((double)threshold, (double)challenge))
-                throw new ValidationException($"Unable to update form. " +
-                                              $"Row: {row}. {propertyName} must be between: " +
+                throw new ValidationException($"Unable to perform operation. " +
+                                              $"Objective #{row}. {propertyName} must be between: " +
                                               $"{threshold} and {challenge}",
                                               $"{propertyName}");
         }
@@ -542,7 +542,7 @@ namespace BonusSystemApplication.BLL.Processes
         {
             if (property == null ||
                 property < lowerLimit)
-                throw new ValidationException($"Unable to update form. " +
+                throw new ValidationException($"Unable to perform operation. " +
                                               $"Current {propertyName} ({property}) " +
                                               $"is less than {lowerLimit}");
         }
@@ -550,7 +550,7 @@ namespace BonusSystemApplication.BLL.Processes
         {
             if (property == null ||
                 property != requiredValue)
-                throw new ValidationException($"Unable to update form. " +
+                throw new ValidationException($"Unable to perform operation. " +
                                               $"Current sum of {propertyName} ({property}) " +
                                               $"is not equal to {requiredValue}");
         }

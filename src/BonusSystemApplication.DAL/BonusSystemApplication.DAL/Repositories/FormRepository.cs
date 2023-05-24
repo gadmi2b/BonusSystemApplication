@@ -141,7 +141,6 @@ namespace BonusSystemApplication.DAL.Repositories
                     .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
                     .Select(f => f.Id)
                     .ToList();
-
         }
 
         public void CreateForm(Form form)

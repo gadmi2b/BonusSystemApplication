@@ -8,11 +8,6 @@
     margin-bottom: 20px;
 }
 
-.button-group__title {
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
 .button-group__line {
     width: 100%;
     height: 1px;
@@ -22,4 +17,17 @@
 
 .button--width {
     width: 75px;
+}
+
+.validation {
+    color: #C00000;
+}
+
+.title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+ul {
+    list-style-type: none;
 }

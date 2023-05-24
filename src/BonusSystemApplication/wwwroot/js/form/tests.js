@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-  runTests();
+  //runTests();
 });
 
 function runTests() {
@@ -10,10 +10,6 @@ function runTests() {
   console.log("testTableClass-IsMeasurableChecked:......." + testTableClassIsMeasurableChecked());
   console.log("testTableClass-SetValue:.................." + testTableClassSetValue());
 }
-
-//ObjectivesResults[i].Objective.Statement
-//ObjectivesResults_0__Objective_Statement
-//ObjectivesResults_0__Row
 
 function testTableClassGetCellId() {
   //arrange

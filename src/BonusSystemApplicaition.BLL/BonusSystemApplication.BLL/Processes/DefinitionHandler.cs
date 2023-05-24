@@ -52,7 +52,7 @@ namespace BonusSystemApplication.BLL.Processes
             YearMustBeLimited(definitionDTO.Year);
 
             if (!Enum.TryParse(definitionDTO.Period, out Periods period))
-                throw new ValidationException($"Unable to update form. " +
+                throw new ValidationException($"Unable to perform operation. " +
                                               $"Selected period is not allowed.",
                                               $"{nameof(definitionDTO.Period)}");
             #endregion
@@ -63,7 +63,7 @@ namespace BonusSystemApplication.BLL.Processes
                                                                          definitionDTO.WorkprojectId,
                                                                          definitionDTO.Year,
                                                                          period))
-                throw new ValidationException("Unable to update form. " +
+                throw new ValidationException("Unable to perform operation. " +
                                               "Another form with selected employee, workproject, period and year is already exist.");
             #endregion
 
@@ -104,14 +104,14 @@ namespace BonusSystemApplication.BLL.Processes
         {
             if (property == null ||
                 property <= 0)
-                throw new ValidationException($"Unable to update form. " +
+                throw new ValidationException($"Unable to perform operation. " +
                                               $"{selectedName} must be selected.",
                                               $"{propertyName}");
         }
         private void MustBeFilled(string? property, string selectedName, string propertyName)
         {
             if (string.IsNullOrEmpty(property))
-                throw new ValidationException($"Unable to update form. " +
+                throw new ValidationException($"Unable to perform operation. " +
                                               $"{selectedName} must be selected.",
                                               $"{propertyName}");
         }

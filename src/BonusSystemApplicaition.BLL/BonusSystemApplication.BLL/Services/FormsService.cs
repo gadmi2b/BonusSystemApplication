@@ -171,6 +171,17 @@ namespace BonusSystemApplication.BLL.Services
             return formDTO;
         }
 
+        public StatesAndSignaturesDTO GetStatesAndSignaturesDTO(long formId)
+        {
+            Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+            return new StatesAndSignaturesDTO
+            {
+                AreObjectivesFrozen = statesAndSignatures.AreObjectivesFrozen,
+                AreResultsFrozen = statesAndSignatures.AreResultsFrozen,
+                SignaturesDTO = _mapper.Map<Signatures, SignaturesDTO>(statesAndSignatures.Signatures),
+            };
+        }
+
         public DefinitionDTO GetDefinitionDTO(long defintionId)
         {
             return _mapper.Map<DefinitionDTO>(_definitionRepository.GetDefinitionFull(defintionId));
@@ -213,12 +224,18 @@ namespace BonusSystemApplication.BLL.Services
         public string GetWorkprojectDescription(long workprojectId)
         {
             string? description = _workprojectRepository.GetWorkprojectData(workprojectId).Description;
-            if (description != null) return description;
-            else return string.Empty;
+            return description == null ? string.Empty : description;
         }
         public EmployeeDTO GetEmployeeDTO(long userId)
         {
-            return _mapper.Map<EmployeeDTO>(_userRepository.GetUserData(userId));
+            User userData = _userRepository.GetUserData(userId);
+            return new EmployeeDTO
+            {
+                TeamName = userData.Team?.Name == null ? string.Empty: userData.Team.Name,
+                PositionName = userData.Position?.NameEng == null ? string.Empty : userData.Position.NameEng,
+                DepartmentName = userData.Department?.Name == null ? string.Empty : userData.Department.Name,
+                Pid = userData.Pid,
+            };
         }
 
         public Dictionary<string, object> UpdateAndReturnSignatures(long formId,
@@ -312,20 +329,21 @@ namespace BonusSystemApplication.BLL.Services
                                List<ObjectiveResultDTO> objectiveResultDTOs)
         {
             if (formId <= 0)
-                throw new ValidationException($"Unable to update form. Unknown form.");
+                throw new ValidationException($"Unable to perform operation. Unknown form.");
 
             try
             {
                 Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
 
                 if (statesAndSignatures.Signatures.AreResultsSigned)
-                    throw new ValidationException("Unable to update form. Results are already signed.");
+                    throw new ValidationException("Unable to perform operation. Results are already signed.");
 
                 if (statesAndSignatures.AreResultsFrozen)
                 {
                     #region Conclusion's comments could be updated
                     _formRepository.UpdateConclusionComments(new Form
                     {
+                        Id = formId,
                         LastSavedBy = UserData.GetUserName(),
                         LastSavedAt = DateTime.Now,
                         Conclusion = new Conclusion
@@ -350,6 +368,7 @@ namespace BonusSystemApplication.BLL.Services
 
                     _formRepository.UpdateResultsConclusion(new Form
                     {
+                        Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         Conclusion = _mapper.Map<Conclusion>(conclusionDTO),
@@ -389,14 +408,15 @@ namespace BonusSystemApplication.BLL.Services
             {
                 throw;
             }
-            catch (Exception ex) when (ex is ArgumentNullException ||
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
                                        ex is DbUpdateException)
             {
                 _logger.LogError($"Message: {ex.Message}.\n" +
                                  $"StackTrace: {ex.StackTrace}.\n" +
                                  $"TargetSite = {ex.TargetSite}.\n");
 
-                throw new ValidationException("Unable to update form. " +
+                throw new ValidationException("Unable to perform operation. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
             }
@@ -456,7 +476,7 @@ namespace BonusSystemApplication.BLL.Services
         /// Changes IsFrozen states for Form and drops collected signatures as well
         /// </summary>
         /// <param name="formId">id of Form to operate</param>
-        /// <param name="changeToState">freeze or unfreeze</param>
+        /// <param name="changeToState">frozen or unfrozen</param>
         /// <param name="objectivesOrResults">objectives or results</param>
         /// <exception cref="ValidationException"></exception>
         public void ChangeState(long formId,
@@ -468,7 +488,7 @@ namespace BonusSystemApplication.BLL.Services
                 Form formStates = _formRepository.GetStates(formId);
 
                 #region Freezing Objectives
-                if (changeToState == "freeze" && objectivesOrResults == "objectives")
+                if (changeToState == "frozen" && objectivesOrResults == "objectives")
                 {
                     if (formStates.AreObjectivesFrozen)
                     {
@@ -514,7 +534,7 @@ namespace BonusSystemApplication.BLL.Services
                 #endregion
 
                 #region Freezing Results
-                if (changeToState == "freeze" && objectivesOrResults == "results")
+                if (changeToState == "frozen" && objectivesOrResults == "results")
                 {
                     if (!formStates.AreObjectivesFrozen)
                     {
@@ -540,6 +560,7 @@ namespace BonusSystemApplication.BLL.Services
 
                     _formRepository.UpdateStates(new Form
                     {
+                        Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         AreObjectivesFrozen = formStates.AreObjectivesFrozen,
@@ -550,7 +571,7 @@ namespace BonusSystemApplication.BLL.Services
                 #endregion
 
                 #region Unfreezing Objectives
-                if (changeToState == "unfreeze" && objectivesOrResults == "objectives")
+                if (changeToState == "unfrozen" && objectivesOrResults == "objectives")
                 {
                     if (!formStates.AreObjectivesFrozen)
                     {
@@ -568,6 +589,7 @@ namespace BonusSystemApplication.BLL.Services
 
                     _formRepository.UpdateStates(new Form
                     {
+                        Id= formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         AreObjectivesFrozen = false,
@@ -578,7 +600,7 @@ namespace BonusSystemApplication.BLL.Services
                 #endregion
 
                 #region Unfreezing Results
-                if (changeToState == "unfreeze" && objectivesOrResults == "results")
+                if (changeToState == "unfrozen" && objectivesOrResults == "results")
                 {
                     if (!formStates.AreObjectivesFrozen)
                     {
@@ -606,6 +628,7 @@ namespace BonusSystemApplication.BLL.Services
 
                     _formRepository.UpdateStates(new Form
                     {
+                        Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         AreObjectivesFrozen = formStates.AreObjectivesFrozen,
@@ -630,7 +653,8 @@ namespace BonusSystemApplication.BLL.Services
                                        ex is InvalidOperationException ||
                                        ex is DbUpdateException)
             {
-                _logger.LogError($"Message: {ex.Message}.\n" +
+                _logger.LogError($"Msg: {ex.Message}.\n" +
+                                 $"IMsg: {ex.InnerException?.Message}\n" +
                                  $"StackTrace: {ex.StackTrace}.\n" +
                                  $"TargetSite = {ex.TargetSite}.\n");
 

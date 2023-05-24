@@ -8,3 +8,11 @@
     BUT this method mixed two logic concerns: validation logic with the service logic
   - [Throwing custom exceptions]: BLL will throw an exception if service logic is violated.
     Exceptions are for exceptional cases only, and violating of business rules is exceptional case.
+
+*** Posting data ***
+    after POST (Edit action) it is possible to return to same page in two ways
+    - return View(viewModel); - sends data from ModelState to View
+      it brings to situation when checkboxes are stayed selected even if they are false in viewModel;
+      it brings to situation when user refreshes page and send same Post request.
+    - return RedirectToAction(nameof(Edit), formId)
+      classical Post-Request-Get approach.

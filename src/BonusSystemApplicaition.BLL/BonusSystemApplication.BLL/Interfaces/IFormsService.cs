@@ -9,6 +9,7 @@ namespace BonusSystemApplication.BLL.Interfaces
         FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections);
         FormDTO GetFormDTO(long formId);
         FormDTO GetIsFrozenStates(long formId);
+        StatesAndSignaturesDTO GetStatesAndSignaturesDTO(long formId);
 
         DefinitionDTO GetDefinitionDTO(long formId);
         ConclusionDTO GetConclusionDTO(long formId);
@@ -27,8 +28,8 @@ namespace BonusSystemApplication.BLL.Interfaces
                         ConclusionDTO conclusion,
                         List<ObjectiveResultDTO> objectivesResultsDTO);
         void ChangeState(long formId,
-                         string act,
-                         string type);
+                         string changeToState,
+                         string objectivesOrResults);
 
         string GetWorkprojectDescription(long workprojectId);
         EmployeeDTO GetEmployeeDTO(long userId);

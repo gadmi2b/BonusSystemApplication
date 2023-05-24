@@ -78,17 +78,17 @@ BEM convention: Block Elements Modifiers
         </div>
         <div class="content-employee__column-2-flex">
           <label asp-for="Definition.TeamName">Team:</label>
-          <input asp-for="Definition.TeamName" type="text"  disabled
+          <input asp-for="Definition.TeamName" type="text"  readonly
                   class="content--styles content-employee--styles" id="js-teamName"/>
         </div>
         <div class="content-employee__column-2-flex">
           <label asp-for="Definition.PositionName">Position:</label>
-          <input asp-for="Definition.PositionName" type="text" disabled
+          <input asp-for="Definition.PositionName" type="text" readonly
                   class="content--styles content-employee--styles" id="js-positionName"/>
         </div>
         <div class="content-employee__column-2-flex">
           <label asp-for="Definition.Pid">PID:</label>
-          <input asp-for="Definition.Pid" type="text" disabled
+          <input asp-for="Definition.Pid" type="text" readonly
                   class="content--styles content-employee--styles" id="js-pid"/>
         </div>
       </div>
@@ -98,7 +98,7 @@ BEM convention: Block Elements Modifiers
           <select asp-for="Definition.WorkprojectId" asp-items="Model.WorkprojectSelectList"
                   class="content--styles" onchange="requestWorkprojectDescription(this)">
           </select>
-          <input asp-for="Definition.WorkprojectDescription" type="text" disabled
+          <input asp-for="Definition.WorkprojectDescription" type="text" readonly
                   class="content-employee--styles" id="js-workprojectDescription"/>
         </div>
         <div class="content-employee__column-2-flex">
@@ -212,7 +212,7 @@ BEM convention: Block Elements Modifiers
       <p>Freeze objectives before validation.</p>
       <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
               disabled="@(!Model.AreObjectivesFrozen ||
-                            Model.AreResultsFrozen)">
+                           Model.AreResultsFrozen)">
         @* Objectives Employee*@
         <div class="content-signatures-block__checkbox js-signature">
           <label for="@nameof(SignaturesVM.ForObjectivesIsSignedByEmployee)">Employee:</label>
@@ -301,42 +301,46 @@ BEM convention: Block Elements Modifiers
   </content>
   <sidebar class="sidebar sidebar--padding">
     <div class="button-group">
-      <p class="button-group__title">Objectives:</p>
+      <p class="title">Objectives:</p>
       <input disabled="@(Model.AreObjectivesFrozen)"
              form="content-form" type="submit" value="Freeze" class="cmn-button button--width"
              asp-controller="Form"
-             asp-action="Edit"
-             asp-route-changeToState="freeze"
+             asp-action="ChangeState"
+             asp-route-changeToState="frozen"
              asp-route-objectivesOrResults="objectives"/>
       <input disabled="@(!Model.AreObjectivesFrozen)"
              form="content-form" type="submit" value="Unfreeze" class="cmn-button button--width"
              asp-controller="Form"
-             asp-action="Edit"
-             asp-route-changeToState="unfreeze"
+             asp-action="ChangeState"
+             asp-route-changeToState="unfrozen"
              asp-route-objectivesOrResults="objectives"/>
     </div>
     <div class="button-group">
-      <p class="button-group__title">Results:</p>
+      <p class="title">Results:</p>
       <input disabled="@(!Model.AreObjectivesFrozen || Model.AreResultsFrozen)"
              form="content-form" type="submit" value="Freeze" class="cmn-button button--width"
              asp-controller="Form"
-             asp-action="Edit"
-             asp-route-changeToState="freeze"
+             asp-action="ChangeState"
+             asp-route-changeToState="frozen"
              asp-route-objectivesOrResults="results"/>
       <input disabled="@(!Model.AreObjectivesFrozen || !Model.AreResultsFrozen)"
              form="content-form" type="submit" value="Unfreeze" class="cmn-button button--width"
              asp-controller="Form"
-             asp-action="Edit"
-             asp-route-changeToState="unfreeze"
+             asp-action="ChangeState"
+             asp-route-changeToState="unfrozen"
              asp-route-objectivesOrResults="results"/>
     </div>
     <div class="button-group">
       <p class="button-group__line"></p>
       <input form="content-form" type="submit" value="Save" class="cmn-button button--width"
-             asp-controller="Form" asp-action="Edit" />
+             asp-controller="Form" asp-action="Edit"/>
       <a asp-controller="Form" asp-action="Index">
         <input type="button" value="Search" class="cmn-button button--width"/>
       </a>
+    </div>
+
+    <p class="title">Information:</p>
+    <div class="validation" asp-validation-summary="All">
     </div>
   </sidebar>
 
