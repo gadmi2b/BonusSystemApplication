@@ -1,15 +1,22 @@
 ﻿@model FormEditViewModel
 @{
-  Layout = "_Layout";
+  Layout = null;
 }
 
-<script type="text/javascript">
-    
-</script>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="~/css/form/wrapper.css" />
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="~/js/form/tableClass.js"></script>
+  <script type="text/javascript" src="~/js/form/objectives-results.js"></script>
+  <script type="text/javascript" src="~/js/form/textareas.js"></script>
+  <script type="text/javascript" src="~/js/form/ajax.js"></script>
+  <script type="text/javascript" src="~/js/form/signatures.js"></script>
+  <script type="text/javascript" src="~/js/form/tests.js"></script>
+
+  <link rel="stylesheet" href="~/css/form/wrapper.css" />
   <link rel="stylesheet" href="~/css/form/content.css" />
   <link rel="stylesheet" href="~/css/form/content-period.css" />
   <link rel="stylesheet" href="~/css/form/content-employee.css" />
@@ -20,7 +27,7 @@
   <link rel="stylesheet" href="~/css/form/sidebar.css" />
   <link rel="stylesheet" href="~/css/common.css" />
 
-  <title>Set title here</title>
+  <title>PPO Form</title>
 </head>
 
 @*----------------------------------------
@@ -57,10 +64,11 @@ BEM convention: Block Elements Modifiers
       <div class="content-period-center">
         <span class="content-period-center__title">PERSONAL PERFORMANCE OBJECTIVES FOR</span>
         <select asp-for="@Model.Definition.Period" asp-items="@Model.PeriodSelectList"
-                class="content--styles content-period-center__period">
+                class="content--styles content-period-center__period" readonly="@Model.AreObjectivesFrozen">
         </select>
         <span class="content-period-center__joinder">OF</span>
-        <input asp-for="Definition.Year" type="text" class="content--styles content-period-center__year" />
+        <input asp-for="Definition.Year" type="text" autocomplete="new-password"
+               class="content--styles content-period-center__year" readonly="@Model.AreObjectivesFrozen"/>
       </div>
       <div class="content-period__text">Please complete the form in English</div>
     </div>
@@ -145,21 +153,59 @@ BEM convention: Block Elements Modifiers
       {
         <tr>
           @*Objectives table block*@
-          <td><input asp-for="ObjectivesResults[i].Row" type="text" readonly /></td>
-          <td><textarea asp-for="ObjectivesResults[i].Objective.Statement" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-          <td><textarea asp-for="ObjectivesResults[i].Objective.Description" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.IsKey" type="checkbox" /></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.IsMeasurable" type="checkbox" /></td>
-          <td><textarea asp-for="ObjectivesResults[i].Objective.Unit" style="text-align: center" rows="1" oninput="resizeTextArea(this)"></textarea></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.Threshold" type="text" /></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.Target" type="text" /></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.Challenge" type="text" /></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.WeightFactor" type="text" /></td>
-          <td><input asp-for="ObjectivesResults[i].Objective.KpiUpperLimit" type="text" /></td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Row" type="text" readonly />
+          </td>
+          <td>
+            <textarea asp-for="ObjectivesResults[i].Objective.Statement" style="text-align: center" rows="1"
+                      oninput="resizeTextArea(this)" readonly="@(Model.AreObjectivesFrozen)"></textarea>
+          </td>
+          <td>
+            <textarea asp-for="ObjectivesResults[i].Objective.Description" rows="1"
+                      oninput="resizeTextArea(this)" readonly="@(Model.AreObjectivesFrozen)"></textarea>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.IsKey" type="checkbox"
+                   onclick="return @((!Model.AreObjectivesFrozen).ToString().ToLower())" />
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.IsMeasurable" type="checkbox"
+                   onclick="return @((!Model.AreObjectivesFrozen).ToString().ToLower())" />
+          </td>
+          <td>
+            <textarea asp-for="ObjectivesResults[i].Objective.Unit" style="text-align: center" rows="1"
+                      oninput="resizeTextArea(this)" readonly="@(Model.AreObjectivesFrozen)"></textarea>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.Threshold" type="text"
+                   readonly="@(Model.AreObjectivesFrozen)"/>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.Target" type="text"
+                   readonly="@(Model.AreObjectivesFrozen)"/>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.Challenge" type="text"
+                   readonly="@(Model.AreObjectivesFrozen)"/>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.WeightFactor" type="text"
+                   readonly="@(Model.AreObjectivesFrozen)"/>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Objective.KpiUpperLimit" type="text"
+                   readonly="@(Model.AreObjectivesFrozen)"/>
+          </td>
           @*Results table block*@
-          <td><textarea asp-for="ObjectivesResults[i].Result.KeyCheck" style="text-align: center" rows="1" disabled></textarea></td>
-          <td><input asp-for="ObjectivesResults[i].Result.Achieved" type="text" /></td>
-          <td><textarea asp-for="ObjectivesResults[i].Result.Kpi" style="text-align: center" rows="1" disabled></textarea></td>
+          <td>
+            <textarea asp-for="ObjectivesResults[i].Result.KeyCheck" style="text-align: center" rows="1" readonly></textarea>
+          </td>
+          <td>
+            <input asp-for="ObjectivesResults[i].Result.Achieved" type="text" readonly="@(Model.AreResultsFrozen)"/>
+          </td>
+          <td>
+            <textarea asp-for="ObjectivesResults[i].Result.Kpi" style="text-align: center" rows="1" readonly></textarea>
+          </td>
         </tr>
       }
       </tbody>
@@ -211,8 +257,8 @@ BEM convention: Block Elements Modifiers
          objectives is not frozen or results is frozen *@
       <p>Freeze objectives before validation.</p>
       <fieldset class="content-signatures-block" id="js-signatureBlockObjectives"
-              disabled="@(!Model.AreObjectivesFrozen ||
-                           Model.AreResultsFrozen)">
+                disabled="@(!Model.AreObjectivesFrozen ||
+                             Model.AreResultsFrozen)">
         @* Objectives Employee*@
         <div class="content-signatures-block__checkbox js-signature">
           <label for="@nameof(SignaturesVM.ForObjectivesIsSignedByEmployee)">Employee:</label>
@@ -220,9 +266,10 @@ BEM convention: Block Elements Modifiers
                   id="@nameof(SignaturesVM.ForObjectivesIsSignedByEmployee)" />
         </div>
         <span class="content-signatures-block__signature"
-          id="@nameof(SignaturesVM.ForObjectivesEmployeeSignature)">
-                  @Model.Signatures.ForObjectivesEmployeeSignature
+              id="@nameof(SignaturesVM.ForObjectivesEmployeeSignature)">
+                     @Model.Signatures.ForObjectivesEmployeeSignature
         </span>
+
         @* Objectives Manager*@
         <div class="content-signatures-block__checkbox js-signature">
           <label for="@nameof(SignaturesVM.ForObjectivesIsSignedByManager)">Direct Manager:</label>
@@ -256,7 +303,7 @@ BEM convention: Block Elements Modifiers
          objectives is not frozen or results is not frozen*@
       <p>Freeze results before validation.</p>
       <fieldset class="content-signatures-block" id="js-signatureBlockResults"
-              disabled="@(!Model.AreObjectivesFrozen ||
+                disabled="@(!Model.AreObjectivesFrozen ||
                           !Model.AreResultsFrozen)">
         @* Results Employee*@
         <div class="content-signatures-block__checkbox js-signature">
@@ -349,3 +396,4 @@ BEM convention: Block Elements Modifiers
   </footer>
 
 </body>
+</html>

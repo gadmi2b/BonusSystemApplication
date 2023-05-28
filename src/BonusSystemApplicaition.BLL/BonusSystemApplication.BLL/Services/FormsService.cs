@@ -485,12 +485,12 @@ namespace BonusSystemApplication.BLL.Services
         {
             try
             {
-                Form formStates = _formRepository.GetStates(formId);
+                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
 
                 #region Freezing Objectives
                 if (changeToState == "frozen" && objectivesOrResults == "objectives")
                 {
-                    if (formStates.AreObjectivesFrozen)
+                    if (statesAndSignatures.AreObjectivesFrozen)
                     {
                         _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
                                            $"Params: " +
@@ -500,7 +500,7 @@ namespace BonusSystemApplication.BLL.Services
                                            $"Unable to freeze Objectives. Objectives are already frozen. ", "");
                         return;
                     }
-                    if (formStates.AreResultsFrozen)
+                    if (statesAndSignatures.AreResultsFrozen)
                     {
                         _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
                                            $"Params: " +
@@ -527,7 +527,7 @@ namespace BonusSystemApplication.BLL.Services
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         AreObjectivesFrozen = true,
-                        AreResultsFrozen = formStates.AreResultsFrozen,
+                        AreResultsFrozen = statesAndSignatures.AreResultsFrozen,
                     });
                     return;
                 }
@@ -536,7 +536,7 @@ namespace BonusSystemApplication.BLL.Services
                 #region Freezing Results
                 if (changeToState == "frozen" && objectivesOrResults == "results")
                 {
-                    if (!formStates.AreObjectivesFrozen)
+                    if (!statesAndSignatures.AreObjectivesFrozen)
                     {
                         _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
                                            $"Unable to freeze Results. Objectives are not frozen. " +
@@ -544,7 +544,7 @@ namespace BonusSystemApplication.BLL.Services
                                            $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
                         return;
                     }
-                    if (formStates.AreResultsFrozen)
+                    if (statesAndSignatures.AreResultsFrozen)
                     {
                         _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
                                            $"Unable to freeze Results. Results are already frozen. " +
@@ -553,7 +553,11 @@ namespace BonusSystemApplication.BLL.Services
                         return;
                     }
 
-                    // check if Results are ready to be frozen
+                    if (!statesAndSignatures.Signatures.AreObjectivesSigned)
+                    {
+                        throw new ValidationException("Unable to freeze results. Objectives are not signed.");
+                    }
+                    
                     List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.ValidateResultsChangeStateProcess(objectiveResults);
@@ -563,7 +567,7 @@ namespace BonusSystemApplication.BLL.Services
                         Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
-                        AreObjectivesFrozen = formStates.AreObjectivesFrozen,
+                        AreObjectivesFrozen = statesAndSignatures.AreObjectivesFrozen,
                         AreResultsFrozen = true,
                     });
                     return;
@@ -573,7 +577,7 @@ namespace BonusSystemApplication.BLL.Services
                 #region Unfreezing Objectives
                 if (changeToState == "unfrozen" && objectivesOrResults == "objectives")
                 {
-                    if (!formStates.AreObjectivesFrozen)
+                    if (!statesAndSignatures.AreObjectivesFrozen)
                     {
                         _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
                                            $"Params: " +
@@ -602,7 +606,7 @@ namespace BonusSystemApplication.BLL.Services
                 #region Unfreezing Results
                 if (changeToState == "unfrozen" && objectivesOrResults == "results")
                 {
-                    if (!formStates.AreObjectivesFrozen)
+                    if (!statesAndSignatures.AreObjectivesFrozen)
                     {
                         _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
                                            $"Params: " +
@@ -612,7 +616,7 @@ namespace BonusSystemApplication.BLL.Services
                                            $"Unable to unfreeze Results. Objectives are not frozen. ", "");
                         return;
                     }
-                    if (!formStates.AreResultsFrozen)
+                    if (!statesAndSignatures.AreResultsFrozen)
                     {
                         _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
                                            $"Params: " +
@@ -631,7 +635,7 @@ namespace BonusSystemApplication.BLL.Services
                         Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
-                        AreObjectivesFrozen = formStates.AreObjectivesFrozen,
+                        AreObjectivesFrozen = statesAndSignatures.AreObjectivesFrozen,
                         AreResultsFrozen = false,
                     });
                     return;

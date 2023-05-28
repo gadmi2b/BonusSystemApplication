@@ -1,40 +1,30 @@
-﻿/**
- *  TODO: global for weight factors and kpiUpperLimits create a colorfull system: 108-115/120 with gradient colors
- *  
- *  TODO: to add mechanism of --> Initialisation <-- of loaded table:
- *        - maybe to use display: none -> display: block for content-table__body or make table display offset effect
- *        - check for proposal for bonus payment lock/unlock on ViewModel Side and lock/unlock here
- *        - check for signatures blocks lock/unlock on ViewModel Side and lock/unlock here
- */
-
-$(document).ready(function () {
+﻿$(document).ready(function () {
   $("#" + Table.bodyId + " input").on('change', tableModified);
   $("#" + Table.bodyId + " textarea").on('change', tableModified);
 
   for (let row = 0; row < Table.totalRows; row++) {
-    keyCheckModification(row);
 
-    /**
-     * TODO: to remove after ViewModel updating:
-     * the target: to prepare html with already known css background-color property for <td> tags
-     *             and only during user interaction, after some data modification recolor cells
-     *             see form.cshtml file
-     */
+    Table.setCellBackgroundColor(Table.getCellId(Table.row, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.statement, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.description, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.isKey, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.isMeasurable, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.unit, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.threshold, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.target, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.challenge, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.weightFactor, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.kpiUpperLimit, row));
+    Table.setCellBackgroundColor(Table.getCellId(Table.achieved, row));
 
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.statement, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.description, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.unit, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.threshold, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.target, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.challenge, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.weightFactor, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.kpiUpperLimit, row));
-    Table.ifEmptyThenColorBackground(Table.getCellId(Table.achieved, row));
+    const keyCheckId = Table.getCellId(Table.keyCheck, row);
+    Table.setCellBackgroundColor(keyCheckId);
+    Table.setCellFontSize(keyCheckId);
+
+    const kpiElemId = Table.getCellId(Table.kpi, row);
+    Table.setCellBackgroundColor(kpiElemId);
+    Table.setCellFontSize(kpiElemId);
   }
-
-  // >> functionality were transfered to server side <<
-  //checkSigantureBlocksState();
-
 });
 
 // ---------- Business logic: content-table -----------
@@ -44,7 +34,6 @@ function tableModified() {
   const affectedCellId = this.id;
   const affectedColumnName = Table.getColumnNameById(affectedCellId);
   const affectedRowNumber = Table.getRowNumberById(affectedCellId);
-  const cellNewValue = this.value;
 
   switch (affectedColumnName) {
                                                     // following cells potentially affected by method:
@@ -105,7 +94,7 @@ function tableModified() {
       break;
   }
 
-  Table.ifEmptyThenColorBackground(affectedCellId, cellNewValue)
+  Table.setCellBackgroundColor(affectedCellId)
   checkProposalForBonusPaymentState();
 }
 
@@ -528,35 +517,6 @@ function checkProposalForBonusPaymentState() {
   enableElement(isProposalForBonusNo, true);
 
 }
-
-
-// ---------- Business logic: content-signatures -----------
-// >> functionality were transfered to server side <<
-
-//function checkSigantureBlocksState() {
-//  const objectivesBlock = document.getElementById("js-signatureBlockObjectives");
-//  const resultsBlock = document.getElementById("js-signatureBlockResults");
-
-//  const areObjectivesFrozenValue = Table.getValueById("js-areObjectivesFrozen");
-//  const areResultsFrozenValue = Table.getValueById("js-areResultsFrozen");
-
-//  // if objectives aren't frozen - both blocks must be disabled
-//  if (!areObjectivesFrozenValue || areObjectivesFrozenValue === "False") {
-//    enableElement(objectivesBlock, false);
-//    enableElement(resultsBlock, false);
-//    return;
-//  } else {
-//    enableElement(objectivesBlock, true);
-//  }
-
-//  // if results aren't frozen - results signature block must be disabled
-//  if (!areResultsFrozenValue || areResultsFrozenValue === "False") {
-//    enableElement(resultsBlock, false);
-//    return;
-//  } else {
-//    enableElement(resultsBlock, true);
-//  }
-//}
 
 // ---------- Help functions --------------------
 

@@ -40,7 +40,8 @@
     padding-left: 5px;
     padding-right: 5px;
 
-    background-color: #DCF5FF;
+    /*background-color: #DCF5FF;*/
+    background-color: rgb(220, 245, 255);
 }
 
 .content-period-center__joinder {
@@ -61,6 +62,7 @@
     padding-left: 5px;
     padding-right: 5px;
 
-    background-color: #FFCCCC;
+    /*background-color: #FFCCCC;*/
+    background-color: rgb(220, 245, 255);
     border: 1px solid rgb(118, 118, 118);
 }

@@ -97,7 +97,6 @@ namespace BonusSystemApplication.Controllers
             formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
                                         .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
-
             return View(formEditViewModel);
         }
 
@@ -105,6 +104,8 @@ namespace BonusSystemApplication.Controllers
         [Route("Form/Edit")]
         public IActionResult ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
         {
+            long formId = formEditViewModel.Id;
+
             #region Validate ViewModel
             //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
             //{
@@ -120,13 +121,14 @@ namespace BonusSystemApplication.Controllers
             formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
                                         .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
+            formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+
             if (!ModelState.IsValid)
             {
                 //return View(formEditViewModel);
             }
             #endregion
 
-            long formId = formEditViewModel.Id;
             DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
             ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
             List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
@@ -173,6 +175,8 @@ namespace BonusSystemApplication.Controllers
         [HttpPost]
         public IActionResult Edit(FormEditViewModel formEditViewModel)
         {
+            long formId = formEditViewModel.Id;
+
             #region Validate ViewModel
             //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
             //{
@@ -188,13 +192,14 @@ namespace BonusSystemApplication.Controllers
             formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
                                         .Select(d => new SelectListItem { Value = d, Text = d })
                                         .ToList();
+            formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+
             if (!ModelState.IsValid)
             {
                 //return View(formEditViewModel);
             }
             #endregion
 
-            long formId = formEditViewModel.Id;
             DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
             ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
             List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
