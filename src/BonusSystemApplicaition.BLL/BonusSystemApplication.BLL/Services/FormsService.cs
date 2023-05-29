@@ -149,7 +149,8 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
 
-            PrepareFormDTOForPresentation(formDTO);
+            PrepareThresholdTargetChallangeForPresentation(formDTO);
+            RoundKpiForPresentation(formDTO);
             return formDTO;
         }
         public FormDTO GetIsFrozenStates(long formId)
@@ -669,9 +670,8 @@ namespace BonusSystemApplication.BLL.Services
         }
 
 
-        private void PrepareFormDTOForPresentation(FormDTO formDTO)
+        private void PrepareThresholdTargetChallangeForPresentation(FormDTO formDTO)
         {
-            #region Prepare Objectives and Results
             for (int i = 0; i < formDTO.ObjectivesResults.Count; i++)
             {
                 if (!formDTO.ObjectivesResults[i].Objective.IsMeasurable)
@@ -687,7 +687,22 @@ namespace BonusSystemApplication.BLL.Services
                             formDTO.ObjectivesResults[i].Objective.Threshold = "N/A";
                 }
             }
-            #endregion region
+        }
+
+        private void RoundKpiForPresentation(FormDTO formDTO)
+        {
+            for (int i = 0; i < formDTO.ObjectivesResults.Count; i++)
+            {
+                if (string.IsNullOrEmpty(formDTO.ObjectivesResults[i].Result.Kpi))
+                {
+                    continue;
+                }
+
+                if (double.TryParse(formDTO.ObjectivesResults[i].Result.Kpi, out double kpi))
+                {
+                    formDTO.ObjectivesResults[i].Result.Kpi = Math.Round(kpi, 2).ToString();
+                }
+            }
         }
     }
 }
