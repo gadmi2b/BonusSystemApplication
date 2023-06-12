@@ -6,6 +6,7 @@ using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.Processes;
 using BonusSystemApplication.BLL.Processes.Signing;
 using BonusSystemApplication.BLL.Processes.Filtering;
+using BonusSystemApplication.BLL.Processes.Promoting;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.UserIdentiry;
 using BonusSystemApplication.BLL.Infrastructure;
@@ -25,7 +26,6 @@ namespace BonusSystemApplication.BLL.Services
         private IGlobalAccessRepository _globalAccessRepository;
 
         private IDefinitionRepository _definitionRepository;
-        private IConclusionRepository _conclusionRepository;
         private ISignaturesRepository _signaturesRepository;
         private IObjectiveResultRepository _objectiveResultRepository;
 
@@ -35,7 +35,6 @@ namespace BonusSystemApplication.BLL.Services
                             IFormRepository formRepo,
                             IUserRepository userRepo,
                             IDefinitionRepository definitionRepo,
-                            IConclusionRepository conclusionRepo,
                             ISignaturesRepository signaturesRepo,
                             IWorkprojectRepository workprojectRepo,
                             IGlobalAccessRepository globalAccessRepo,
@@ -50,193 +49,290 @@ namespace BonusSystemApplication.BLL.Services
             _globalAccessRepository = globalAccessRepo;
 
             _definitionRepository = definitionRepo;
-            _conclusionRepository = conclusionRepo;
             _signaturesRepository = signaturesRepo;
             _objectiveResultRepository = objectiveResultRepo;
         }
 
         public FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections)
         {
-            #region Getting global accesses user has
-            IEnumerable<GlobalAccess> globalAccesses = _globalAccessRepository.GetGlobalAccessesByUserId(UserData.UserId);
-            #endregion
-
-            #region Getting form Ids available for User
-            //Form Ids where user has Global accesses
-            IEnumerable<long> formIdsWithGlobalAccess = _definitionRepository.GetFormIdsWhereGlobalAccess(globalAccesses);
-
-            //Form Ids where user has Local access
-            // TODO: replace _formRespository to _localAccessRepository
-            IEnumerable<long> formIdsWithLocalAccess = _formRepository.GetFormIdsWhereLocalAccess(UserData.UserId);
-
-            //Form Ids where user has any Participation
-            IEnumerable<long> formIdsWithParticipation = _definitionRepository.GetFormIdsWhereParticipation(UserData.UserId);
-
-            //Form Ids unioning and sorting
-            List<long> availableFormIds = formIdsWithParticipation.Union(formIdsWithLocalAccess)
-                                                                  .Union(formIdsWithGlobalAccess)
-                                                                  .OrderBy(id => id)
-                                                                  .ToList();
-            #endregion
-
-            #region Load data from database into forms and get corresponding permissions
-            FormDataAvailable formDataAvailable = new FormDataAvailable(
-                           _formRepository.GetForms(availableFormIds)
-                          .ToDictionary(form => form,
-                                        form => FormDataExtractor.ExtractPermissions(form,
-                                                                                     UserData.UserId,
-                                                                                     formIdsWithGlobalAccess,
-                                                                                     formIdsWithLocalAccess,
-                                                                                     formIdsWithParticipation)));
-            #endregion
-
-            UserData.AvailableFormIds = availableFormIds;
-
-            // TODO: to analyse: this time there are Several big classes for data preparing
-            //       FormDataAvailable, FormDataSorted
-            //       and it is necessary to manage same information in similar manner several times
-            //       Perhaps it will be useful to create a class for each information/type
-            //       and operate it inside this class. If a new information will appear
-            //       it will be necessary to create new object and attach it to viewmodel...
-
-            // TODO: FormDataSorted: Sorted<Data> collections are not used. FormDataSorted could be removed.
-
-            // TODO: userSelections is DTO => exclude any methods into separate class
-
-            userSelections.PrepareSelections(formDataAvailable);
-            FormDataSorted formDataSorted = new FormDataSorted(formDataAvailable, userSelections);
-
-            #region Prepare TableRows: table's content
-            List<TableRowDTO> tableRows = formDataSorted.SortedFormPermissions
-                .Select(pair => new TableRowDTO
-                {
-                    Id = pair.Key.Id,
-                    EmployeeFullName = $"{pair.Key.Definition.Employee.LastNameEng} {pair.Key.Definition.Employee.FirstNameEng}",
-                    WorkprojectName = pair.Key.Definition.Workproject?.Name,
-                    DepartmentName = pair.Key.Definition.Employee.Department?.Name,
-                    TeamName = pair.Key.Definition.Employee.Team?.Name,
-                    LastSavedAt = pair.Key.LastSavedAt,
-                    Period = pair.Key.Definition.Period.ToString(),
-                    Year = pair.Key.Definition.Year.ToString(),
-                    Permissions = pair.Value.Select(p => p.ToString()).ToList(),
-                })
-                .ToList();
-            #endregion
-
-            #region Prepare SelectLists: dropdown's content
-            SelectListsDTO selectLists = new SelectListsDTO(formDataAvailable, userSelections);
-            #endregion
-
-            return new FormIndexDTO
+            try
             {
-                TableRows = tableRows,
-                SelectLists = selectLists,
-            };
+                #region Getting global accesses user has
+                IEnumerable<GlobalAccess> globalAccesses = _globalAccessRepository.GetGlobalAccessesByUserId(UserData.GetUserId());
+                #endregion
+
+                #region Getting form ids available for User
+                //Form Ids where user has Global accesses
+                IEnumerable<long> formIdsWithGlobalAccess = _definitionRepository.GetFormIdsWhereGlobalAccess(globalAccesses);
+
+                //Form Ids where user has Local access
+                IEnumerable<long> formIdsWithLocalAccess = _formRepository.GetFormIdsWhereLocalAccess(UserData.GetUserId());
+
+                //Form Ids where user has any Participation
+                IEnumerable<long> formIdsWithParticipation = _definitionRepository.GetFormIdsWhereParticipation(UserData.GetUserId());
+
+                //Form Ids unioning and sorting
+                List<long> availableFormIds = formIdsWithParticipation.Union(formIdsWithLocalAccess)
+                                                                      .Union(formIdsWithGlobalAccess)
+                                                                      .OrderBy(id => id)
+                                                                      .ToList();
+                #endregion
+                UserData.AvailableFormIds = availableFormIds;
+
+                #region Get forms from Database and prepare available data
+                List<Form> availableForms = _formRepository.GetForms(availableFormIds);
+
+                FormDataExtractor formDataExtractor = new FormDataExtractor();
+                FormDataAvailable formDataAvailable = new FormDataAvailable(formDataExtractor);
+
+                formDataAvailable.PrepareAvailableFormPermissions(UserData.GetUserId(),
+                                                                  availableForms,
+                                                                  formIdsWithGlobalAccess,
+                                                                  formIdsWithLocalAccess,
+                                                                  formIdsWithParticipation);
+                formDataAvailable.PrepareAvailablePermissions(availableForms);
+                formDataAvailable.PrepareAvailableEmployees(availableForms);
+                formDataAvailable.PrepareAvailablePeriods(availableForms);
+                formDataAvailable.PrepareAvailableYears(availableForms);
+                formDataAvailable.PrepareAvailableDepartments(availableForms);
+                formDataAvailable.PrepareAvailableTeams(availableForms);
+                formDataAvailable.PrepareAvailableWorkprojects(availableForms);
+                #endregion
+
+                #region Prepare user selections
+                UserSelectionsHandler userSelectionsHandler = new UserSelectionsHandler(formDataAvailable);
+                userSelectionsHandler.PrepareSelections(userSelections);
+                #endregion
+
+                #region Prepare TableRows: table's content
+                TableRowsCreator tableRowsCreator = new TableRowsCreator(formDataAvailable, userSelections);
+                List<TableRowDTO> tableRows = tableRowsCreator.CreateTableRows();
+                #endregion
+
+                #region Prepare DropdownLists: dropdown's content
+                DropdownListsCreator dropdownListsCreator = new DropdownListsCreator(formDataAvailable, userSelections);
+                DropdownListsDTO dropdownLists = new DropdownListsDTO
+                {
+                    EmployeeDropdownList = dropdownListsCreator.CreateEmployeeDropdownLists(),
+                    PeriodDropdownList = dropdownListsCreator.CreatePeriodDropdownLists(),
+                    YearDropdownList = dropdownListsCreator.CreateYearDropdownLists(),
+                    PermissionDropdownList = dropdownListsCreator.CreatePermissionDropdownLists(),
+                    DepartmentDropdownList = dropdownListsCreator.CreateDepartmentDropdownLists(),
+                    TeamDropdownList = dropdownListsCreator.CreateTeamDropdownLists(),
+                    WorkprojectDropdownList = dropdownListsCreator.CreateWorkprojectDropdownLists(),
+                };
+                #endregion
+
+                return new FormIndexDTO
+                {
+                    TableRows = tableRows,
+                    DropdownLists = dropdownLists,
+                };
+            }
+            catch (ValidationException ex)
+            {
+                throw;
+            }
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to prepare available forms. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
         public FormDTO GetFormDTO(long formId)
         {
-            FormDTO formDTO = new FormDTO();
             try
             {
-                formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
+                FormDTO formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
+                PrepareThresholdTargetChallangeForPresentation(formDTO);
+                RoundOverallKpiForPresentation(formDTO);
+                RoundKpiForPresentation(formDTO);
+                return formDTO;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
             {
-                _logger.LogError($"Method: {nameof(GetFormDTO)}. Params: {nameof(formId)} = {formId} " +
-                                 $"EF msg: {ex.Message}", "");
-                throw new ValidationException("Unable to get form data. " +
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to perform operation. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
             }
+        }
+        public FormDTO GetPrefilledFormDTO(long formId)
+        {
+            try
+            {
+                FormDTO formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
 
-            PrepareThresholdTargetChallangeForPresentation(formDTO);
-            RoundKpiForPresentation(formDTO);
-            return formDTO;
+                formDTO.Id = 0;
+                formDTO.LastSavedBy = string.Empty;
+                formDTO.LastSavedAt = DateTime.Now;
+                formDTO.AreObjectivesFrozen = false;
+                formDTO.AreResultsFrozen = false;
+                formDTO.Definition.Id = 0;
+                formDTO.Conclusion = new ConclusionDTO();
+                formDTO.Signatures = new SignaturesDTO();
+                for (int i = 0; i < formDTO.ObjectivesResults.Count(); i++)
+                {
+                    formDTO.ObjectivesResults[i].Id = 0;
+                    formDTO.ObjectivesResults[i].Result.Achieved = string.Empty;
+                    formDTO.ObjectivesResults[i].Result.Kpi = string.Empty;
+                }
+
+                PrepareThresholdTargetChallangeForPresentation(formDTO);
+                return formDTO;
+            }
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to create form based on selected one. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
         public FormDTO GetIsFrozenStates(long formId)
         {
-            FormDTO formDTO = new FormDTO();
             try
             {
-                formDTO = _mapper.Map<FormDTO>(_formRepository.GetStates(formId));
+                return _mapper.Map<FormDTO>(_formRepository.GetStates(formId));
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
             {
-                _logger.LogError($"Method: {nameof(GetIsFrozenStates)}. Params: {nameof(formId)} = {formId} " +
-                                 $"EF msg: {ex.Message}", "");
-                throw new ValidationException("Unable to get form data. " +
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to receive form data. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
             }
-
-            return formDTO;
-        }
-
-        public StatesAndSignaturesDTO GetStatesAndSignaturesDTO(long formId)
-        {
-            Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
-            return new StatesAndSignaturesDTO
-            {
-                AreObjectivesFrozen = statesAndSignatures.AreObjectivesFrozen,
-                AreResultsFrozen = statesAndSignatures.AreResultsFrozen,
-                SignaturesDTO = _mapper.Map<Signatures, SignaturesDTO>(statesAndSignatures.Signatures),
-            };
-        }
-
-        public DefinitionDTO GetDefinitionDTO(long defintionId)
-        {
-            return _mapper.Map<DefinitionDTO>(_definitionRepository.GetDefinitionFull(defintionId));
-        }
-        public ConclusionDTO GetConclusionDTO(long conclusionId)
-        {
-            return _mapper.Map<ConclusionDTO>(_conclusionRepository.GetConclusion(conclusionId));
         }
         public SignaturesDTO GetSignaturesDTO(long signaturesId)
         {
-            return _mapper.Map<SignaturesDTO>(_signaturesRepository.GetSignatures(signaturesId));
-        }
-        public IList<ObjectiveResultDTO> GetObjectivesResultsDTO(long formId)
-        {
-            return _mapper.Map<IList<ObjectiveResultDTO>>(_objectiveResultRepository.GetObjectivesResults(formId));
-        }
+            try
+            {
+                return _mapper.Map<SignaturesDTO>(_signaturesRepository.GetSignatures(signaturesId));
+            }
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
 
-
+                throw new ValidationException("Unable to receive signatures data. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
+        }
         public Dictionary<string, string> GetWorkprojectIdsNames()
         {
+            try
+            {
+                return _workprojectRepository.GetWorkprojectsNames()
+                                             .OrderBy(wp => wp.Id)
+                                             .ToDictionary(w => w.Id.ToString(),
+                                                           w => w.Name);
+            }
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
 
-            return _workprojectRepository.GetWorkprojectsNames()
-                                  .OrderBy(wp => wp.Id)
-                                  .ToDictionary(w => w.Id.ToString(),
-                                                w => w.Name);
+                throw new ValidationException("Unable to receive workprojects names. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
         public Dictionary<string, string> GetUserIdsNames()
         {
-            return _userRepository.GetUsersNames()
-                                  .OrderBy(u => u.LastNameEng)
-                                  .ToDictionary(u => u.Id.ToString(),
-                                                u => $"{u.LastNameEng} {u.FirstNameEng}");
+            try
+            {
+                return _userRepository.GetUsersNames()
+                                      .OrderBy(u => u.LastNameEng)
+                                      .ToDictionary(u => u.Id.ToString(),
+                                                    u => $"{u.LastNameEng} {u.FirstNameEng}");
+            }
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to receive users names. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
         public List<string> GetPeriodNames()
         {
             return Enum.GetNames(typeof(Periods)).ToList();
         }
-
-
         public string GetWorkprojectDescription(long workprojectId)
         {
-            string? description = _workprojectRepository.GetWorkprojectData(workprojectId).Description;
-            return description == null ? string.Empty : description;
+            try
+            {
+                string? description = _workprojectRepository.GetWorkprojectData(workprojectId).Description;
+                return description == null ? string.Empty : description;
+            }
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to receive workproject description. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
         public EmployeeDTO GetEmployeeDTO(long userId)
         {
-            User userData = _userRepository.GetUserData(userId);
-            return new EmployeeDTO
+            try
             {
-                TeamName = userData.Team?.Name == null ? string.Empty: userData.Team.Name,
-                PositionName = userData.Position?.NameEng == null ? string.Empty : userData.Position.NameEng,
-                DepartmentName = userData.Department?.Name == null ? string.Empty : userData.Department.Name,
-                Pid = userData.Pid,
-            };
+                User userData = _userRepository.GetUserData(userId);
+                return new EmployeeDTO
+                {
+                    TeamName = userData.Team?.Name == null ? string.Empty: userData.Team.Name,
+                    PositionName = userData.Position?.NameEng == null ? string.Empty : userData.Position.NameEng,
+                    DepartmentName = userData.Department?.Name == null ? string.Empty : userData.Department.Name,
+                    Pid = userData.Pid,
+                };
+            }
+            catch (Exception ex) when (ex is ArgumentNullException ||
+                                       ex is InvalidOperationException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                throw new ValidationException("Unable to receive user data. " +
+                                              "Try again, and if the problem persists, " +
+                                              "see your system administrator.");
+            }
         }
 
         public Dictionary<string, object> UpdateAndReturnSignatures(long formId,
@@ -244,98 +340,97 @@ namespace BonusSystemApplication.BLL.Services
                                                                     bool isCheckboxChecked)
         {
             if (string.IsNullOrEmpty(checkboxId))
-            {
                 throw new ValidationException($"Signature process is not possible. " +
                                               $"Signature data is not affected.");
-            }
-
-            #region Determine which properties were affected. Getting affected PropertyLinker
-            foreach (PropertyType type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
-            {
-                IPropertyLinker propertyLinker = PropertyLinkerFactory.CreatePropertyLinker(type);
-                if (PropertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, checkboxId))
-                {
-                    break;
-                }
-            }
-
-            if (PropertyLinkerHandler.AffectedPropertyLinker == null)
-            {
-                throw new ValidationException($"Signature process is not possible. " +
-                                              $"Neither objectives nor results are involved into signature process.");
-            }
-            #endregion
-
-            #region Get property-value pairs which should be saved in Database
-            Dictionary<string, object> propertiesValues =
-                PropertyLinkerHandler.GetPropertiesValues(checkboxId, isCheckboxChecked);
-
-            if (propertiesValues.Count == 0)
-            {
-                throw new ValidationException($"Signature process is not possible. " +
-                                              $"Signature data is not affected.");
-            }
-            #endregion
-
-            #region Get form from database and check signature possibility
-            Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
-
-            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
-               !FormDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
-            {
-                throw new ValidationException($"Signature process is not possible. " +
-                                              $"Objectives should be frozen at first.");
-            }
-
-            if (PropertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
-               !FormDataHandler.IsResultsSignaturePossible(statesAndSignatures))
-            {
-                throw new ValidationException($"Signature process is not possible. " +
-                                              $"Results should be frozen at first.");
-            }
-            #endregion
-
-            #region Fill property-value pair with User signature and Update Form data
-            FormDataHandler.PutUserSignature(ref propertiesValues);
-            FormDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
-            FormDataHandler.UpdateLastSavedFormData(statesAndSignatures);
 
             try
             {
+                PropertyLinkerHandler propertyLinkerHandler = new PropertyLinkerHandler();
+                PropertyLinkerFactory propertyLinkerFactory = new PropertyLinkerFactory();
+
+                #region Determine which properties were affected. Getting affected PropertyLinker
+                foreach (PropertyType type in Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>())
+                {
+                    IPropertyLinker propertyLinker = propertyLinkerFactory.CreatePropertyLinker(type);
+                    if (propertyLinkerHandler.IsPropertyLinkerAffected(propertyLinker, checkboxId))
+                        break;
+                }
+
+                if (propertyLinkerHandler.AffectedPropertyLinker == null)
+                {
+                    throw new ValidationException($"Signature process is not possible. " +
+                                                  $"Neither objectives nor results are involved into signature process.");
+                }
+                #endregion
+
+                #region Get property-value pairs which should be saved in Database
+                Dictionary<string, object> propertiesValues =
+                    propertyLinkerHandler.GetPropertiesValues(checkboxId, isCheckboxChecked);
+
+                if (propertiesValues.Count == 0)
+                {
+                    throw new ValidationException($"Signature process is not possible. " +
+                                                  $"Signature data is not affected.");
+                }
+                #endregion
+
+                #region Get form from database and check signature possibility
+                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+                FormDataHandler formDataHandler = new FormDataHandler();
+
+                if (propertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
+                   !formDataHandler.IsObjectivesSignaturePossible(statesAndSignatures))
+                {
+                    throw new ValidationException($"Signature process is not possible. " +
+                                                  $"Objectives should be frozen at first.");
+                }
+
+                if (propertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForResults &&
+                   !formDataHandler.IsResultsSignaturePossible(statesAndSignatures))
+                {
+                    throw new ValidationException($"Signature process is not possible. " +
+                                                  $"Results should be frozen at first.");
+                }
+                #endregion
+
+                #region Fill property-value pair with User signature and Update Form data
+                formDataHandler.PutUserSignature(ref propertiesValues);
+                formDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
+                formDataHandler.UpdateLastSavedFormData(statesAndSignatures);
+
                 _formRepository.UpdateSignatures(statesAndSignatures);
+                return propertiesValues;
             }
             catch (ValidationException ex)
             {
                 throw;
             }
-            catch (Exception ex) when (ex is ArgumentNullException ||
-                                       ex is DbUpdateException)
+            catch (Exception ex) when (ex is InvalidOperationException ||
+                                       ex is ArgumentNullException ||
+                                       ex is DbUpdateException ||
+                                       ex is ArgumentException)
             {
                 _logger.LogError($"Message: {ex.Message}.\n" +
                                  $"StackTrace: {ex.StackTrace}.\n" +
                                  $"TargetSite = {ex.TargetSite}.\n");
 
-                throw new ValidationException("Unable to save changes. " +
+                throw new ValidationException("Unable to update signatures. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
             }
             #endregion
-
-            return propertiesValues;
         }
-
         public void UpdateForm(long formId,
                                DefinitionDTO definitionDTO,
                                ConclusionDTO conclusionDTO,
                                List<ObjectiveResultDTO> objectiveResultDTOs)
         {
-            if (formId <= 0)
-                throw new ValidationException($"Unable to perform operation. Unknown form.");
-
             try
             {
-                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+                if (formId <= 0)
+                    throw new ValidationException($"Unable to perform operation. Unknown form.");
 
+                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
                 if (statesAndSignatures.Signatures.AreResultsSigned)
                     throw new ValidationException("Unable to perform operation. Results are already signed.");
 
@@ -360,21 +455,31 @@ namespace BonusSystemApplication.BLL.Services
                          statesAndSignatures.AreObjectivesFrozen)
                 {
                     #region Results & Conclusion could be updated
-                    List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
+                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.HandleResultsUpdateProcess(objectiveResults, objectiveResultDTOs);
 
                     ConclusionHandler conclusionHandler = new ConclusionHandler(conclusionDTO, objectiveResultDTOs);
                     conclusionHandler.HandleUpdateProcess();
 
-                    _formRepository.UpdateResultsConclusion(new Form
+                    Form form = new Form
                     {
                         Id = formId,
                         LastSavedAt = DateTime.Now,
                         LastSavedBy = UserData.GetUserName(),
                         Conclusion = _mapper.Map<Conclusion>(conclusionDTO),
-                        ObjectivesResults = _mapper.Map<List<ObjectiveResult>>(objectiveResultDTOs),
-                    });
+                        ObjectivesResults = objectiveResults,
+                    };
+
+                    int index = 0;
+                    foreach (var objRes in form.ObjectivesResults)
+                    {
+                        if (index < objectiveResultDTOs.Count())
+                            objRes.Result = _mapper.Map<Result>(objectiveResultDTOs[index].Result);
+                        index++;
+                    }
+
+                    _formRepository.UpdateResultsConclusion(form);
                     #endregion
                 }
                 else
@@ -410,6 +515,7 @@ namespace BonusSystemApplication.BLL.Services
                 throw;
             }
             catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is InvalidOperationException ||
                                        ex is ArgumentNullException ||
                                        ex is DbUpdateException)
             {
@@ -455,12 +561,11 @@ namespace BonusSystemApplication.BLL.Services
             }
             catch (ValidationException ex)
             {
-                _logger.LogDebug($"Message: {ex.Message}.\n" +
-                                 $"StackTrace: {ex.StackTrace}.\n" +
-                                 $"TargetSite = {ex.TargetSite}.\n");
                 throw;
             }
-            catch (Exception ex) when (ex is ArgumentNullException ||
+            catch (Exception ex) when (ex is AutoMapperMappingException ||
+                                       ex is InvalidOperationException ||
+                                       ex is ArgumentNullException ||
                                        ex is DbUpdateException)
             {
                 _logger.LogError($"Message: {ex.Message}.\n" +
@@ -470,6 +575,41 @@ namespace BonusSystemApplication.BLL.Services
                 throw new ValidationException("Unable to create form. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
+            }
+        }
+
+        /// <summary>
+        /// Creates a new form with same Definition and Objecties as Form with formId
+        /// but with the next Period
+        /// </summary>
+        /// <param name="formId"></param>
+        /// <returns>string representing an error message</returns>
+        public string PromoteForm(long formId)
+        {
+            try
+            {
+                Promoter promoter = new Promoter(_formRepository,
+                                                 _definitionRepository);
+                
+                Form newForm = promoter.GetPromotedForm(formId);
+
+                _formRepository.CreateForm(newForm);
+                return string.Empty;
+            }
+            catch (ValidationException ex)
+            {
+                return ex.Message;
+            }
+            catch (Exception ex) when (ex is InvalidOperationException ||
+                                       ex is ArgumentNullException ||
+                                       ex is DbUpdateException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+                return "Unable to promote form. " +
+                       "Try again, and if the problem persists, " +
+                       "see your system administrator.";
             }
         }
 
@@ -491,24 +631,9 @@ namespace BonusSystemApplication.BLL.Services
                 #region Freezing Objectives
                 if (changeToState == "frozen" && objectivesOrResults == "objectives")
                 {
-                    if (statesAndSignatures.AreObjectivesFrozen)
+                    if (statesAndSignatures.AreObjectivesFrozen ||
+                        statesAndSignatures.AreResultsFrozen)
                     {
-                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                           $"Params: " +
-                                           $"{nameof(formId)} = {formId}, " +
-                                           $"{nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                           $"Unable to freeze Objectives. Objectives are already frozen. ", "");
-                        return;
-                    }
-                    if (statesAndSignatures.AreResultsFrozen)
-                    {
-                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                           $"Params: " +
-                                           $"{nameof(formId)} = {formId}, " +
-                                           $"{nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                           $"Unable to freeze Objectives. Results are already frozen. ", "");
                         return;
                     }
 
@@ -518,7 +643,7 @@ namespace BonusSystemApplication.BLL.Services
                     definitionValidator.HandleChangeStateProcess(definition);
 
                     // check if Objectives are ready to be frozen
-                    List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
+                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.ValidateObjectivesChangeStateProcess(objectiveResults);
 
@@ -537,20 +662,9 @@ namespace BonusSystemApplication.BLL.Services
                 #region Freezing Results
                 if (changeToState == "frozen" && objectivesOrResults == "results")
                 {
-                    if (!statesAndSignatures.AreObjectivesFrozen)
+                    if (!statesAndSignatures.AreObjectivesFrozen ||
+                        statesAndSignatures.AreResultsFrozen)
                     {
-                        _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
-                                           $"Unable to freeze Results. Objectives are not frozen. " +
-                                           $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
-                        return;
-                    }
-                    if (statesAndSignatures.AreResultsFrozen)
-                    {
-                        _logger.LogWarning($"{nameof(FormsService)}. Wrong client side's call of Method: {nameof(ChangeState)}. " +
-                                           $"Unable to freeze Results. Results are already frozen. " +
-                                           $"{nameof(formId)} = {formId}, {nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}", "");
                         return;
                     }
 
@@ -558,8 +672,9 @@ namespace BonusSystemApplication.BLL.Services
                     {
                         throw new ValidationException("Unable to freeze results. Objectives are not signed.");
                     }
-                    
-                    List<ObjectiveResult> objectiveResults = (List<ObjectiveResult>)_objectiveResultRepository.GetObjectivesResults(formId);
+
+                    // check if Results are ready to be frozen
+                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.ValidateResultsChangeStateProcess(objectiveResults);
 
@@ -580,16 +695,10 @@ namespace BonusSystemApplication.BLL.Services
                 {
                     if (!statesAndSignatures.AreObjectivesFrozen)
                     {
-                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                           $"Params: " +
-                                           $"{nameof(formId)} = {formId}, " +
-                                           $"{nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. ",
-                                           $"Unable to unfreeze Objectives. Objectives are not frozen. ", "");
                         return;
                     }
 
-                    // Drop all signatures
+                    // drop all signatures
                     _signaturesRepository.DropSignatures(formId);
 
                     _formRepository.UpdateStates(new Form
@@ -607,28 +716,13 @@ namespace BonusSystemApplication.BLL.Services
                 #region Unfreezing Results
                 if (changeToState == "unfrozen" && objectivesOrResults == "results")
                 {
-                    if (!statesAndSignatures.AreObjectivesFrozen)
+                    if (!statesAndSignatures.AreObjectivesFrozen ||
+                        !statesAndSignatures.AreResultsFrozen)
                     {
-                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                           $"Params: " +
-                                           $"{nameof(formId)} = {formId}, " +
-                                           $"{nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
-                                           $"Unable to unfreeze Results. Objectives are not frozen. ", "");
-                        return;
-                    }
-                    if (!statesAndSignatures.AreResultsFrozen)
-                    {
-                        _logger.LogWarning($"Method: {nameof(ChangeState)}. Wrong client side's call. " +
-                                           $"Params: " +
-                                           $"{nameof(formId)} = {formId}, " +
-                                           $"{nameof(changeToState)} = {changeToState}, " +
-                                           $"{nameof(objectivesOrResults)} = {objectivesOrResults}. " +
-                                           $"Unable to unfreeze Results. Results are not frozen. ", "");
                         return;
                     }
 
-                    // Drop signatures for Results only
+                    // drop signatures for Results only
                     _signaturesRepository.DropSignaturesForResults(formId);
 
                     _formRepository.UpdateStates(new Form
@@ -642,36 +736,54 @@ namespace BonusSystemApplication.BLL.Services
                     return;
                 }
                 #endregion
-
-                _logger.LogWarning($"Method: {nameof(ChangeState)}. Unknown call. " +
-                                   $"Params: {nameof(changeToState)} = {changeToState}, " +
-                                   $"{nameof(objectivesOrResults)} = {objectivesOrResults}.");
             }
             catch (ValidationException ex)
             {
-                _logger.LogDebug($"Message: {ex.Message}.\n" +
-                                 $"StackTrace: {ex.StackTrace}.\n" +
-                                 $"TargetSite = {ex.TargetSite}.\n");
                 throw;
             }
-            catch (Exception ex) when (ex is ArgumentNullException ||
-                                       ex is InvalidOperationException ||
+            catch (Exception ex) when (ex is InvalidOperationException ||
+                                       ex is ArgumentNullException ||
                                        ex is DbUpdateException)
             {
-                _logger.LogError($"Msg: {ex.Message}.\n" +
-                                 $"IMsg: {ex.InnerException?.Message}\n" +
+                _logger.LogError($"Message: {ex.Message}.\n" +
                                  $"StackTrace: {ex.StackTrace}.\n" +
                                  $"TargetSite = {ex.TargetSite}.\n");
 
-                throw new ValidationException("Unable to change state. " +
+                throw new ValidationException("Unable to change state of the Form. " +
                                               "Try again, and if the problem persists, " +
                                               "see your system administrator.");
+            }
+        }
+
+        public string DeleteForm(long formId)
+        {
+            try
+            {
+                _formRepository.DeleteForm(formId);
+                _logger.LogInformation($"Form with id={formId} was deleted.\n" +
+                                       $"Operation was performed by user: id={UserData.GetUserId()}, name={UserData.GetUserName()}.");
+                return string.Empty;
+            }
+            catch (Exception ex) when (ex is InvalidOperationException ||
+                                       ex is ArgumentNullException ||
+                                       ex is DbUpdateException)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                return "Unable to delete form. " +
+                       "Try again, and if the problem persists, " +
+                       "see your system administrator.";
             }
         }
 
 
         private void PrepareThresholdTargetChallangeForPresentation(FormDTO formDTO)
         {
+            if (formDTO.ObjectivesResults == null)
+                return;
+
             for (int i = 0; i < formDTO.ObjectivesResults.Count; i++)
             {
                 if (!formDTO.ObjectivesResults[i].Objective.IsMeasurable)
@@ -689,8 +801,20 @@ namespace BonusSystemApplication.BLL.Services
             }
         }
 
+        private void RoundOverallKpiForPresentation(FormDTO formDTO)
+        {
+            if (formDTO.Conclusion == null ||
+                formDTO.Conclusion.OverallKpi == null)
+                return;
+
+            formDTO.Conclusion.OverallKpi = Math.Round((double)formDTO.Conclusion.OverallKpi, 2);
+        }
+
         private void RoundKpiForPresentation(FormDTO formDTO)
         {
+            if (formDTO.ObjectivesResults == null)
+                return;
+
             for (int i = 0; i < formDTO.ObjectivesResults.Count; i++)
             {
                 if (string.IsNullOrEmpty(formDTO.ObjectivesResults[i].Result.Kpi))

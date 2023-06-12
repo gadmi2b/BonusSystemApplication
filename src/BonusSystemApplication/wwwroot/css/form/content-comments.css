@@ -3,18 +3,18 @@
 }
 
 .content-comments p {
-    margin-bottom: 5px;
     font-weight: 600;
+    margin-bottom: 5px;
 }
 
 .content-comments textarea {
-    vertical-align: middle;
-    resize: none;
-    outline: none;
     border: 1px solid #999;
     border-radius: 4px;
+    outline: none;
     overflow: hidden;
     padding: 8px 4px;
+    resize: none;
+    vertical-align: middle;
     width: 100%;
 }
 

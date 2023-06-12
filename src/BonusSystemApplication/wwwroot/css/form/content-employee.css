@@ -1,11 +1,11 @@
 ﻿.content-employee {
+    align-items: center;
     display: grid;
     grid-template-columns: min-content auto;
     grid-template-rows: minmax(45px, auto) minmax(45px, auto);
-    align-items: center;
+    margin-bottom: 20px;
     margin-left: 30px;
     margin-right: 30px;
-    margin-bottom: 20px;
 }
 
 .content-employee label {
@@ -14,7 +14,7 @@
 }
 
 .content-employee select {
-    padding: 4px 4px;
+    padding: 4px 8px;
 }
 
 .content-employee__column-1 {
@@ -22,75 +22,44 @@
 }
 
 .content-employee__column-2 {
-    display: flex;
     align-items: center;
+    display: flex;
     justify-content: space-between;
 }
 
 .content-employee__column-2-flex {
-    display: flex;
     align-items: center;
+    display: flex;
     width: auto;
 }
 
 .content-employee--styles {
-    padding: 5px 4px;
-    text-align: center;
-    color: darkgrey;
-    min-height: 28px;
     border: 1px solid darkgrey;
     border-radius: 2px;
+    color: darkgrey;
     outline: none;
+    min-height: 28px;
+    padding: 5px 4px;
+    text-align: center;
 }
 
 
-#Employee {
-    width: fit-content;
-    min-width: 180px;
+#js-teamName {
+    min-width: 140px;
     max-width: 300px;
 }
 
-#IsWpmHox {
+#js-positionName {
+    min-width: 140px;
+    max-width: 420px;
 }
 
-#Team {
-    width: fit-content;
-    min-width: 180px;
-    max-width: 360px;
-}
-
-#Position {
-    width: fit-content;
-    min-width: 240px;
-    max-width: 360px;
-}
-
-#Pid {
-    width: fit-content;
-    min-width: 120px;
+#js-pid {
+    min-width: 140px;
     max-width: 180px;
 }
 
-#Workproject {
-    width: fit-content;
-    min-width: 75px;
-    max-width: 120px;
-}
-
-#WorkprojectDescription {
-    width: fit-content;
-    min-width: 240px;
-    max-width: 360px;
-}
-
-#Manager {
-    width: fit-content;
-    min-width: 240px;
-    max-width: 270px;
-}
-
-#Approver {
-    width: fit-content;
-    min-width: 240px;
-    max-width: 270px;
+#js-workprojectDescription {
+    min-width: 140px;
+    max-width: 420px;
 }

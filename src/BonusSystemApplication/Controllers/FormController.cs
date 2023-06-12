@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using BonusSystemApplication.Handlers;
 using BonusSystemApplication.Models.Forms.Index;
 using BonusSystemApplication.Models.Forms.Edit;
 using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.Infrastructure;
-using BonusSystemApplication.BLL.Services;
-
-//using Newtonsoft.Json.Serialization;
+using BonusSystemApplication.BLL.UserIdentiry;
 
 namespace BonusSystemApplication.Controllers
 {
@@ -28,20 +26,56 @@ namespace BonusSystemApplication.Controllers
             _formService = formService;
         }
 
-        public IActionResult Index(UserSelectionsDTO userSelections)
+        public IActionResult Index(UserSelectionsVM userSelectionsVM)
         {
-            FormIndexViewModel formIndexViewModel = _mapper.Map<FormIndexViewModel>(_formService.GetFormIndexDTO(userSelections));
+            FormIndexViewModel formIndexViewModel = new FormIndexViewModel();
+            try
+            {
+                UserSelectionsDTO userSelectionsDTO = _mapper.Map<UserSelectionsDTO>(userSelectionsVM);
+                formIndexViewModel = _mapper.Map<FormIndexViewModel>(_formService.GetFormIndexDTO(userSelectionsDTO));
+
+                try
+                {
+                    string[] errors = (string[])TempData["errorMessages"];
+                    if (errors != null)
+                        formIndexViewModel.ErrorMessages = errors.ToList();
+                }
+                catch (Exception ex) when (ex is InvalidCastException)
+                {
+                    _logger.LogError($"Message: {ex.Message}.\n" +
+                                     $"StackTrace: {ex.StackTrace}.\n" +
+                                     $"TargetSite = {ex.TargetSite}.\n");
+                    formIndexViewModel.ErrorMessages.Add("An error occured during last operation. " +
+                                                         "Try to restart application. If the problem persists, " +
+                                                         "see your system administrator.");
+                }
+            }
+            catch (ValidationException ex)
+            {
+                formIndexViewModel.ErrorMessages.Add(ex.Message);
+            }
+            catch (AutoMapperMappingException ex)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                formIndexViewModel.ErrorMessages.Add("Unable to prepare available forms. " +
+                                                     "Try again, and if the problem persists, " +
+                                                     "see your system administrator.");
+            }
+
             return View(formIndexViewModel);
         }
 
         public IActionResult Edit(long? Id)
         {
             #region Validate incoming form id
-            //if (Id == null || Id < 0 ||
-            //    !UserData.AvailableFormIds.Contains((long)Id))
-            //{
-            //    return NotFound();
-            //}
+            if (Id == null || Id < 0)
+                return NotFound();
+
+            if (Id > 0 && !UserData.AvailableFormIds.Contains((long)Id))
+                return NotFound();
             #endregion
 
             long formId = Convert.ToInt64(Id);
@@ -77,71 +111,133 @@ namespace BonusSystemApplication.Controllers
                 }
                 catch (ValidationException ex)
                 {
-                    // TODO: redirect to error page to show error message
-                    return NotFound();
+                    TempData["errorMessages"] = ex.Message.ToList();
+                    return RedirectToAction(nameof(Index));
                 }
-
-                if (formEditViewModel == null)
+                catch (AutoMapperMappingException ex)
                 {
-                    // TODO: redirect to error page to show error message
-                    return NotFound();
+                    _logger.LogError($"Message: {ex.Message}.\n" +
+                                     $"StackTrace: {ex.StackTrace}.\n" +
+                                     $"TargetSite = {ex.TargetSite}.\n");
+
+                    TempData["errorMessages"] = "Unable to prepare selected form for editing. " +
+                                                "Try again, and if the problem persists, " +
+                                                "see your system administrator.".ToList();
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
-                                        .Select(d => new SelectListItem { Value = d, Text = d })
-                                        .ToList();
+            SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
+            selectListsCreator.CreateSelectLists(formEditViewModel);
+
             return View(formEditViewModel);
         }
 
         [HttpPost]
-        [Route("Form/Edit")]
-        public IActionResult ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
+        public IActionResult Edit(FormEditViewModel formEditViewModel)
         {
-            long formId = formEditViewModel.Id;
-
-            #region Validate ViewModel
-            //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
-            //{
-            //    return NotFound();
-            //}
-
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
-                                        .Select(d => new SelectListItem { Value = d, Text = d })
-                                        .ToList();
-            formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
-
-            if (!ModelState.IsValid)
-            {
-                //return View(formEditViewModel);
-            }
-            #endregion
-
-            DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
-            ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
-            List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
-
             try
             {
+                long formId = formEditViewModel.Id;
+
+                #region ModelState and formId validation
+                if (formId < 0)
+                    return NotFound();
+
+                if (formId > 0 && !UserData.AvailableFormIds.Contains(formId))
+                    return NotFound();
+
+                SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
+                selectListsCreator.CreateSelectLists(formEditViewModel);
+
+                if (!ModelState.IsValid)
+                {
+                    return View(formEditViewModel);
+                }
+                #endregion
+
+                DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
+                ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
+                List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
+
+                if (formId > 0)
+                {
+                    _formService.UpdateForm(formId,
+                                            definitionDTO,
+                                            conclusionDTO,
+                                            objectiveResultDTOs);
+
+                    formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+
+                    return RedirectToAction(nameof(Edit), new { Id = formId });
+                }
+                else // formId = 0
+                {
+                    _formService.CreateForm(definitionDTO,
+                                            conclusionDTO,
+                                            objectiveResultDTOs);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (ValidationException ex)
+            {
+                ModelState.AddModelError(ex.Property, ex.Message);
+            }
+            catch (AutoMapperMappingException ex)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                ModelState.AddModelError("", "Unable to perform operation. " +
+                                             "Try again, and if the problem persists, " +
+                                             "see your system administrator.");
+            }
+
+            return View(nameof(Edit), formEditViewModel);
+        }
+
+        /// <summary>
+        /// Changes IsFrozen state of edited Form
+        /// </summary>
+        /// <param name="formEditViewModel">edited Form</param>
+        /// <param name="changeToState">frozen or unfrozen</param>
+        /// <param name="objectivesOrResults">objectives or results</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
+        {
+            try
+            {
+                long formId = formEditViewModel.Id;
+
+                #region ModelState and formId validation
+                if (formId < 0)
+                    return NotFound();
+
+                if (formId > 0 && !UserData.AvailableFormIds.Contains(formId))
+                    return NotFound();
+
+                SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
+                selectListsCreator.CreateSelectLists(formEditViewModel);
+
+                formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+
+                if (!ModelState.IsValid)
+                {
+                    return View(nameof(Edit), formEditViewModel);
+                }
+                #endregion
+
+                DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
+                ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
+                List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
+
                 #region Change IsFrozen state
                 if (changeToState != null && objectivesOrResults != null)
                 {
                     if (formId == 0)
-                    {
                         throw new ValidationException("Please save the form before changing state");
-                    }
 
                     if (changeToState == "frozen")
                     {
@@ -168,155 +264,136 @@ namespace BonusSystemApplication.Controllers
             {
                 ModelState.AddModelError(ex.Property, ex.Message);
             }
+            catch (AutoMapperMappingException ex)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                ModelState.AddModelError("", "Unable to perform operation. " +
+                                             "Try again, and if the problem persists, " +
+                                             "see your system administrator.");
+            }
 
             return View(nameof(Edit), formEditViewModel);
         }
 
+        /// <summary>
+        /// Opens in Edit view a copy of existing form
+        /// as a prefilled new Form
+        /// </summary>
+        /// <param name="ids">selected form ids</param>
+        /// <returns></returns>
         [HttpPost]
-        public IActionResult Edit(FormEditViewModel formEditViewModel)
+        [Route("Form/New")]
+        public IActionResult OpenPrefilled(List<long> ids)
         {
-            long formId = formEditViewModel.Id;
+            FormIdsValidator validator = new FormIdsValidator();
+            validator.ValidateFormIds(ids);
 
-            #region Validate ViewModel
-            //if (formEditViewModel.Id < 0 || !UserData.AvailableFormIds.Contains(formEditViewModel.Id))
-            //{
-            //    return NotFound();
-            //}
-
-            formEditViewModel.WorkprojectSelectList = _formService.GetWorkprojectIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.EmployeeSelectList = _formService.GetUserIdsNames()
-                                        .Select(d => new SelectListItem { Value = d.Key, Text = d.Value })
-                                        .ToList();
-            formEditViewModel.PeriodSelectList = _formService.GetPeriodNames()
-                                        .Select(d => new SelectListItem { Value = d, Text = d })
-                                        .ToList();
-            formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
-
-            if (!ModelState.IsValid)
-            {
-                //return View(formEditViewModel);
-            }
-            #endregion
-
-            DefinitionDTO definitionDTO = _mapper.Map<DefinitionDTO>(formEditViewModel.Definition);
-            ConclusionDTO conclusionDTO = _mapper.Map<ConclusionDTO>(formEditViewModel.Conclusion);
-            List<ObjectiveResultDTO> objectiveResultDTOs = _mapper.Map<List<ObjectiveResultDTO>>(formEditViewModel.ObjectivesResults);
+            if (ids.Count() == 0)
+                return RedirectToAction("Index");
 
             try
             {
-                if (formId > 0)
-                {
-                    _formService.UpdateForm(formId,
-                                            definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
-                    return RedirectToAction(nameof(Edit), new { Id = formId });
-                }
-                else
-                {
-                    _formService.CreateForm(definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
-                    return RedirectToAction(nameof(Index));
-                }
+                // only first selected formId will be operated
+                FormEditViewModel formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetPrefilledFormDTO(ids[0]));
+
+                SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
+                selectListsCreator.CreateSelectLists(formEditViewModel);
+
+                return View(nameof(Edit), formEditViewModel);
             }
             catch (ValidationException ex)
             {
-                ModelState.AddModelError(ex.Property, ex.Message);
+                TempData["errorMessages"] = ex.Message.ToList();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (AutoMapperMappingException ex)
+            {
+                _logger.LogError($"Message: {ex.Message}.\n" +
+                                 $"StackTrace: {ex.StackTrace}.\n" +
+                                 $"TargetSite = {ex.TargetSite}.\n");
+
+                TempData["errorMessages"] = "Unable to prepare selected form for editing. " +
+                                            "Try again, and if the problem persists, " +
+                                            "see your system administrator.".ToList();
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of selected form in the Database,
+        /// and changes its Period to the next one
+        /// </summary>
+        /// <param name="ids">selected form ids</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Promote(List<long> ids)
+        {
+            FormIdsValidator validator = new FormIdsValidator();
+            validator.ValidateFormIds(ids);
+
+            if (ids.Count() == 0)
+            return RedirectToAction("Index");
+
+            List<string> errorMessages = new List<string>();
+            foreach (long formId in ids)
+            {
+                string errorMessage = _formService.PromoteForm(formId);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessages.Add(errorMessage);
+                    errorMessage = string.Empty;
+                }
             }
 
-            return View(nameof(Edit), formEditViewModel);
-        }
-
-        [HttpPost]
-        public IActionResult CreateFormBasedOnSelection(List<long> selectedFormIds)
-        {
-            #region Validation of selected form id
-            //List<long> itemsToRemove = new List<long>();
-            //foreach (long formId in selectedFormIds)
-            //{
-            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-            //    {
-            //        itemsToRemove.Add(formId);
-            //    }
-            //}
-            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            //itemsToRemove.Clear();
-
-            //if (selectedFormIds.Count() == 0)
-            //{
-            //    return RedirectToAction("Index");
-            //}
-            #endregion
-
-            #region Creation of a new form based on selected one
-            //new form id should be equal to 0
-            //only Objectives should be included
-            //other fields = default values
-
-            #endregion
-
-            return RedirectToAction("Form", "Home", new { id = 0 });
-        }
-
-        [HttpPost]
-        public IActionResult PromoteSelectedForms(List<long> selectedFormIds)
-        {
-            #region Validation of selected form ids
-            //List<long> itemsToRemove = new List<long>();
-            //foreach (long formId in selectedFormIds)
-            //{
-            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-            //    {
-            //        itemsToRemove.Add(formId);
-            //    }
-            //}
-            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            //itemsToRemove.Clear();
-
-            //if (selectedFormIds.Count() == 0)
-            //{
-            //    return RedirectToAction("Index");
-            //}
-            #endregion
-
-            #region Promote selected forms to a new forms
-            // create identical forms with same definition, objectives and next period
-            // other fields = default values
-            // save them to DB
-            #endregion
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public IActionResult DeleteSelectedForms(List<long> selectedFormIds)
-        {
-            #region Validation of selected form ids
-            //List<long> itemsToRemove = new List<long>();
-            //foreach (long formId in selectedFormIds)
-            //{
-            //    if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
-            //    {
-            //        itemsToRemove.Add(formId);
-            //    }
-            //}
-            //selectedFormIds.RemoveAll(x => itemsToRemove.Contains(x));
-            //itemsToRemove.Clear();
-
-            //if (selectedFormIds.Count() == 0)
-            //{
-            //    return RedirectToAction("Index");
-            //}
-            #endregion
-
-            // TODO: delete forms with selected ids
+            TempData["errorMessages"] = errorMessages;
             return RedirectToAction("Index");
         }
 
         /// <summary>
+        /// Deletes forms with selected ids from database
+        /// </summary>
+        /// <param name="ids">selected form ids</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Delete(List<long> ids)
+        {
+            // !!! IMPORTANT !!!
+            // is in progress: only for demostaiting of functionality
+            // in according to Business rules using of this method should be restricted
+            // only Head of HR should be able to see corresponding button and launch the process
+
+          FormIdsValidator validator = new FormIdsValidator();
+          validator.ValidateFormIds(ids);
+
+          if (ids.Count() == 0)
+            return RedirectToAction("Index");
+
+          try
+            {
+                List<string> errorMessages = new List<string>();
+                foreach (long formId in ids)
+                {
+                    string message = _formService.DeleteForm(formId);
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        errorMessages.Add(message);
+                        message = string.Empty;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                TempData["errorMessages"] = ex.Message.ToList();
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        /// <summary>
+        /// Requests workproject description from Database.
         /// Action for Ajax request method requestWorkprojectDescription
         /// </summary>
         /// <param name="workprojectId">selected workproject id</param>
@@ -326,24 +403,35 @@ namespace BonusSystemApplication.Controllers
             #region check requested id
             if(workprojectId <= 0)
             {
-                // TODO: to add to log: "Requested Id is less or equal to zero"
                 return new JsonResult(new
                 {
                     status = "error",
-                    message = "Bad id was requested"
+                    message = "Bad request."
                 });
             }
             #endregion
 
-            return new JsonResult(new
+            try
             {
-                status = "success",
-                message = "Operation was complited successfully",
-                workprojectDescription = _formService.GetWorkprojectDescription(workprojectId),
-            });
+                return new JsonResult(new
+                {
+                    status = "success",
+                    message = "Operation was complited successfully",
+                    workprojectDescription = _formService.GetWorkprojectDescription(workprojectId),
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = ex.Message,
+                });
+            }
         }
 
         /// <summary>
+        /// Requests employee data from Database.
         /// Action for Ajax request method requestEmployeeData
         /// </summary>
         /// <param name="employeeId">selected employee id</param>
@@ -356,24 +444,35 @@ namespace BonusSystemApplication.Controllers
                 return new JsonResult(new
                 {
                     status = "error",
-                    message = "Bad id was requested"
+                    message = "Bad request."
                 });
             }
             #endregion
-            
-            EmployeeDTO employeeDTO = _formService.GetEmployeeDTO(employeeId);
-
-            return new JsonResult(new
+            try
             {
-                status = "success",
-                message = "Operation was complited successfully",
-                employeeTeam = employeeDTO.TeamName,
-                employeePosition = employeeDTO.PositionName,
-                employeePid = employeeDTO.Pid,
-            });
+                EmployeeDTO employeeDTO = _formService.GetEmployeeDTO(employeeId);
+
+                return new JsonResult(new
+                {
+                    status = "success",
+                    message = "Operation was complited successfully",
+                    employeeTeam = employeeDTO.TeamName,
+                    employeePosition = employeeDTO.PositionName,
+                    employeePid = employeeDTO.Pid,
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = ex.Message,
+                });
+            }
         }
 
         /// <summary>
+        /// Provides signature process.
         /// Action for Ajax request on change event for id='js-signature'
         /// </summary>
         /// <param name="formId">id of loaded form</param>
@@ -382,8 +481,14 @@ namespace BonusSystemApplication.Controllers
         /// <returns></returns>
         public JsonResult SignatureProcess(long formId, string checkboxId, bool isCheckboxChecked)
         {
-            // TODO: add user checking
-            //       add formId checking
+            if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
+            {
+                return new JsonResult(new
+                {
+                    status = "error",
+                    message = "Unable to perform signature operation."
+                });
+            }
 
             try
             {
@@ -399,21 +504,10 @@ namespace BonusSystemApplication.Controllers
             }
             catch (ValidationException ex)
             {
-                _logger.LogError(ex.Message);
                 return new JsonResult(new
                 {
                     status = "error",
                     message = ex.Message,
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return new JsonResult(new
-                {
-                    status = "error",
-                    message = "An error occured during work of application. " +
-                              "Please see your system administrator.",
                 });
             }
         }

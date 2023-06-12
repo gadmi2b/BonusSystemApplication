@@ -9,9 +9,9 @@
         public string? LastSavedBy { get; set; }
 
         public Definition Definition { get; set; }
-        public IList<ObjectiveResult> ObjectivesResults { get; set; }
+        public List<ObjectiveResult> ObjectivesResults { get; set; }
         public Conclusion Conclusion { get; set; }
         public Signatures Signatures { get; set; }
-        public ICollection<LocalAccess> LocalAccesses { get; set; }
+        public List<LocalAccess> LocalAccesses { get; set; } = new List<LocalAccess>();
     }
 }

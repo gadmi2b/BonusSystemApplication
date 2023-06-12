@@ -1,7 +1,6 @@
 ﻿.content-period {
     display: flex;
     justify-content: space-between;
-
     margin-left: 30px;
     margin-bottom: 20px;
 }
@@ -11,58 +10,47 @@
 
 .content-period__text {
     align-self: start;
-
-    font-weight: 600;
     color: #C00000;
+    font-weight: 600;
 }
 
 .content-period-center {
     display: flex;
-
     font-size: 26px;
     font-weight: 600;
 }
 
 .content-period-center__title {
     align-self: center;
-
     font-size: inherit;
     font-weight: inherit;
 }
 
 .content-period-center__period {
-    text-align: center;
+    background-color: rgb(220, 245, 255);
     font-size: inherit;
     font-weight: inherit;
-
     margin-left: 5px;
     margin-right: 5px;
     padding-left: 5px;
     padding-right: 5px;
-
-    /*background-color: #DCF5FF;*/
-    background-color: rgb(220, 245, 255);
+    text-align: center;
 }
 
 .content-period-center__joinder {
     align-self: center;
-
     font-size: inherit;
     font-weight: inherit;
 }
 
 .content-period-center__year {
-    width: 80px;
-
-    text-align: center;
+    background-color: rgb(220, 245, 255);
+    border: 1px solid rgb(118, 118, 118);
     font-size: inherit;
     font-weight: inherit;
-
     margin-left: 5px;
     padding-left: 5px;
     padding-right: 5px;
-
-    /*background-color: #FFCCCC;*/
-    background-color: rgb(220, 245, 255);
-    border: 1px solid rgb(118, 118, 118);
+    text-align: center;
+    width: 80px;
 }

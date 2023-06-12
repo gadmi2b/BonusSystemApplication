@@ -4,10 +4,9 @@
 }
 
 .content-advanced-proposal {
+    align-items: center;
     display: flex;
     justify-content: start;
-    align-items: center;
-
     width: 50%;
 }
 
@@ -20,14 +19,14 @@
 }
 
 .content-advanced-worktime {
+    align-items: center;
     display: flex;
     justify-content: start;
-    align-items: center;
 }
 
 .content-advanced-worktime input {
-    text-align: center;
     margin-left: 12px;
-    width: 60px;
     height: 30px;
+    text-align: center;
+    width: 60px;
 }

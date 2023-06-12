@@ -1,5 +1,5 @@
 ﻿/**
- * maintains the table
+ * maintains the table with Objectives and Results
  * 
  */
 
@@ -103,8 +103,7 @@ class Table {
       throw new Error("Element with cellId: " + cellId + " could not be found");
     }
 
-    const value = document.getElementById(cellId).value;
-    return value;
+    return element.value;
   }
 
   /**
@@ -319,7 +318,7 @@ class Table {
     let tdElement = document.getElementById(cellId).parentElement;
 
     if ($(tdElement).css("background-color") !== this.backgroundColorNotEditable) {
-        $(tdElement).css("background-color", this.backgroundColorNotEditable);
+      $(tdElement).css("background-color", this.backgroundColorNotEditable);
     } else { return; }
   }
 

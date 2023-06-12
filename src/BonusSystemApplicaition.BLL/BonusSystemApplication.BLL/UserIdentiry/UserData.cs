@@ -1,19 +1,17 @@
 ﻿namespace BonusSystemApplication.BLL.UserIdentiry
 {
+    /// <summary>
+    /// This class should be replaced by normal user identity system
+    /// </summary>
     public static class UserData
     {
-        public static long UserId { get; set; } = 7;
-        static string UserName { get; set; } = "Current ApplicationUser";
+        static long _userId { get; set; } = 14;
+        static string _userName { get; set; } = "Nikolay Nikolayev";
         public static List<long> AvailableFormIds { get; set; } = new List<long>();
 
-        public static string GetUserSignature()
-        {
-            return $"{UserName} {DateTime.Now}";
-        }
+        public static long GetUserId() => _userId;
+        public static string GetUserName() => _userName;
+        public static string GetUserSignature() => $"{_userName} {DateTime.Now}";
 
-        public static string GetUserName()
-        {
-            return UserName;
-        }
     }
 }

@@ -1,0 +1,13 @@
+﻿.content__errors {
+    margin-bottom: 30px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.content__errors li {
+    margin-left: 14px;
+}
+
+.content__errors li span {
+    color: firebrick;
+}

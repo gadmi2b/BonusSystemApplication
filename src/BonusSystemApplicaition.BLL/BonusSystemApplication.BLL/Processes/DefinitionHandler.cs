@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BonusSystemApplication.BLL.DTO.Edit;
+﻿using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.Infrastructure;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
@@ -96,7 +95,6 @@ namespace BonusSystemApplication.BLL.Processes
             MustBeFilledAndGreaterThanZero(definition.ApproverId, "Approver", nameof(definition.ApproverId));
             MustBeFilledAndGreaterThanZero(definition.ManagerId, "Manager", nameof(definition.ManagerId));
             #endregion
-
         }
 
 
@@ -115,7 +113,6 @@ namespace BonusSystemApplication.BLL.Processes
                                               $"{selectedName} must be selected.",
                                               $"{propertyName}");
         }
-
         private void UserMustExist(long userId, string selectedName, string propertyName)
         {
             if (!_userRepository.IsUserExist(userId))
@@ -131,7 +128,7 @@ namespace BonusSystemApplication.BLL.Processes
         {
             if (year < DateTime.Now.Year - 1 ||
                 year > DateTime.Now.Year + 1)
-                throw new ValidationException("It's forbidden to save forms with more than '\u00B1'1 " +  // \u00B1: +- sign
+                throw new ValidationException("It's forbidden to save forms with more than \u00B11 " +  // \u00B1: +- sign
                                               "year in the past or future.",
                                               $"{nameof(DefinitionDTO.Year)}");
         }

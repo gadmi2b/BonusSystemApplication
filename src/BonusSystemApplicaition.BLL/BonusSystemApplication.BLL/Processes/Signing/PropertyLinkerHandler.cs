@@ -2,11 +2,11 @@
 
 namespace BonusSystemApplication.BLL.Processes.Signing
 {
-    public static class PropertyLinkerHandler
+    public class PropertyLinkerHandler
     {
-        public static IPropertyLinker? AffectedPropertyLinker { get; set; } = null;
+        public IPropertyLinker? AffectedPropertyLinker { get; set; } = null;
 
-        public static bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
+        public bool IsPropertyLinkerAffected(IPropertyLinker propertyLinker,
                                                              string checkboxId)
         {
             if (propertyLinker == null || string.IsNullOrEmpty(checkboxId))
@@ -22,8 +22,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             }
             return false;
         }
-
-        public static Dictionary<string, object> GetPropertiesValues(string checkboxId,
+        public Dictionary<string, object> GetPropertiesValues(string checkboxId,
                                                                        bool isCheckboxChecked)
         {
             Dictionary<string, object> propertiesValues = new Dictionary<string, object>();
@@ -34,7 +33,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
 
             #region Description of logic
             /*
-             * LOGIC: < if signature was dropped => reject must be dropped also >
+             * LOGIC: if signature was dropped => reject must be dropped also
              * if checkbox for signing was clicked then we have to add:
              * - isSigned  key-value pair to dictionary (id and value)
              * - signature key-value pair to dictionary (id and just empty.string)
@@ -65,7 +64,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
 
             #region Description of logic
             /*
-             * LOGIC: < if rejected => must be signed >
+             * LOGIC: if rejected => must be signed
              * if checkbox for rejecting was clicked then we have to add:
              * - isRejected key-value pair to dictionary (id and value)
              * in this case:
@@ -96,24 +95,18 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             return propertiesValues;
         }
 
-        /// <summary>
-        /// Get a member of dictionary associated with key OR value
-        /// </summary>
-        /// <param name="keyOrValue"></param>
-        /// <param name="dict"></param>
-        /// <param name="member"></param>
-        /// <returns> returns false found nothing or member is null or string.Empty </returns>
-        private static bool IsExistGetMember(Dictionary<string, string?> dict,
+
+        private bool IsExistGetMember(Dictionary<string, string?> dict,
                                              string keyOrValue, out string member)
         {
-            // check existing value member be key
+            // check existing value member by key
             if (dict.TryGetValue(keyOrValue, out member))
             {
                 if (string.IsNullOrEmpty(member)) { return false; }
             }
+            // check existing key member by value
             else
             {
-                // check existing key member by value
                 member = dict.First(e => e.Value == keyOrValue).Key;
                 if (string.IsNullOrEmpty(member)) { return false; }
             }

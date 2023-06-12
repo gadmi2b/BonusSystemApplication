@@ -13,61 +13,14 @@ namespace BonusSystemApplication.DAL.Repositories
 
         public Definition GetDefinition(long formId)
         {
-            return _context.Definitions.TagWith($"Get Definition for FormId: {formId}")
+            return _context.Definitions
+                    .AsNoTracking()
                     .Where(d => d.FormId == formId)
                     .First();
         }
-        public Definition GetDefinitionFull(long formId)
-        {
-            return _context.Definitions.TagWith($"Get full Definition for FormId: {formId}")
-                    .Where(d => d.FormId == formId)
-                    .Select(d => new Definition
-                    {
-                        Year = d.Year,
-                        Period = d.Period,
-                        IsWpmHox = d.IsWpmHox,
-                        ManagerId = d.ManagerId,
-                        EmployeeId = d.EmployeeId,
-                        ApproverId = d.ApproverId,
-                        WorkprojectId = d.WorkprojectId,
-
-                        Employee = new User
-                        {
-                            FirstNameEng = d.Employee.FirstNameEng,
-                            LastNameEng = d.Employee.LastNameEng,
-                            Pid = d.Employee.Pid,
-                            Team = new Team
-                            {
-                                Name = d.Employee.Team == null ? string.Empty : d.Employee.Team.Name,
-                            },
-                            Position = new Position
-                            {
-                                NameEng = d.Employee.Position == null ? string.Empty : d.Employee.Position.NameEng,
-                            },
-                        },
-                        Manager = new User
-                        {
-                            FirstNameEng = d.Manager == null ? string.Empty : d.Manager.FirstNameEng,
-                            LastNameEng = d.Manager == null ? string.Empty : d.Manager.LastNameEng,
-                        },
-                        Approver = new User
-                        {
-                            FirstNameEng = d.Approver == null ? string.Empty : d.Approver.FirstNameEng,
-                            LastNameEng = d.Approver == null ? string.Empty : d.Approver.LastNameEng,
-                        },
-                        Workproject = new Workproject
-                        {
-                            Name = d.Workproject == null ? string.Empty : d.Workproject.Name,
-                            Description = d.Workproject == null ? string.Empty : d.Workproject.Description,
-                        },
-                    })
-                    .First();
-        }
-
         public List<long> GetFormIdsWhereParticipation(long userId)
         {
             return _context.Definitions
-                .TagWith("Requesting form Ids where user has participation")
                 .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
                 .Select(d => d.FormId)
                 .ToList();
@@ -75,7 +28,6 @@ namespace BonusSystemApplication.DAL.Repositories
         public List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses)
         {
             IQueryable<Definition> queryInitial = _context.Definitions.AsQueryable()
-                .TagWith("Requesting form Ids where user has Global access")
                 .Include(d => d.Employee)
                     .ThenInclude(e => e.Department)
                 .Include(d => d.Employee)
@@ -114,6 +66,16 @@ namespace BonusSystemApplication.DAL.Repositories
                 .ToList();
         }
 
+        /// <summary>
+        /// Checks if form with another formId exists in database
+        /// with same properties
+        /// </summary>
+        /// <param name="formId"></param>
+        /// <param name="employeeId"></param>
+        /// <param name="workprojectId"></param>
+        /// <param name="year"></param>
+        /// <param name="period"></param>
+        /// <returns></returns>
         public bool IsExistWithSamePropertyCombination(long formId,
                                                        long employeeId,
                                                        long workprojectId,
@@ -141,17 +103,24 @@ namespace BonusSystemApplication.DAL.Repositories
 
 
         /// <summary>
-        /// There are 3 big areas of global access working like filters if presented (from biggest to smallest):
-        /// Department (like Engineering at all), Team (like Design or Stress) or just Workproject
-        /// If userId is presented in the global accesses without any areas - it will get access to all forms
-        /// If only DepartmentId is presented - gets an access to forms from this Department
-        /// If TeamId is presented also - gets an access to this Team's forms inside this Department
-        /// If WorkprojectsId is indicated - gets an access to forms of this WP inside Team inside this Department
+        /// Creates ea expression for quering formIds depending on GlobalAccess object
         /// </summary>
         /// <param name="gAccess">A Global Access object</param>
         /// <returns>An expression for FormIds quering</returns>
         private Expression<Func<Definition, bool>> GetGlobalAccessExpression(GlobalAccess gAccess)
         {
+            /* Logic description
+            There are 3 big areas of global access working like filters if presented (from biggest to smallest):
+             - Department (like Engineering or IT)
+             - Team (like Design or Stress)
+             - Workproject (like 145)
+
+            If userId is presented in the global accesses without any areas - it will get access to all forms
+            If only DepartmentId is presented - gets an access to forms from this Department
+            If TeamId is presented also - gets an access to this Team's forms inside this Department
+            If WorkprojectsId is indicated - gets an access to forms of this Workproject inside Team inside Department
+            */
+
             Expression<Func<Definition, bool>> expr = (d) => false;
 
             if (gAccess.DepartmentId == null)

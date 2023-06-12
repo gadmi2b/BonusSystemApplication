@@ -7,14 +7,14 @@ namespace BonusSystemApplication.DAL.Repositories
 {
     public class GlobalAccessRepository : IGlobalAccessRepository
     {
-        private DataContext context;
-        public GlobalAccessRepository(DataContext ctx) => context = ctx;
+        private DataContext _context;
+        public GlobalAccessRepository(DataContext ctx) => _context = ctx;
 
         public IEnumerable<GlobalAccess> GetGlobalAccessesByUserId(long userId)
         {
-            return context.GlobalAccess.TagWith("Global accesses requesting")
-                .Where(x => x.UserId == userId)
+            return _context.GlobalAccess
                 .AsNoTracking()
+                .Where(x => x.UserId == userId)
                 .ToList();
         }
     }

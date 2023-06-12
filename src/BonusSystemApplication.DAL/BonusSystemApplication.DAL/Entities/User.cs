@@ -20,9 +20,9 @@
         public long? PositionId { get; set; }
         public Position? Position { get; set; }
 
-        public ICollection<LocalAccess>? LocalAccesses { get; set; }
-        public ICollection<Definition>? EmployeeFormDefinitions { get; set; }
-        public ICollection<Definition>? ManagerFormDefinitions { get; set; }
-        public ICollection<Definition>? ApproverFormDefinitions { get; set; }
+        public List<LocalAccess>? LocalAccesses { get; set; }
+        public List<Definition>? EmployeeFormDefinitions { get; set; }
+        public List<Definition>? ManagerFormDefinitions { get; set; }
+        public List<Definition>? ApproverFormDefinitions { get; set; }
     }
 }

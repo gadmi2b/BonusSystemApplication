@@ -37,9 +37,9 @@ $(document).ready(function () {
  * Launchs ResizeTextArea() method for each textarea
  */
 function resizeAllTextAreas() {
-  const textAreaElem = document.getElementsByTagName('textarea');
-  for (let i = 0; i < textAreaElem.length; i++) {
-    resizeTextArea(textAreaElem[i]);
+  const textAreaElems = document.getElementsByTagName('textarea');
+  for (let i = 0; i < textAreaElems.length; i++) {
+    resizeTextArea(textAreaElems[i]);
   }
 }
 
@@ -50,4 +50,47 @@ function resizeAllTextAreas() {
 function resizeTextArea(element) {
   element.style.height = 'auto';
   element.style.height = (element.scrollHeight) + 'px';
+}
+
+
+
+/**
+ * resizes selects with class .content-employee to fit its content after change
+ */
+$(document).ready(function () {
+  $('.content-employee select').change(function () {
+    var text = $(this).find('option:selected').text();
+    var $aux = $('<select/>').append($('<option/>').text(text));
+    $(this).after($aux);
+    $(this).width($aux.width());
+    $aux.remove();
+  }).change();
+});
+
+
+
+/**
+ * resizes inputs width to fit their content
+ */
+$(document).ready(function () {
+  resizeEmployeeInformationInputs();
+  resizeWorkprojectDescriptionInput();
+});
+
+function resizeEmployeeInformationInputs() {
+  resizeInputElement(document.getElementById('js-teamName'));
+  resizeInputElement(document.getElementById('js-positionName'));
+  resizeInputElement(document.getElementById('js-pid'));
+}
+
+function resizeWorkprojectDescriptionInput() {
+  resizeInputElement(document.getElementById('js-workprojectDescription'));
+}
+
+function resizeInputElement(element) {
+  const initialMinwidth = $(element).css('min-width');
+  $(element).css('min-width', '0px');
+  $(element).css('width', '0px');
+  $(element).css('width', 1.1 * element.scrollWidth + 'px');
+  $(element).css('min-width', initialMinwidth);
 }

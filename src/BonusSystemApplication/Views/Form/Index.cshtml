@@ -1,8 +1,7 @@
 ﻿@model FormIndexViewModel
 @{
   Layout = null;
-  SelectListsVM tableSelectLists = Model.SelectLists;
-  UserSelectionsDTO userSelections = new UserSelectionsDTO();
+  UserSelectionsVM userSelectionsVM = new UserSelectionsVM();
 }
 
 <!DOCTYPE html>
@@ -13,179 +12,162 @@
   <link rel="stylesheet" href="~/css/index/wrapper.css" />
   <link rel="stylesheet" href="~/css/index/content.css" />
   <link rel="stylesheet" href="~/css/index/content-select.css" />
+  <link rel="stylesheet" href="~/css/index/content-errors.css" />
   <link rel="stylesheet" href="~/css/index/content-table.css" />
   <link rel="stylesheet" href="~/css/common.css" />
-
   <link rel="stylesheet" href="~/lib/bootstrap/bootstrap/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="~/lib/bootstrap/bootstrap-multiselect/css/bootstrap-multiselect.css"/>
+
   <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="~/lib/popper.js/umd/popper.min.js"></script>
   <script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.min.js"></script>
-  @*<script type="text/javascript" src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>*@
   <script type="text/javascript" src="~/lib/bootstrap/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
   <script type="text/javascript" src="~/js/index/bootstrap.js"></script>
   <script type="text/javascript" src="~/js/index/index.js"></script>
-
 </head>
 
-@*----------------------------------------
-BEM convention: Block Elements Modifiers
-.stick-man          || blocks with -
-
-.stick-man__head    || elements with __
-.stick-man__arms
-.stick-man__feet
-
-.stick-man--blue    || modifiers with --
-
-.stick-man__head--small
-----------------------------------------*@
-
 <body class="wrapper">
-  <header class="header">
-    <p>You can do it!</p>
+  <header class="header" style="align-self: center;">
+    <span style="margin-left: 50px; font-size: 16px; color:darkgray;">
+      <i style="font-size: inherit;">Bonus System Application</i> with test functionality
+    </span>
   </header>
   
 
   <content class="content">
     <form asp-controller="Form" asp-action="Index" method="post" class="content-select-form" id="js-content-select">
-        <div class="button-groups__title">Multiselect filters:</div>
+        <div class="content__title">Multiselect filters:</div>
         <div class="content-select">
             <label>Employee:</label>
-            <select asp-for="@userSelections.SelectedEmployees"
-                    asp-items="tableSelectLists.EmployeeSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedEmployees"
+                    asp-items="Model.DropdownLists.EmployeeDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <label>Period:</label>
-            <select asp-for="@userSelections.SelectedPeriods"
-                    asp-items="tableSelectLists.PeriodSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedPeriods"
+                    asp-items="Model.DropdownLists.PeriodDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <label>Year:</label>
-            <select asp-for="@userSelections.SelectedYears"
-                    asp-items="tableSelectLists.YearSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedYears"
+                    asp-items="Model.DropdownLists.YearDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <label>Permission:</label>
-            <select asp-for="@userSelections.SelectedPermissions"
-                    asp-items="@tableSelectLists.PermissionSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedPermissions"
+                    asp-items="@Model.DropdownLists.PermissionDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <span></span>
             <span></span>
             <label>Department:</label>
-            <select asp-for="@userSelections.SelectedDepartments"
-                    asp-items="tableSelectLists.DepartmentSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedDepartments"
+                    asp-items="Model.DropdownLists.DepartmentDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <label>Team:</label>
-            <select asp-for="@userSelections.SelectedTeams"
-                    asp-items="tableSelectLists.TeamSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedTeams"
+                    asp-items="Model.DropdownLists.TeamDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
             <label>Workproject:</label>
-            <select asp-for="@userSelections.SelectedWorkprojects"
-                    asp-items="tableSelectLists.WorkprojectSelectListItems"
+            <select asp-for="@userSelectionsVM.SelectedWorkprojects"
+                    asp-items="Model.DropdownLists.WorkprojectDropdownList"
                     class="js-bootstrap-multiselect" multiple visibility: hidden>
             </select>
         </div>
         <input type="submit" name="submit" value="Apply filters" class="cmn-button" id="js-selection-submit"/>
     </form>
 
+    <div class="content__errors">
+      @if (Model.ErrorMessages.Count() > 0)
+      {
+        <div class="content__title">Errors:</div>
+        <ul>
+            @foreach (string errorMessage in Model.ErrorMessages)
+            {
+              <li><span>@errorMessage</span></li>
+            }
+        </ul>
+      }
+    </div>
 
     <form method="post" class="content-table-form">
       <div class="button-group--flex">
         <span class="button-group--margin">
-          <div class="button-group__title">Work with empty form:</div>
+          <div class="content__title">Work with empty form:</div>
           <a asp-controller="Form" asp-action="Edit" asp-route-id="0">
             <input type="button" value="Open blank form" class="cmn-button" />
           </a>
         </span>
         <span class="button-group--margin">
-          <div class="button-group__title">Work based on selected form/forms:</div>
-          <input type="submit" value="Create" asp-controller="Form" asp-action="CreateFormBasedOnSelection" class="cmn-button" id="js-create-button" />
-          <input type="submit" value="Promote" asp-controller="Form" asp-action="PromoteFormsBasedOnSelection" class="cmn-button" />
-          <input type="submit" value="Delete" asp-controller="Form" asp-action="" class="cmn-button" />
+          <div class="content__title">Work based on selected form/forms:</div>
+          <input type="submit" value="Create new form" asp-controller="Form" asp-action="OpenPrefilled" class="cmn-button" id="js-create-button" />
+          <input type="submit" value="Promote" asp-controller="Form" asp-action="Promote" class="cmn-button" />
+          <input type="submit" value="Delete" asp-controller="Form" asp-action="Delete" class="cmn-button" />
         </span>
       </div>
 
-      <table class="content-table">
-        <thead class="content-table__header">
-          <tr class="content-table__header-row">
-            <th class="content-table--column-checkbox"></th>
-            <th class="content-table--column-nth"><b>#</b></th>
-            <th class="content-table--column-workproject"><b>Workproject</b></th>
-            <th class="content-table--column-employee"><b>Employee</b></th>
-            <th class="content-table--column-period"><b>Period</b></th>
-            <th class="content-table--column-year"><b>Year</b></th>
-            <th class="content-table--column-department"><b>Department</b></th>
-            <th class="content-table--column-team"><b>Team</b></th>
-            <th class="content-table--column-datetime"><b>Last modified</b></th>
-            <th class="content-table--column-permission"><b>Permission</b></th>
-          </tr>
-        </thead>
-        <tbody class="content-table__body">
-          @for(int i = 0; i < Model.TableRows.Count(); i++)
-          {
-            <tr id="@Model.TableRows[i].Id">
-              <td> @*Checkbox*@
-                  <input name="selectedFormIds" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox"/>
-              </td>
-              <td> @*(i+1)*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @(i+1)
-                </a>
-              </td>
-              <td> @*WorkprojectName*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].WorkprojectName
-                </a>
-              </td>
-              <td> @*EmployeeFullName*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].EmployeeFullName
-                </a>
-              </td>
-              <td> @*Period*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].Period
-                </a>
-              </td>
-              <td> @*Year*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].Year
-                </a>
-              </td>
-              <td> @*DepartmentName*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].DepartmentName
-                </a>
-              </td>
-              <td> @*TeamName*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].TeamName
-                </a>
-              </td>
-              <td> @*LastSavedAt*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @Model.TableRows[i].LastSavedAt
-                </a>
-              </td>
-              <td> @*Permissions*@
-                <a asp-controller="Form" asp-action="Edit" asp-route-id="@Model.TableRows[i].Id">
-                  @{ string permission = string.Empty; }
-                  @foreach (string s in @Model.TableRows[i].Permissions)
+      <div class="content-group--flex">
+        <div class="column_1">
+          <table class="content-table">
+            <thead class="content-table__header">
+              <tr class="content-table__header-row">
+                <th class="content-table--column-checkbox"></th>
+              </tr>
+            </thead>
+            <tbody class="content-table__body">
+              @for (int i = 0; i < Model.TableRows.Count(); i++)
+              {
+                <tr>
+                  <td><input name="ids" value="@Model.TableRows[i].Id" type="checkbox" class="js-checkbox" /></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="column_2">
+          <table class="content-table">
+            <thead class="content-table__header">
+              <tr class="content-table__header-row">
+                <th class="content-table--column-nth"><b>#</b></th>
+                <th class="content-table--column-workproject"><b>Workproject</b></th>
+                <th class="content-table--column-employee"><b>Employee</b></th>
+                <th class="content-table--column-period"><b>Period</b></th>
+                <th class="content-table--column-year"><b>Year</b></th>
+                <th class="content-table--column-department"><b>Department</b></th>
+                <th class="content-table--column-team"><b>Team</b></th>
+                <th class="content-table--column-datetime"><b>Last modified</b></th>
+                <th class="content-table--column-permission"><b>Permission</b></th>
+              </tr>
+            </thead>
+            <tbody class="content-table__body">
+              @for (int i = 0; i < Model.TableRows.Count(); i++)
+              {
+                <tr onclick="window.location.href = '@Url.Action("Edit", "Form")/'+@Model.TableRows[i].Id">
+                  <td>@(i+1)</td>
+                  <td>@Model.TableRows[i].WorkprojectName</td>
+                  <td>@Model.TableRows[i].EmployeeFullName</td>
+                  <td>@Model.TableRows[i].Period</td>
+                  <td>@Model.TableRows[i].Year</td>
+                  <td>@Model.TableRows[i].DepartmentName</td>
+                  <td>@Model.TableRows[i].TeamName</td>
+                  <td>@Model.TableRows[i].LastSavedAt</td>
+                  @{
+                    string permission = string.Empty;
+                    foreach (string s in Model.TableRows[i].Permissions)
                     if (string.IsNullOrEmpty(permission))
-                      permission = s;
+                        permission = s;
                     else
-                      permission = permission + "; " + s;
-                  @permission
-                </a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>  
+                        permission = permission + ", " + s;
+                  }
+                  <td>@permission</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
     </form>
   </content>
 

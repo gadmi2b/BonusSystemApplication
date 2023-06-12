@@ -21,61 +21,19 @@ namespace BonusSystemApplication.DAL.EF
         private static Position[] Positions =
         {
             new Position { NameEng = "All People", NameRus = "Все сотрудники", Abbreviation = "N/A" },
-            new Position { NameEng = "General Director", NameRus = "Генеральный Директор", Abbreviation = "AGD" },
-            new Position { NameEng = "Facility Manager", NameRus = "Начальник АХО", Abbreviation = "AFM" },
-            new Position { NameEng = "Corporate Affairs Specialist", NameRus = "Специалист по корпоративному управлению", Abbreviation = "ACA" },
-            new Position { NameEng = "Travel Coordinator", NameRus = "Специалист по организации деловых поездок", Abbreviation = "ATC" },
-            new Position { NameEng = "Head of Business Development", NameRus = "Директор по развитию бизнеса", Abbreviation = "HoBD" },
-            new Position { NameEng = "Head of Engineering", NameRus = "Технический директор", Abbreviation = "HoE" },
-            new Position { NameEng = "Design Manager", NameRus = "Руководитель конструкторского направления", Abbreviation = "ENDM" },
-            new Position { NameEng = "Programme Manager", NameRus = "Руководитель направления по управлению проектами", Abbreviation = "ENPM" },
-            new Position { NameEng = "Engineering Supplier Manager", NameRus = "Менеджер по работе с поставщиками", Abbreviation = "ENESM" },
-            new Position { NameEng = "Chief Engineer", NameRus = "Главный конструктор", Abbreviation = "ENCD" },
-            new Position { NameEng = "Stress Manager", NameRus = "Руководитель направления прочности", Abbreviation = "ENSM" },
-            new Position { NameEng = "Project Leader", NameRus = "Руководитель проекта", Abbreviation = "DPL" },
-            new Position { NameEng = "Design Domain Expert", NameRus = "Главный специалист конструкторского направления", Abbreviation = "DDE" },
-            new Position { NameEng = "Lead Design Engineer", NameRus = "Ведущий инженер-конструктор", Abbreviation = "DLE" },
-            new Position { NameEng = "Senior Design Engineer", NameRus = "Старший инженер-конструктор", Abbreviation = "DSE" },
-            new Position { NameEng = "Design Engineer - Category 1", NameRus = "Инженер-конструктор 1 категории", Abbreviation = "DE1" },
-            new Position { NameEng = "Design Engineer - Category 2", NameRus = "Инженер-конструктор 2 категории", Abbreviation = "DE2" },
-            new Position { NameEng = "Design Engineer - Category 3", NameRus = "Инженер-конструктор 3 категории", Abbreviation = "DE3" },
-            new Position { NameEng = "Design Engineer", NameRus = "Инженер-конструктор", Abbreviation = "DE" },
-            new Position { NameEng = "Design Technician", NameRus = "Техник-конструктор", Abbreviation = "DT" },
+            new Position { NameEng = "General Director", NameRus = "Генеральный Директор", Abbreviation = "GDR" },
+            new Position { NameEng = "Design Engineer - Category X", NameRus = "Инженер-конструктор X категории", Abbreviation = "DECX" },
+            new Position { NameEng = "Lead Design Engineer", NameRus = "Старший инженер инженер-конструктор", Abbreviation = "LDE" },
+            new Position { NameEng = "Project Leader (Design)", NameRus = "Руководитель проекта (дизайн)", Abbreviation = "DPL" },
             new Position { NameEng = "Project Leader (Stress)", NameRus = "Руководитель проекта (прочность)", Abbreviation = "SPL" },
-            new Position { NameEng = "Stress Domain Expert", NameRus = "Главный специалист Направления прочности", Abbreviation = "SDE" },
             new Position { NameEng = "Lead Stress Engineer", NameRus = "Ведущий инженер по прочности", Abbreviation = "SLE" },
             new Position { NameEng = "Senior Stress Engineer", NameRus = "Старший инженер по прочности", Abbreviation = "SSE" },
-            new Position { NameEng = "Stress Engineer - Category 1", NameRus = "Инженер 1 категории по прочности", Abbreviation = "SE1" },
-            new Position { NameEng = "Stress Engineer - Category 2", NameRus = "Инженер 2 категории по прочности", Abbreviation = "SE2" },
-            new Position { NameEng = "Stress Engineer - Category 3", NameRus = "Инженер 3 категории по прочности", Abbreviation = "SE3" },
-            new Position { NameEng = "Stress Engineer", NameRus = "Инженер по прочности", Abbreviation = "SE" },
-            new Position { NameEng = "Stress Technician", NameRus = "Техник по прочности", Abbreviation = "ST" },
-            new Position { NameEng = "Analytic-Programmer", NameRus = "Аналитик-программист", Abbreviation = "PMAP" },
-            new Position { NameEng = "PMO", NameRus = "Специалист по управлению проектами", Abbreviation = "PMS" },
-            new Position { NameEng = "Lead PMO", NameRus = "Ведущий специалист по управлению проектами", Abbreviation = "PMLS" },
-            new Position { NameEng = "Engineering Supplier Specialist", NameRus = "Специалист по работе с поставщиками", Abbreviation = "ESS" },
-            new Position { NameEng = "Accountant", NameRus = "Бухгалтер", Abbreviation = "FA" },
-            new Position { NameEng = "Analytic Accountant", NameRus = "Бухгалтер-аналитик", Abbreviation = "FAA" },
-            new Position { NameEng = "Head of Finance", NameRus = "Финансовый директор", Abbreviation = "HoF" },
-            new Position { NameEng = "Deputy Chief Accountant", NameRus = "Заместитель главного бухгалтера", Abbreviation = "FDC" },
-            new Position { NameEng = "Lead Economist", NameRus = "Ведущий экономист", Abbreviation = "FLE" },
-            new Position { NameEng = "Senior accountant", NameRus = "Старший бухгалтер", Abbreviation = "FSA" },
-            new Position { NameEng = "Head of HR", NameRus = "Директор по персоналу", Abbreviation = "HoHR" },
-            new Position { NameEng = "HR Administrator", NameRus = "Специалист по кадровому делопроизводству", Abbreviation = "HRA" },
+            new Position { NameEng = "Head of Design", NameRus = "Руководитель конструкторского направления", Abbreviation = "HOD" },
+            new Position { NameEng = "Head of Stress", NameRus = "Руководитель направления прочности", Abbreviation = "HOS" },
+            new Position { NameEng = "Head of HR", NameRus = "Директор по персоналу", Abbreviation = "HRD" },
             new Position { NameEng = "HR Specialist, Recruitment, Assessment and Motivation", NameRus = "Специалист по набору, оценке и мотивации персонала", Abbreviation = "HRR" },
-            new Position { NameEng = "HR Specialist, Trainings and Internal Communications", NameRus = "Специалист по обучению и внутренним коммуникациям", Abbreviation = "HRT" },
-            new Position { NameEng = "Head of IT&S", NameRus = "Директор по информационным технологиям и безопасности", Abbreviation = "HoITS" },
             new Position { NameEng = "IT Manager", NameRus = "Менеджер по информационным технологиям", Abbreviation = "ITM" },
-            new Position { NameEng = "CAD/CAE/PDM Support Manager", NameRus = "Менеджер по поддержке CAD/CAE/PDM", Abbreviation = "ITCADM" },
-            new Position { NameEng = "CAD/CAE/PDM Support Specialist", NameRus = "Специалист по поддержке CAD/CAE/PDM", Abbreviation = "ITCADS" },
-            new Position { NameEng = "Senior UNIX System Administrator", NameRus = "Старший системный администратор UNIX инфраструктуры", Abbreviation = "ITSUA" },
-            new Position { NameEng = "Windows and UNIX System Administrator", NameRus = "Системный администратор Windows и UNIX инфраструктуры", Abbreviation = "ITUWSA" },
             new Position { NameEng = "WINDOWS Infrastructure Technical Support Specialist", NameRus = "Специалист по технической поддержке WINDOWS инфраструктуры", Abbreviation = "ITWS" },
-            new Position { NameEng = "DDC Head", NameRus = "Руководитель Группы управления качеством конструкторской документации", Abbreviation = "DDCHO" },
-            new Position { NameEng = "Lead DDC Specialist", NameRus = "Ведущий специалист Группы управления качеством конструкторской документации", Abbreviation = "DDCLS" },
-            new Position { NameEng = "DDC Specialist", NameRus = "Специалист Группы управления качеством конструкторской документации", Abbreviation = "DDCS" },
-            new Position { NameEng = "Head of Quality", NameRus = "Директор по качеству", Abbreviation = "HoQ" },
-            new Position { NameEng = "Quality Specialist, Methods&Processes", NameRus = "Специалист по методам и процессам в области качества", Abbreviation = "QMP" }
         };
 
         private static Team[] Teams =
@@ -91,87 +49,57 @@ namespace BonusSystemApplication.DAL.EF
 
         private static User[] Users =
         {
+            // Design & Stress
             //designers:
-            new User { FirstNameEng = "Ivan", LastNameEng = "Ivanov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Iviva00", Email = "iviva00@airbus.com", Pid = "100dsg",
-                       Department = Departments[2], Team = Teams[3], Position = Positions[16]},
-            new User { FirstNameEng = "Dmitry", LastNameEng = "Dmitriev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Dmdmi01", Email = "dmdmi01@airbus.com", Pid = "101str",
-                       Department = Departments[2], Team = Teams[5], Position = Positions[25]},
-            new User { FirstNameEng = "Sergey", LastNameEng = "Sergeev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Seser02", Email = "seser02@airbus.com", Pid = "102dsg",
-                       Department = Departments[2], Team = Teams[3], Position = Positions[18]},
-            new User { FirstNameEng = "Marat", LastNameEng = "Maratov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Mamar03", Email = "dmdmi03@airbus.com", Pid = "103str",
-                       Department = Departments[2], Team = Teams[5], Position = Positions[25]},
+            new User { FirstNameEng = "Ivan", LastNameEng = "Ivanov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Iviva00", Email = "ivan.ivanov@domain.com", Pid = "dsg001",
+                       Department = Departments[2], Team = Teams[3], Position = Positions[2]},
+            new User { FirstNameEng = "Dmitriy", LastNameEng = "Dmitriev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Dmdmi00", Email = "dmitry.dmitriev@domain.com", Pid = "dsg002",
+                       Department = Departments[2], Team = Teams[3], Position = Positions[3]},
+            new User { FirstNameEng = "Sergey", LastNameEng = "Sergeev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Seser00", Email = "sergey.sergeev@domain.com", Pid = "dsg003",
+                       Department = Departments[2], Team = Teams[3], Position = Positions[2]},
+            new User { FirstNameEng = "Marat", LastNameEng = "Maratov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Mamar00", Email = "marat.maratov@domain.com", Pid = "dsg004",
+                       Department = Departments[2], Team = Teams[5], Position = Positions[6]},
+            new User { FirstNameEng = "Konstantin", LastNameEng = "Konstantinov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Kokon00", Email = "konstantin.konstantinov@domain.com", Pid = "dsg005",
+                       Department = Departments[2], Team = Teams[5], Position = Positions[7]},
+            new User { FirstNameEng = "Vladimir", LastNameEng = "Vladimirov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Vlvla00", Email = "vladimir.vladimirov@domain.com", Pid = "dsg006",
+                       Department = Departments[2], Team = Teams[5], Position = Positions[6]},
 
             //managers:
-            new User { FirstNameEng = "Karl", LastNameEng = "Karlov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Kakar02", Email = "kakar04@airbus.com", Pid = "104mng",
-                       Department = Departments[2], Team = Teams[3], Position = Positions[12]},
-            new User { FirstNameEng = "Alexander", LastNameEng = "Alexandrov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Alale03", Email = "alale05@airbus.com", Pid = "105mng",
-                       Department = Departments[2], Team = Teams[5], Position = Positions[12]},
+            new User { FirstNameEng = "Karl", LastNameEng = "Karlov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Kakar00", Email = "karl.karlov@domain.com", Pid = "mng001",
+                       Department = Departments[2], Team = Teams[3], Position = Positions[4]},
+            new User { FirstNameEng = "Alexander", LastNameEng = "Alexandrov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Alale00", Email = "alexander.alexadrov@domain.com", Pid = "mng002",
+                       Department = Departments[2], Team = Teams[5], Position = Positions[5]},
 
             //approvers:
-            new User { FirstNameEng = "Petr", LastNameEng = "Petrov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Pepet04", Email = "pepet06@airbus.com", Pid = "106apr",
-                       Department = Departments[2], Team = Teams[3], Position = Positions[7]},
-            new User { FirstNameEng = "Mark", LastNameEng = "Markov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Mamar05", Email = "mamar07@airbus.com", Pid = "107apr",
-                       Department = Departments[2], Team = Teams[5], Position = Positions[11]},
+            new User { FirstNameEng = "Petr", LastNameEng = "Petrov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Pepet00", Email = "petr.petrov@domain.com", Pid = "apr001",
+                       Department = Departments[2], Team = Teams[3], Position = Positions[8]},
+            new User { FirstNameEng = "Mark", LastNameEng = "Markov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Mamar01", Email = "marl.markov@domain.com", Pid = "apr002",
+                       Department = Departments[2], Team = Teams[5], Position = Positions[9]},
 
-            //administration:
-            new User { FirstNameEng = "Nikolay", LastNameEng = "Nikolaev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Ninik06", Email = "ninik08@airbus.com", Pid = "108hr",
-                       Department = Departments[4], Team = Teams[0], Position = Positions[42]},
-            new User { FirstNameEng = "Boris", LastNameEng = "Borisov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Bobor07", Email = "bobor09@airbus.com", Pid = "109",
-                       Department = Departments[0], Team = Teams[4], Position = Positions[1]},
+            // IT
+            new User { FirstNameEng = "Viktor", LastNameEng = "Viktorov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Vivik00", Email = "viktor.viktorov@domain.com", Pid = "it001",
+                       Department = Departments[5], Team = Teams[0], Position = Positions[13]},
+            new User { FirstNameEng = "Alexey", LastNameEng = "Alexeev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "AlAle01", Email = "Alexey.Alexeev@domain.com", Pid = "mng003",
+                       Department = Departments[5], Team = Teams[0], Position = Positions[13]},
+            new User { FirstNameEng = "Tikhon", LastNameEng = "Tikhonov", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Titik00", Email = "tikhon.tikhonov@domain.com", Pid = "apr003",
+                       Department = Departments[5], Team = Teams[0], Position = Positions[12]},
+
+            // HR
+            new User { FirstNameEng = "Nikolay", LastNameEng = "Nikolaev", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Ninik00", Email = "nikolay.nikolayev@domain.com", Pid = "hr001",
+                       Department = Departments[4], Team = Teams[0], Position = Positions[10]},
+            new User { FirstNameEng = "Anna", LastNameEng = "Annova", FirstNameRus = "", LastNameRus = "", MiddleNameRus = "", Login = "Anann00", Email = "anna.annova@domain.com", Pid = "hr002",
+                       Department = Departments[4], Team = Teams[0], Position = Positions[11]},
         };
 
         private static Workproject[] Workprojects =
                 {
             new Workproject { Name = "All", Description = "All WP (including N/A)" },
-            new Workproject { Name = "13", Description = "Serial Activity SA 13-14" },
-            new Workproject { Name = "82", Description = "LR S15/21 Serial Activity" },
-            new Workproject { Name = "93", Description = "Test Facility" },
-            new Workproject { Name = "98", Description = "A350 Crown&Cabin Bbracket" },
-            new Workproject { Name = "118-0", Description = "A350 NCF Serial Activity - Leaders" },
-            new Workproject { Name = "118-1", Description = "A350 NCF Serial Activity - Design" },
-            new Workproject { Name = "118-2", Description = "A350 NCF Serial Activity - Stress ZM" },
-            new Workproject { Name = "118-3", Description = "A350 NCF Serial Activity - Stress ZB" },
-            new Workproject { Name = "119", Description = "Serial Activity AF MSI SA LR A380" },
-            new Workproject { Name = "131", Description = "A350 PET Activity" },
-            new Workproject { Name = "135-0", Description = "SA Stress - Task Leaders" },
-            new Workproject { Name = "135-1", Description = "SA Stress - AF Static" },
-            new Workproject { Name = "135-2", Description = "SA Stress - AD Static" },
-            new Workproject { Name = "135-3", Description = "SA Stress" },
-            new Workproject { Name = "138", Description = "SA/LR/A380 Mechanical Systems Installation" },
-            new Workproject { Name = "141", Description = "A330-900F Development" },
-            new Workproject { Name = "144", Description = "20-Meter Car" },
-            new Workproject { Name = "145", Description = "SA/LR A-D Structure" },
-            new Workproject { Name = "146", Description = "A350 Integration" },
-            new Workproject { Name = "148", Description = "SA MSI Automatization" },
-            new Workproject { Name = "149", Description = "DDMS SA 15-18" },
-            new Workproject { Name = "150", Description = "CTP Interiors" },
-            new Workproject { Name = "151", Description = "SA Belly Fairing and Floor Panels" },
-            new Workproject { Name = "152", Description = "A330 F&DT Engineering Support" },
-            new Workproject { Name = "153", Description = "RHC - Design" },
-            new Workproject { Name = "154", Description = "A350F Barrier Wall Fittings" },
-            new Workproject { Name = "155", Description = "Railway AC System" },
-            new Workproject { Name = "156", Description = "RHC - Stress Audit" },
-            new Workproject { Name = "157", Description = "Railway Elevator" },
-            new Workproject { Name = "158", Description = "Engineering Automation" },
-            new Workproject { Name = "159", Description = "TBD" },
-            new Workproject { Name = "160", Description = "TBD" },
-            new Workproject { Name = "AM1", Description = "Automation development" },
-            new Workproject { Name = "BD1", Description = "Business Development Support & Tenders" },
-            new Workproject { Name = "CE1", Description = "Signature Delegation" },
-            new Workproject { Name = "DM1", Description = "Design Improvements & Tenders" },
-            new Workproject { Name = "DM2", Description = "SKU design" },
-            new Workproject { Name = "HR5", Description = "HR activities - Miscellanious" },
-            new Workproject { Name = "PM1", Description = "PMDB Development" },
-            new Workproject { Name = "PM2", Description = "Lean & Instructions/Manuals" },
-            new Workproject { Name = "QM1", Description = "DDC & Quality Audits" },
-            new Workproject { Name = "QM3", Description = "DDC Stress support" },
-            new Workproject { Name = "SM1", Description = "Stress Improvements & Tenders" },
-            new Workproject { Name = "SM2", Description = "SKU stress" },
-            new Workproject { Name = "T07", Description = "Design Training preparation and conduct for trainers" },
-            new Workproject { Name = "T08", Description = "Design On-job trainers" },
-            new Workproject { Name = "T09", Description = "Stress Training preparation and conduct for trainers" },
-            new Workproject { Name = "T10", Description = "Stress On-job trainers" },
-            new Workproject { Name = "T50", Description = "Software development - trainings" }
+            new Workproject { Name = "101", Description = "Serial Activity" },
+            new Workproject { Name = "112", Description = "Serial Activity Stress - AD Static" },
+            new Workproject { Name = "118", Description = "SA/LR/A380 Mechanical Systems Installation" },
+            new Workproject { Name = "AM9", Description = "Automation" },
+            new Workproject { Name = "HR7", Description = "HR activities" },
+
         };
 
         private static Signatures[] Signatures =
@@ -186,22 +114,20 @@ namespace BonusSystemApplication.DAL.EF
 
         private static Definition[] Definitions =
         {
-            new Definition { Employee = Users[1], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q3, Year = 2023 },
-            new Definition { Employee = Users[2], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023 },
-            new Definition { Employee = Users[3], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q4, Year = 2023 },
-            new Definition { Employee = Users[0], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023 },
-
-            new Definition { Employee = Users[4], Manager = Users[4], Approver = Users[6], Workproject = Workprojects[18], Period = Periods.Q1, Year = 2023, IsWpmHox = true },
-            new Definition { Employee = Users[5], Manager = Users[5], Approver = Users[7], Workproject = Workprojects[19], Period = Periods.Q1, Year = 2023, IsWpmHox = true },
+            new Definition { Employee = Users[0], Manager = Users[6], Approver = Users[8], Workproject = Workprojects[1], Period = Periods.Q1, Year = 2023 },
+            new Definition { Employee = Users[1], Manager = Users[6], Approver = Users[8], Workproject = Workprojects[3], Period = Periods.Q1, Year = 2023 },
+            new Definition { Employee = Users[3], Manager = Users[7], Approver = Users[9], Workproject = Workprojects[2], Period = Periods.Q1, Year = 2023 },
+            new Definition { Employee = Users[4], Manager = Users[7], Approver = Users[9], Workproject = Workprojects[2], Period = Periods.Q1, Year = 2023 },
+            new Definition { Employee = Users[10], Manager = Users[11], Approver = Users[12], Workproject = Workprojects[4], Period = Periods.S1, Year = 2023, IsWpmHox = true },
+            new Definition { Employee = Users[14], Manager = Users[13], Approver = Users[13], Workproject = Workprojects[5], Period = Periods.Y, Year = 2023, IsWpmHox = true },
         };
 
         private static Conclusion[] Conclusions =
         {
             new Conclusion { },
             new Conclusion { },
+            new Conclusion { ManagerComment = "Item 6.3. Inapropriate filling 1C and PMDB on daily basis was registered." },
             new Conclusion { },
-            new Conclusion { },
-
             new Conclusion { },
             new Conclusion { },
         };
@@ -212,68 +138,175 @@ namespace BonusSystemApplication.DAL.EF
             new Form { Definition = Definitions[1], Conclusion = Conclusions[1], Signatures = Signatures[1] },
             new Form { Definition = Definitions[2], Conclusion = Conclusions[2], Signatures = Signatures[2] },
             new Form { Definition = Definitions[3], Conclusion = Conclusions[3], Signatures = Signatures[3] },
-
             new Form { Definition = Definitions[4], Conclusion = Conclusions[4], Signatures = Signatures[4] },
             new Form { Definition = Definitions[5], Conclusion = Conclusions[5], Signatures = Signatures[5] },
         };
 
         private static ObjectiveResult[] ObjectivesResults =
         {
-            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Some Unit #{1}", IsKey = false, IsMeasurable = true, Threshold = 60, Target = 80, Challenge = 100, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Some Unit #{2}", IsKey = true, IsMeasurable = true, Threshold = 45, Target = 70, Challenge = 90, WeightFactor = 20, KpiUpperLimit = 117 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Some Unit #{3}", IsKey = true, IsMeasurable = false, Threshold = 80, Target = 60, Challenge = 30, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Some Unit #{4}", IsKey = false, IsMeasurable = true, Threshold = 10, Target = 40, Challenge = 60, WeightFactor = 15, KpiUpperLimit = 120 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Some Unit #{5}", IsKey = true, IsMeasurable = false, Threshold = null, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Some Unit #{6}", IsKey = true, IsMeasurable = true, Threshold = 90, Target = 110, Challenge = 140, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Some Unit #{7}", IsKey = false, IsMeasurable = false, Threshold = 75, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[0] },
-            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"Statement #{8}", Description = $"Description #{8}", Unit = $"Some Unit #{8}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[0] },
-            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"Statement #{9}", Description = $"Description #{9}", Unit = $"Some Unit #{9}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[0] },
-            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"Statement #{10}", Description = $"Description #{10}", Unit = $"Some Unit #{10}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[0] },
+            // form[0]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Earn vs Spent (Productivity)", Description = $"Hours spent by the design team (FP) covered by provided deliveries. Earned vs to Spent Ratio.",
+                                  Unit = $"ratio, %", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 110, Challenge = 125, WeightFactor = 25, KpiUpperLimit = 120 }, Form = Forms[0] },
 
-            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Some Unit #{1}", IsKey = false, IsMeasurable = false, Threshold = 30, Target = 50, Challenge = 70, WeightFactor = 20, KpiUpperLimit = 115 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Some Unit #{2}", IsKey = true, IsMeasurable = true, Threshold = 60, Target = 70, Challenge = 110, WeightFactor = 20, KpiUpperLimit = 117 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Some Unit #{3}", IsKey = true, IsMeasurable = false, Threshold = 24, Target = 30, Challenge = 55, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Some Unit #{4}", IsKey = true, IsMeasurable = true, Threshold = 80, Target = 60, Challenge = 35, WeightFactor = 15, KpiUpperLimit = 120 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Some Unit #{5}", IsKey = true, IsMeasurable = false, Threshold = 1, Target = 7, Challenge = 11, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Some Unit #{6}", IsKey = true, IsMeasurable = true, Threshold = 33, Target = 54, Challenge = 67, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Some Unit #{7}", IsKey = false, IsMeasurable = false, Threshold = null, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[1] },
-            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"Statement #{8}", Description = $"Description #{8}", Unit = $"Some Unit #{8}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
-            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"Statement #{9}", Description = $"Description #{9}", Unit = $"Some Unit #{9}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
-            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"Statement #{10}", Description = $"Description #{10}", Unit = $"Some Unit #{10}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Design", Description = $"1. Develop technical skills of the design team. To provide adequate feedback to low performers.\r\n" +
+                                                                                                            $"2. Planning and controlling of deliverables: highlighted in advance all blocking issues;\r\n" +
+                                                                                                            $"3. Planning and controlling of resourses. Participation in Resource diagram regular update (bi-weekly basis);\r\n" +
+                                                                                                            $"4. To Develop Task calculator for Belly Fairing perimeter\r\n" +
+                                                                                                            $"5. Independent management of FP perimeter\r\n" +
+                                                                                                            $"6. To prepare all design perimeters for Q6 assessement\r\n" +
+                                                                                                            $"7. To use task calc catalog for FP perimeter",
+                                  Unit = $"items done", IsKey = true, IsMeasurable = true, Threshold = 5, Target = 6, Challenge = 7, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[0] },
 
-            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Some Unit #{1}", IsKey = true, IsMeasurable = false, Threshold = 45, Target = 55, Challenge = 65, WeightFactor = 20, KpiUpperLimit = 119 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Some Unit #{2}", IsKey = false, IsMeasurable = true, Threshold = 44, Target = 20, Challenge = 73, WeightFactor = 20, KpiUpperLimit = 117 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Some Unit #{3}", IsKey = true, IsMeasurable = true, Threshold = 99, Target = 102, Challenge = 110, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Some Unit #{4}", IsKey = false, IsMeasurable = true, Threshold = 15, Target = 25, Challenge = 30, WeightFactor = 15, KpiUpperLimit = 120 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Some Unit #{5}", IsKey = false, IsMeasurable = false, Threshold = 90, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Some Unit #{6}", IsKey = true, IsMeasurable = false, Threshold = 33, Target = 54, Challenge = 67, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Some Unit #{7}", IsKey = false, IsMeasurable = false, Threshold = null, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[2] },
-            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"Statement #{8}", Description = $"Description #{8}", Unit = $"Some Unit #{8}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
-            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"Statement #{9}", Description = $"Description #{9}", Unit = $"Some Unit #{9}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
-            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"Statement #{10}", Description = $"Description #{10}", Unit = $"Some Unit #{10}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Internal Quality (Formal)", Description = $"Internal DDC Right First Time in Sheets. No repetitive mistakes are allowed.",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 80, Target = 90, Challenge = 95, WeightFactor = 20, KpiUpperLimit = 110 }, Form = Forms[0] },
 
-            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Some Unit #{1}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 20, KpiUpperLimit = 119 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Some Unit #{2}", IsKey = true, IsMeasurable = false, Threshold = 44, Target = 20, Challenge = 73, WeightFactor = 20, KpiUpperLimit = 117 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Some Unit #{3}", IsKey = false, IsMeasurable = false, Threshold = 99, Target = null, Challenge = null, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Some Unit #{4}", IsKey = true, IsMeasurable = true, Threshold = 44, Target = 60, Challenge = 75, WeightFactor = 15, KpiUpperLimit = 120 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Some Unit #{5}", IsKey = false, IsMeasurable = true, Threshold = 90, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Some Unit #{6}", IsKey = true, IsMeasurable = false, Threshold = 25, Target = 55, Challenge = 67, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Some Unit #{7}", IsKey = false, IsMeasurable = false, Threshold = null, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[3] },
-            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"Statement #{8}", Description = $"Description #{8}", Unit = $"Some Unit #{8}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
-            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"Statement #{9}", Description = $"Description #{9}", Unit = $"Some Unit #{9}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
-            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"Statement #{10}", Description = $"Description #{10}", Unit = $"Some Unit #{10}", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Manager's feedback", Description = $"Criteria: Direct Manager's Feedback which takes into account overall intensity of the work, involvement into the processes, reactivity and pro-activity, professional behavior, team spirit and fulfilment of basic ECAR procedure. \r\n" +
+                                                                                                                        $"Excellent = 115%, Normal = 100%, Need to improve <100%",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = false, Threshold = 80, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[0] },
+
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Technical Quality", Description = $"Airbus and ECAR Technical Quality Right First Time",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 98, Challenge = 100, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[0] },
+
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Improvements", Description = $"To create neither a several simple scripts to simplify a work nor one complex macros (for GSuite for example)",
+                                  Unit = $"Week number", IsKey = true, IsMeasurable = true, Threshold = 14, Target = 12, Challenge = 10, WeightFactor = 10, KpiUpperLimit = 110 }, Form = Forms[0] },
+
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"On-time delivery", Description = $"Average delay vs. agreed target days. IT issues will not be considered.",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 98, Challenge = 100, WeightFactor = 5, KpiUpperLimit = 108 }, Form = Forms[0] },
+
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"PMDB rules", Description = $"1. PMDB WP and 1C completion on daily basis. Working hours fulfillment; \r\n" +
+                                                                                                                $"2. All required signatures provided on-time; \r\n" +
+                                                                                                                $"3. PMDB always match to 1C, personal and team;\r\n" +
+                                                                                                                $"4. Avoid integral tasks. \r\n" +
+                                                                                                                $"5. Avoid mistakes in New PMDB. (wrong template, UFP, MSN)\r\n" +
+                                                                                                                $"6. Status monitoring in PMDB: keep up-to-date;",
+                                  Unit = $"Number of reached", IsKey = true, IsMeasurable = true, Threshold = 4, Target = 5, Challenge = 6, WeightFactor = 0, KpiUpperLimit = 120 }, Form = Forms[0] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[0] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[0] },
+
+
+
+            // form[1]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Earn vs Spent (Productivity)", Description = $"To be in line with the hours appointed in PMDB by design leader.\r\nIf assigned hours exceeded, inform DL immediately",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 90, Target = 105, Challenge = 115, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"External Quality (Technical)", Description = $"Airbus Technical Right First Time. Official reject or repetitive mistakes from Airbus quality reports shall be considered as a blocking point! Rejects from ECAR technical checker to be taken into account as well.",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 98, Challenge = 100, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Internal Quality (Formal)", Description = $"Internal DDC Right First Time in Sheets. No repetitive mistakes are allowed.\r\nIn case of no DDC deliverables, the item will be considered as a target",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 80, Target = 90, Challenge = 95, WeightFactor = 15, KpiUpperLimit = 115 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"On time Delivery", Description = $"KPI Value based on CLDB data or Milestones from DL's schedule. Measured on CLDB Checklist data storage compared with ADB/RQS data required.",
+                                  Unit = $"%", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 98, Challenge = 100, WeightFactor = 15, KpiUpperLimit = 110 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Manager's feedback", Description = $"Criteria: Direct Manager's Feedback which takes into account overall intensity of the work, involvement into the processes, reactivity and pro-activity, professional behavior, team spirit and fulfilment of basic ECAR procedure; to pass E&C training. Confirmation sheet should be signed within one week the request received.\r\nExcellent = 110%, Satisfactory = 100%, Need to improve <100%",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = false, Threshold = 85, Target = null, Challenge = null, WeightFactor = 15, KpiUpperLimit = 110 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Project Needs", Description = $"1. To learn WP way of working (Task tracking, sourses for documentation)\r\n" +
+                                                                                                                   $"2. Communication with cusromer per mail\r\n" +
+                                                                                                                   $"3. XLR MOD 1/2/3 + Brackets support (3d/2d, releasing)\r\n" +
+                                                                                                                   $"4. Topic7: UWF → Support (3d/2d, releasing)\r\n" +
+                                                                                                                   $"5. DP's , I/F  preparation support\r\n" +
+                                                                                                                   $"6. To learn and use updated internal Check lists (Tech. / Formal)\r\n" +
+                                                                                                                   $"Excellent = 115%, Good = 100%, Need to improve <100%  ",
+                                  Unit = $"N of actions done", IsKey = true, IsMeasurable = true, Threshold = 4, Target = 5, Challenge = 6, WeightFactor = 15, KpiUpperLimit = 120 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"PMDB rules", Description = $"1. PMDB WP and 1C completion on daily basis. Working hours fulfillment\r\n" +
+                                                                                                                $"2. PMDB always match to 1C, personal.\r\n" +
+                                                                                                                $"3. Inform DL in case of overspending hours\r\n" +
+                                                                                                                $"4. PMDB C/L closure: Author & performer names are different (four eyes principle)\r\n" +
+                                                                                                                $"5. Status DONE for each finished task is present in PMDB ",
+                                  Unit = $"Number of reached targets", IsKey = true, IsMeasurable = true, Threshold = 3, Target = 4, Challenge = 5, WeightFactor = 5, KpiUpperLimit = 108 }, Form = Forms[1] },
+
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[1] },
+
+
+
+            // form[2]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Earn vs Spent (Productivity)", Description = $"Earn / spent ratio is calculated as the hours assigned by stress leader / hours spent in accordance with PMDB. Responsibility for the entire Easy Fit Brackets perimeter.",
+                                  Unit = $"ratio, %", IsKey = true, IsMeasurable = true, Threshold = 95, Target = 100, Challenge = 115, WeightFactor = 25, KpiUpperLimit = 118 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"On-time delivery", Description = $"Personal KPI based on PMDB data with task end. Calculated as ratio between number of closed in time tasks / total number of tasks (In case of number of tasks > 10)",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = true, Threshold = 85, Target = 96, Challenge = 100, WeightFactor = 25, KpiUpperLimit = 108 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Internal Quality", Description = $"Quality of stress deliverables (calculations, reports and so on).\r\n" +
+                                                                                   $"KPI base on PMDB data.",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = true, Threshold = 80, Target = 95, Challenge = 100, WeightFactor = 20, KpiUpperLimit = 115 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Direct manager's feedback", Description = $"Criteria: Direct Manager's Feedback which takes into account overall intensity of the work, involvement into the processes, flexibility, reactivity and pro-activity, professional behavior, team spirit and fulfilment of basic ECAR procedure. \r\n" +
+                                                                                                                               $"115% - Several stress project improvments external/internal to be proposed (confirmed by Airbus colleagues or Stress leader) and no any complains from customer about work within given perimeter\r\n" +
+                                                                                                                               $"100% - Just no any complains from customer about work within given perimeter and normal way of working\r\n" +
+                                                                                                                               $"80% - 100% - Minor deviations; <80% - exist sever complaints",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = false, Threshold = 80, Target = null, Challenge = null, WeightFactor = 20, KpiUpperLimit = 115 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Permanent Improve Efficiency", Description = $"Independent management of individual perimeter (to defined by SL, but preliminary - Easy Fit brackets), including communication with Customer concerning all the questions. Planning and controlling of deliverables: highlighted in advance all blocking issues. PM/SL/DL feedbacks to be taken into account as follow: \r\n" +
+                                                                                                                                  $"115% - Excellent deedback from the Customers (Airbus, ECAR). Brilliant overal loerational results within given perimeter;\r\n" +
+                                                                                                                                  $"100% - Just no any complains from customers about work within given perimeter and normal way of working\r\n" +
+                                                                                                                                  $"80% - 100% - Minor deviations; <80% - exist sever complaints",
+                                  Unit = $"KPI value, %", IsKey = true, IsMeasurable = false, Threshold = 85, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"PMDB rules", Description = $"1. To strictly follow PMDB rules (example all done tasks should be closed);\r\n" +
+                                                                                                                $"2. Planning and controlling of deliverables: highlighted in advance all blocking issues with missing inputs, stress validation or resources required;\r\n" +
+                                                                                                                $"3. Fill 1C and PMDB on daily basis;\r\n" +
+                                                                                                                $"4. Strictly follow project file storage rules;",
+                                  Unit = $"Number of items", IsKey = true, IsMeasurable = true, Threshold = 2, Target = 3, Challenge = 4, WeightFactor = 0, KpiUpperLimit = 108 }, Form = Forms[2] },
+
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = 10, KpiUpperLimit = 115 }, Form = Forms[2] },
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[2] },
+
+            // form[3]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Unit #{1}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 30, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Unit #{2}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Unit #{3}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Unit #{4}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Unit #{5}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Unit #{6}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Unit #{7}", IsKey = true, IsMeasurable = true, Threshold = 30, Target = 55, Challenge = 65, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[3] },
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[3] },
+        
+        
+            // form[4]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Unit #{1}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 30, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Unit #{2}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Unit #{3}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Unit #{4}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Unit #{5}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Unit #{6}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Unit #{7}", IsKey = true, IsMeasurable = true, Threshold = 15, Target = 35, Challenge = 99, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[4] },
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[4] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[4] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[4] },
+        
+        
+            // form[5]
+            new ObjectiveResult { Row = 1, Objective = new Objective { Statement = $"Statement #{1}", Description = $"Description #{1}", Unit = $"Unit #{1}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 30, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 2, Objective = new Objective { Statement = $"Statement #{2}", Description = $"Description #{2}", Unit = $"Unit #{2}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 3, Objective = new Objective { Statement = $"Statement #{3}", Description = $"Description #{3}", Unit = $"Unit #{3}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 20, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 4, Objective = new Objective { Statement = $"Statement #{4}", Description = $"Description #{4}", Unit = $"Unit #{4}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 5, Objective = new Objective { Statement = $"Statement #{5}", Description = $"Description #{5}", Unit = $"Unit #{5}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 10, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 6, Objective = new Objective { Statement = $"Statement #{6}", Description = $"Description #{6}", Unit = $"Unit #{6}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 7, Objective = new Objective { Statement = $"Statement #{7}", Description = $"Description #{7}", Unit = $"Unit #{7}", IsKey = true, IsMeasurable = true, Threshold = 64, Target = 87, Challenge = 110, WeightFactor = 5, KpiUpperLimit = 120 }, Form = Forms[5] },
+            new ObjectiveResult { Row = 8, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[5] },
+            new ObjectiveResult { Row = 9, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[5] },
+            new ObjectiveResult { Row = 10, Objective = new Objective { Statement = $"", Description = $"", Unit = $"", IsKey = true, IsMeasurable = true, Threshold = null, Target = null, Challenge = null, WeightFactor = null, KpiUpperLimit = null }, Form = Forms[5] },
         };
 
         private static LocalAccess[] LocalAccess =
         {
-            new LocalAccess { Form = Forms[1], User = Users[6] }
+            new LocalAccess { User = Users[13], Form = Forms[4] }
         };
 
         private static GlobalAccess[] GlobalAccess =
         {
+            new GlobalAccess { User = Users[13], Department = Departments[2], Team = null },
+            new GlobalAccess { User = Users[12], Department = Departments[5], Team = null },
             new GlobalAccess { User = Users[8], Department = Departments[2], Team = Teams[3] },
-            new GlobalAccess { User = Users[8], Department = Departments[2], Team = Teams[5] },
-            new GlobalAccess { User = Users[6], Department = Departments[2], Team = Teams[5] },
+            new GlobalAccess { User = Users[9], Department = Departments[2], Team = Teams[5] },
         };
 
 

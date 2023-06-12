@@ -11,9 +11,9 @@ table {
 
 /*------------------ Common styling: header, body, footer ------------------------*/
 .content-table {
-    width: 100%;
-    margin-bottom: 5px;
     border-collapse: collapse;
+    margin-bottom: 5px;
+    width: 100%;
 }
 
 .content-table input,
@@ -109,21 +109,21 @@ table {
 }
 
 .content-table__body input {
-    width: 100%;
-    text-align: center;
-    padding: 4px 4px;
     border: none;
     outline: none;
+    padding: 4px 4px;
+    text-align: center;
+    width: 100%;
 }
 
 .content-table__body textarea {
-    resize: none;
-    outline: none;
     border: none;
+    outline: none;
     overflow: hidden;
     padding: 4px 4px;
-    width: 100%;
+    resize: none;
     vertical-align: middle;
+    width: 100%;
 }
 
 /*-------------- Footer styling --------------*/
@@ -137,11 +137,11 @@ table {
 }
 
 .content-table__footer input {
-    width: 100%;
-    text-align: center;
-    padding: 4px 4px;
     border: none;
     outline: none;
+    padding: 4px 4px;
+    text-align: center;
+    width: 100%;
 }
 
 .content-table__footer--padding {
@@ -161,9 +161,9 @@ table {
 }
 
 .content-table__footer--position-absolute {
-    top: 45px;
-    left: 23px;
-    width: 138px;
-    position: absolute;
     color: #C00000;
+    left: 23px;
+    position: absolute;
+    top: 45px;
+    width: 138px;
 }

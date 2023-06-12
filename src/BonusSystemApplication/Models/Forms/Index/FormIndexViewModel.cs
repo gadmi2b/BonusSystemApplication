@@ -2,7 +2,8 @@
 {
     public class FormIndexViewModel
     {
-        public SelectListsVM SelectLists { get; set; }
-        public List<TableRowVM> TableRows { get; set; }
+        public DropdownListsVM DropdownLists { get; set; } = new DropdownListsVM();
+        public List<TableRowVM> TableRows { get; set; } = new List<TableRowVM>();
+        public List<string> ErrorMessages { get; set; } = new List<string>();
     }
 }

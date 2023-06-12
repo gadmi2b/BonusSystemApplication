@@ -2,7 +2,7 @@
 {
     public class FormIndexDTO
     {
-        public SelectListsDTO SelectLists { get; set; }
+        public DropdownListsDTO DropdownLists { get; set; }
         public List<TableRowDTO> TableRows { get; set; }
     }
 }

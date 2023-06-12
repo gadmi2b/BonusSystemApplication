@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="Views\_ViewStart.cshtml" />
@@ -17,7 +16,7 @@
     <None Include="wwwroot\js\form\signatures.js" />
     <None Include="wwwroot\js\form\tableClass.js" />
     <None Include="wwwroot\js\form\tests.js" />
-    <None Include="wwwroot\js\form\textareas.js" />
+    <None Include="wwwroot\js\form\handlers.js" />
     <None Include="wwwroot\js\index\bootstrap.js" />
     <None Include="wwwroot\js\index\index.js" />
     <None Include="wwwroot\lib\bootstrap\bootstrap-multiselect\js\bootstrap-multiselect.js" />

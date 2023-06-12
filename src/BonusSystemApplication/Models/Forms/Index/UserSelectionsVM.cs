@@ -1,9 +1,6 @@
-﻿using BonusSystemApplication.BLL.Processes.Filtering;
-using BonusSystemApplication.DAL.Entities;
-
-namespace BonusSystemApplication.BLL.DTO.Index
+﻿namespace BonusSystemApplication.Models.Forms.Index
 {
-    public class UserSelectionsDTO
+    public class UserSelectionsVM
     {
         public List<string> SelectedEmployees { get; set; } = new List<string>();
         public List<string> SelectedPeriods { get; set; } = new List<string>();

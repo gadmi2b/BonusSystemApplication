@@ -4,9 +4,9 @@ using System.Reflection;
 
 namespace BonusSystemApplication.BLL.Processes.Signing
 {
-    public static class FormDataHandler
+    public class FormDataHandler
     {
-        public static bool IsObjectivesSignaturePossible(Form form)
+        public bool IsObjectivesSignaturePossible(Form form)
         {
             if (form.AreObjectivesFrozen && !form.AreResultsFrozen)
             {
@@ -14,7 +14,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             }
             return false;
         }
-        public static bool IsResultsSignaturePossible(Form form)
+        public bool IsResultsSignaturePossible(Form form)
         {
             if (form.AreObjectivesFrozen && form.AreResultsFrozen)
             {
@@ -22,8 +22,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             }
             return false;
         }
-
-        public static void PutUserSignature(ref Dictionary<string, object> propertiesValues)
+        public void PutUserSignature(ref Dictionary<string, object> propertiesValues)
         {
             if (propertiesValues == null)
             {
@@ -74,14 +73,12 @@ namespace BonusSystemApplication.BLL.Processes.Signing
                 }
             }
         }
-
-        public static void UpdateLastSavedFormData(Form form)
+        public void UpdateLastSavedFormData(Form form)
         {
             form.LastSavedBy = UserData.GetUserName();
             form.LastSavedAt = DateTime.Now;
         }
-
-        public static void UpdateSignatures(Form form, Dictionary<string, object> propertiesValues)
+        public void UpdateSignatures(Form form, Dictionary<string, object> propertiesValues)
         {
             Signatures signatures = form.Signatures;
             foreach (string propertyPath in propertiesValues.Keys)
@@ -109,24 +106,6 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             }
             PropertyInfo propertyToSet = target.GetType().GetProperty(levels.Last());
             propertyToSet.SetValue(target, value, null);
-        }
-
-
-        private static bool IsObjectivesResultsSavePossible(Form form)
-        {
-            if (!form.AreObjectivesFrozen && !form.AreResultsFrozen)
-            {
-                return true;
-            }
-            return false;
-        }
-        private static bool IsResultsSavePossible(Form form)
-        {
-            if (form.AreObjectivesFrozen && !form.AreResultsFrozen)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

@@ -2,34 +2,32 @@
 
 namespace BonusSystemApplication.BLL.Processes.Filtering
 {
-    public static class FormDataExtractor
+    public class FormDataExtractor
     {
-
-        public static List<Permission> ExtractPermissions(Form form,
-                                                          long userId,
-                                                          IEnumerable<long> formIdsWithGlobalAccess,
-                                                          IEnumerable<long> formIdsWithLocalAccess,
-                                                          IEnumerable<long> formIdsWithParticipation)
+        public List<Permission> ExtractPermissions(Form form,
+                                                   long userId,
+                                                   IEnumerable<long> formIdsWithGlobalAccess,
+                                                   IEnumerable<long> formIdsWithLocalAccess,
+                                                   IEnumerable<long> formIdsWithParticipation)
         {
             List<Permission> permissions = new List<Permission>();
             if (formIdsWithGlobalAccess.Contains(form.Id))
-            {
                 permissions.Add(Permission.GlobalAccess);
-            }
+
             if (formIdsWithLocalAccess.Contains(form.Id))
-            {
                 permissions.Add(Permission.LocalAccess);
-            }
+
             if (formIdsWithParticipation.Contains(form.Id))
             {
                 if (userId == form.Definition.EmployeeId) { permissions.Add(Permission.Employee); }
                 if (userId == form.Definition.ManagerId) { permissions.Add(Permission.Manager); }
                 if (userId == form.Definition.ApproverId) { permissions.Add(Permission.Approver); }
             }
+
             return permissions;
         }
 
-        public static List<Permission> ExtractPermissions(List<List<Permission>> allPermissions)
+        public List<Permission> ExtractPermissions(List<List<Permission>> allPermissions)
         {
             List<Permission> permissions = new List<Permission>();
             foreach (List<Permission> list in allPermissions)
@@ -46,7 +44,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return permissions;
         }
 
-        public static List<string> ExtractEmployees(List<Form> forms)
+        public List<string> ExtractEmployees(List<Form> forms)
         {
             List<string> employees = new List<string>();
             employees = forms
@@ -57,7 +55,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return employees;
         }
 
-        public static List<Periods> ExtractPeriods(List<Form> forms)
+        public List<Periods> ExtractPeriods(List<Form> forms)
         {
             List<Periods> periods = new List<Periods>();
             periods = forms
@@ -68,7 +66,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return periods;
         }
 
-        public static List<int> ExtractYears(List<Form> forms)
+        public List<int> ExtractYears(List<Form> forms)
         {
             List<int> years = new List<int>();
             years = forms
@@ -79,7 +77,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return years;
         }
 
-        public static List<string> ExtractDepartments(List<Form> forms)
+        public List<string> ExtractDepartments(List<Form> forms)
         {
             List<string> departments = new List<string>();
             departments = forms
@@ -90,7 +88,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return departments;
         }
 
-        public static List<string> ExtractTeams(List<Form> forms)
+        public List<string> ExtractTeams(List<Form> forms)
         {
             List<string> teams = new List<string>();
             teams = forms
@@ -101,7 +99,7 @@ namespace BonusSystemApplication.BLL.Processes.Filtering
             return teams;
         }
 
-        public static List<string> ExtractWorkprojects(List<Form> forms)
+        public List<string> ExtractWorkprojects(List<Form> forms)
         {
             List<string> workprojects = new List<string>();
             workprojects = forms

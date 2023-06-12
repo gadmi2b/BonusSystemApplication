@@ -86,8 +86,7 @@ namespace BonusSystemApplication.DAL.Migrations
                     b.Property<int>("Period")
                         .HasColumnType("int");
 
-                    b.Property<long?>("WorkprojectId")
-                        .IsRequired()
+                    b.Property<long>("WorkprojectId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Year")

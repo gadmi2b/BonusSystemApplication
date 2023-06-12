@@ -1,3 +1,9 @@
 ﻿.content {
-  margin: 10px 20px 10px 20px;
+    margin: 10px 20px 10px 20px;
+}
+
+.content__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }

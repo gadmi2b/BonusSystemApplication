@@ -47,6 +47,7 @@ namespace BonusSystemApplication.BLL.Processes
             /// Logic description:
             /// bonus will not be paid if overalkpi is less than 100
             /// bonus will not be paid if at least one keyCheck of any objective is KO
+            /// in other cases bonus will be paid if corresponding checkbox was selected
 
             if (_conclusionDTO.OverallKpi == null ||
                 _conclusionDTO.OverallKpi < 100)
@@ -66,8 +67,6 @@ namespace BonusSystemApplication.BLL.Processes
                     return;
                 }
             }
-
-            _conclusionDTO.IsProposalForBonusPayment = true;
         }
     }
 }

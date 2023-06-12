@@ -20,6 +20,7 @@ function requestWorkprojectDescription(element) {
       }
       else {
         $("#js-workprojectDescription").val(response.workprojectDescription);
+        resizeWorkprojectDescriptionInput();
       }
     },
     failure: function (response) {
@@ -50,6 +51,7 @@ function requestEmployeeData(element) {
         $("#js-teamName").val(response.employeeTeam);
         $("#js-positionName").val(response.employeePosition);
         $("#js-pid").val(response.employeePid);
+        resizeEmployeeInformationInputs();
       }
     },
     failure: function (response) {

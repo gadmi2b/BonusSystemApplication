@@ -25,6 +25,10 @@
     Table.setCellBackgroundColor(kpiElemId);
     Table.setCellFontSize(kpiElemId);
   }
+
+  calculateWeightFactorSum();
+  calculateKpiUpperLimitSum();
+  checkProposalForBonusPaymentState();
 });
 
 // ---------- Business logic: content-table -----------
@@ -483,22 +487,34 @@ function checkProposalForBonusPaymentState() {
   const isProposalForBonusYes = document.getElementById("js-IsProposalForBonusPaymentYes")
   const isProposalForBonusNo = document.getElementById("js-IsProposalForBonusPaymentNo")
 
-  // if objectives aren't frozen or results are already frozen
+  // if objectives aren't frozen
   const areObjectivesFrozenValue = Table.getValueById("js-areObjectivesFrozen");
   const areResultsFrozenValue = Table.getValueById("js-areResultsFrozen");
-  if (!areObjectivesFrozenValue || areObjectivesFrozenValue === "False" ||
-       areResultsFrozenValue === "True") {
+  if (areObjectivesFrozenValue === "False") {
 
-    enableElement(isProposalForBonusYes, false);
-    enableElement(isProposalForBonusNo, false);
+    disableElement(isProposalForBonusYes);
+    disableElement(isProposalForBonusNo);
+    isProposalForBonusYes.checked = false;
+    isProposalForBonusNo.checked = true;
+    return;
+  }
+
+  // if results are already frozen
+  if (areResultsFrozenValue === "True") {
+
+    disableElement(isProposalForBonusYes);
+    disableElement(isProposalForBonusNo);
+    return;
   }
 
   // if kpi summary is NaN or less than 100
   const kpiSumValue = Table.getValueById(Table.kpiSumId);
   if (isNanCheck(+kpiSumValue) || +kpiSumValue < 100) {
 
-    enableElement(isProposalForBonusYes, false);
-    enableElement(isProposalForBonusNo, false);
+    disableElement(isProposalForBonusYes);
+    disableElement(isProposalForBonusNo);
+    isProposalForBonusYes.checked = false;
+    isProposalForBonusNo.checked = true;
     return;
   }
 
@@ -507,15 +523,16 @@ function checkProposalForBonusPaymentState() {
     const keyCheckValue = Table.getValue(Table.keyCheck, row);
     if (keyCheckValue === "KO") {
 
-      enableElement(isProposalForBonusYes, false);
-      enableElement(isProposalForBonusNo, false);
+      disableElement(isProposalForBonusYes);
+      disableElement(isProposalForBonusNo);
+      isProposalForBonusYes.checked = false;
+      isProposalForBonusNo.checked = true;
       return;
     }
   }
 
-  enableElement(isProposalForBonusYes, true);
-  enableElement(isProposalForBonusNo, true);
-
+  enableElement(isProposalForBonusYes);
+  enableElement(isProposalForBonusNo);
 }
 
 // ---------- Help functions --------------------
@@ -533,24 +550,25 @@ function isNanCheck(valueToCheck) {
 }
 
 
-function enableElement(element, isToEnable) {
-
-  if (isToEnable) {
-    if (element.disabled) {
-      element.disabled = false;
-    }
-  } else {
-    if (!element.disabled) {
-      element.disabled = true;
-    }
+function enableElement(element) {
+  if (element.disabled) {
+    element.disabled = false;
   }
 }
+
+
+function disableElement(element) {
+  if (!element.disabled) {
+    element.disabled = true;
+  }
+}
+
 
 /**
  * 
  * @param {any} value
- * @param {any} precision
+ * @param {any} digits
  */
-function roundAndFormatValue(value, precision) {
-  return (Math.round(value * 100) / 100).toFixed(precision);
+function roundAndFormatValue(value, digits) {
+  return (Math.round(value * 100) / 100).toFixed(digits);
 }

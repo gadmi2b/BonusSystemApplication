@@ -12,8 +12,8 @@
         public User? Manager { get; set; }
         public long? ApproverId { get; set; }
         public User? Approver { get; set; }
-        public long? WorkprojectId { get; set; }
-        public Workproject? Workproject { get; set; }
+        public long WorkprojectId { get; set; }
+        public Workproject Workproject { get; set; }
 
         public long FormId { get; set; }
         public Form Form { get; set; }

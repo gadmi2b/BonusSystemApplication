@@ -1,17 +1,19 @@
 ﻿using BonusSystemApplication.DAL.Interfaces;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace BonusSystemApplication.DAL.Repositories
 {
     public class WorkprojectRepository : IWorkprojectRepository
     {
-        private DataContext context;
-        public WorkprojectRepository(DataContext ctx) => context = ctx;
+        private DataContext _context;
+        public WorkprojectRepository(DataContext ctx) => _context = ctx;
 
         public Workproject GetWorkprojectData(long workprojectId)
         {
-            return context.Workprojects
+            return _context.Workprojects
+                .AsNoTracking()
                 .Where(w => w.Id == workprojectId)
                 .Select(w => new Workproject
                 {
@@ -23,7 +25,8 @@ namespace BonusSystemApplication.DAL.Repositories
         }
         public List<Workproject> GetWorkprojectsNames()
         {
-            return context.Workprojects
+            return _context.Workprojects
+                .AsNoTracking()
                 .Select(w => new Workproject
                 {
                     Id = w.Id,
@@ -33,7 +36,7 @@ namespace BonusSystemApplication.DAL.Repositories
         }
         public bool IsWorkprojectExists(long workprojectId)
         {
-            return context.Workprojects.Any(w => w.Id == workprojectId);
+            return _context.Workprojects.Any(w => w.Id == workprojectId);
         }
     }
 }

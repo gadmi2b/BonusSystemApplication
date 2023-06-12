@@ -13,13 +13,17 @@ namespace BonusSystemApplication.Models.Forms.Edit
         public DefinitionVM Definition { get; set; }
         public ConclusionVM Conclusion { get; set; }
         public SignaturesVM Signatures { get; set; }
-        public IList<ObjectiveResultVM> ObjectivesResults { get; set; }
+        public List<ObjectiveResultVM> ObjectivesResults { get; set; }
 
         [ValidateNever]
-        public List<SelectListItem> PeriodSelectList { get; set; }
+        public List<SelectListItem> WorkprojectsSelectList { get; set; }
         [ValidateNever]
-        public List<SelectListItem> EmployeeSelectList { get; set; }
+        public List<SelectListItem> EmployeesSelectList { get; set; }
         [ValidateNever]
-        public List<SelectListItem> WorkprojectSelectList { get; set; }
+        public List<SelectListItem> ManagersSelectList { get; set; }
+        [ValidateNever]
+        public List<SelectListItem> ApproversSelectList { get; set; }
+        [ValidateNever]
+        public List<SelectListItem> PeriodsSelectList { get; set; }
     }
 }

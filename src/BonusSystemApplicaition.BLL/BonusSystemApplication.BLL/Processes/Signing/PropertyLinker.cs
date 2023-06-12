@@ -6,7 +6,6 @@ namespace BonusSystemApplication.BLL.Processes.Signing
     {
         public PropertyType PropertyType { get; set; }
         public Dictionary<string, string?> IdPairsIsSignedIsRejected { get; set; }
-
         public Dictionary<string, string?> IdPairsIsSignedSignature { get; set; }
     }
 }

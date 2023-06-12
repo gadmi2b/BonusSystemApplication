@@ -1,4 +1,8 @@
-﻿$(document).ready(function () {
+﻿/**
+ * disables button if amount of checked checkboxes > 1
+ * enables button if amount of checked checkboxes = 0
+ */
+$(document).ready(function () {
   $(".js-checkbox").click(function () {
     let checkboxChecked = $('.js-checkbox:checkbox:checked');
     let createButtonElement = document.getElementById("js-create-button");

@@ -1,6 +1,5 @@
 ﻿using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BonusSystemApplication.BLL.Interfaces
 {
@@ -8,34 +7,33 @@ namespace BonusSystemApplication.BLL.Interfaces
     {
         FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections);
         FormDTO GetFormDTO(long formId);
+        FormDTO GetPrefilledFormDTO(long formId);
         FormDTO GetIsFrozenStates(long formId);
-        StatesAndSignaturesDTO GetStatesAndSignaturesDTO(long formId);
-
-        DefinitionDTO GetDefinitionDTO(long formId);
-        ConclusionDTO GetConclusionDTO(long formId);
+        EmployeeDTO GetEmployeeDTO(long userId);
         SignaturesDTO GetSignaturesDTO(long formId);
-        IList<ObjectiveResultDTO> GetObjectivesResultsDTO(long formId);
-
+        string GetWorkprojectDescription(long workprojectId);
         Dictionary<string, string> GetWorkprojectIdsNames();
         Dictionary<string, string> GetUserIdsNames();
         List<string> GetPeriodNames();
 
+        Dictionary<string, object> UpdateAndReturnSignatures(long formId,
+                                                             string checkboxId,
+                                                             bool isCheckboxChecked);
         void UpdateForm(long formId,
                         DefinitionDTO definition,
                         ConclusionDTO conclusion,
                         List<ObjectiveResultDTO> objectivesResultsDTO);
+        
         void CreateForm(DefinitionDTO definition,
                         ConclusionDTO conclusion,
                         List<ObjectiveResultDTO> objectivesResultsDTO);
+        
         void ChangeState(long formId,
                          string changeToState,
                          string objectivesOrResults);
+        
+        string DeleteForm(long formId);
 
-        string GetWorkprojectDescription(long workprojectId);
-        EmployeeDTO GetEmployeeDTO(long userId);
-
-        Dictionary<string, object> UpdateAndReturnSignatures(long formId,
-                                                             string checkboxId,
-                                                             bool isCheckboxChecked);
+        string PromoteForm(long formId);
     }
 }

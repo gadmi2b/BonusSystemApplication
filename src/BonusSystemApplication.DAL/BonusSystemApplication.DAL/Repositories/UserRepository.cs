@@ -1,21 +1,19 @@
 ﻿using BonusSystemApplication.DAL.Interfaces;
 using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace BonusSystemApplication.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private DataContext context;
-        public UserRepository(DataContext ctx)
-        {
-            Console.WriteLine($">>>>>>>>>> DI has created me at: {DateTime.Now} <<<<<<<<<<");
-            context = ctx;
-        }
+        private DataContext _context;
+        public UserRepository(DataContext ctx) => _context = ctx;
 
         public User GetUserData(long userId)
         {
-            return context.Users
+            return _context.Users
+                .AsNoTracking()
                 .Where(u => u.Id == userId)
                 .Select(u => new User
                 {
@@ -34,10 +32,10 @@ namespace BonusSystemApplication.DAL.Repositories
                 })
                 .First();
         }
-
         public List<User> GetUsersNames()
         {
-            return context.Users
+            return _context.Users
+                .AsNoTracking()
                 .Select(u => new User
                 {
                     Id = u.Id,
@@ -46,10 +44,9 @@ namespace BonusSystemApplication.DAL.Repositories
                 })
                 .ToList();
         }
-    
         public bool IsUserExist(long userId)
         {
-            return context.Users.Any(u => u.Id == userId);
+            return _context.Users.Any(u => u.Id == userId);
         }
     }
 }

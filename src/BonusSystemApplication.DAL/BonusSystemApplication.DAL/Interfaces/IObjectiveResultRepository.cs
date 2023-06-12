@@ -4,6 +4,6 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IObjectiveResultRepository
     {
-        IList<ObjectiveResult> GetObjectivesResults(long formId);
+        List<ObjectiveResult> GetObjectivesResults(long formId);
     }
 }

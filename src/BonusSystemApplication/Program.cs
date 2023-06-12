@@ -3,7 +3,6 @@ using BonusSystemApplication.Mapper;
 using BonusSystemApplication.BLL.Interfaces;
 using BonusSystemApplication.BLL.Services;
 using BonusSystemApplication.DAL.EF;
-using BonusSystemApplication.DAL.Entities;
 using BonusSystemApplication.DAL.Interfaces;
 using BonusSystemApplication.DAL.Repositories;
 
@@ -22,7 +21,6 @@ builder.Services.AddTransient<IFormsService, FormsService>();
 builder.Services.AddTransient<IFormRepository, FormRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IDefinitionRepository, DefinitionRepository>();
-builder.Services.AddTransient<IConclusionRepository, ConclusionRepository>();
 builder.Services.AddTransient<ISignaturesRepository, SignaturesRepository>();
 builder.Services.AddTransient<IWorkprojectRepository, WorkprojectRepository>();
 builder.Services.AddTransient<IGlobalAccessRepository, GlobalAccessRepository>();
@@ -44,7 +42,6 @@ if (app.Environment.IsDevelopment())
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Forms/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -57,7 +54,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Form}/{action=Index}/{id?}");
 
-// -------------------------------------------------- UNTILL HERE --------------------------------------------------
-
-//Process.Start("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "https://localhost:5000");
 app.Run();

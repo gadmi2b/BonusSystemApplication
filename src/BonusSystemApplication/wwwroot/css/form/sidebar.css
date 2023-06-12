@@ -9,10 +9,10 @@
 }
 
 .button-group__line {
-    width: 100%;
-    height: 1px;
     background-color: dimgrey;
+    height: 1px;
     margin-bottom: 8px;
+    width: 100%;
 }
 
 .button--width {

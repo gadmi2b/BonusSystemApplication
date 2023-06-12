@@ -7,7 +7,7 @@ namespace BonusSystemApplication.BLL.Processes
     internal class ObjectivesResultsHandler
     {
         private int _maxObjectivesResults { get; } = 10;
-        private int _minRequiredObjectivesResultsQuantity { get; } = 7;
+        private int _minRequiredObjectivesResultsQuantity { get; } = 5;
         private double _minWeightFactor { get; } = 0;
         private double _maxWeightFactor { get; } = 40;
         private double _minKpiUpperLimit { get; } = 108;
@@ -398,11 +398,15 @@ namespace BonusSystemApplication.BLL.Processes
                 }
 
                 if (threshold < challenge)
+                {
                     if (achieved >= threshold)
                         return _keyChecksHandler.GetKeyCheck(KeyChecks.KeyCheckOK);
+                }
                 else
+                {
                     if (achieved <= threshold)
                         return _keyChecksHandler.GetKeyCheck(KeyChecks.KeyCheckOK);
+                }
 
                 return _keyChecksHandler.GetKeyCheck(KeyChecks.KeyCheckKO);
             }

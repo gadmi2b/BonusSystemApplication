@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BonusSystemApplication.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230417043316_Initial")]
-    partial class Initial
+    [Migration("20230602154657_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -88,8 +88,7 @@ namespace BonusSystemApplication.DAL.Migrations
                     b.Property<int>("Period")
                         .HasColumnType("int");
 
-                    b.Property<long?>("WorkprojectId")
-                        .IsRequired()
+                    b.Property<long>("WorkprojectId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Year")

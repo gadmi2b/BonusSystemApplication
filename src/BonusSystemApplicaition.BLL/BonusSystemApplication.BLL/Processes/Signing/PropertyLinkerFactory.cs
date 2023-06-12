@@ -3,9 +3,9 @@ using BonusSystemApplication.DAL.Entities;
 
 namespace BonusSystemApplication.BLL.Processes.Signing
 {
-    public static class PropertyLinkerFactory
+    public class PropertyLinkerFactory
     {
-        public static IPropertyLinker CreatePropertyLinker(PropertyType propertyType)
+        public IPropertyLinker CreatePropertyLinker(PropertyType propertyType)
         {
             switch (propertyType)
             {
@@ -19,7 +19,8 @@ namespace BonusSystemApplication.BLL.Processes.Signing
             }
         }
 
-        private static IPropertyLinker GetObjectivesSignaturePropertyLinker()
+
+        private IPropertyLinker GetObjectivesSignaturePropertyLinker()
         {
             return new PropertyLinker()
             {
@@ -38,8 +39,7 @@ namespace BonusSystemApplication.BLL.Processes.Signing
                 }
             };
         }
-
-        private static IPropertyLinker GetResultsSignaturePropertyLinker()
+        private IPropertyLinker GetResultsSignaturePropertyLinker()
         {
             return new PropertyLinker()
             {

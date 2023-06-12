@@ -7,6 +7,6 @@
         public string NameRus { get; set; }
         public string? Abbreviation { get; set; }
 
-        public ICollection<User>? Users { get; set; }
+        public List<User>? Users { get; set; }
     }
 }

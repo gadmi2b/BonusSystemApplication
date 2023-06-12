@@ -4,6 +4,7 @@ using BonusSystemApplication.BLL.DTO.Edit;
 using BonusSystemApplication.BLL.DTO.Index;
 using BonusSystemApplication.Models.Forms.Edit;
 using BonusSystemApplication.Models.Forms.Index;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BonusSystemApplication.Mapper
 {
@@ -21,18 +22,21 @@ namespace BonusSystemApplication.Mapper
 			CreateMap<ObjectiveResultDTO, ObjectiveResultVM>().ReverseMap();
 			CreateMap<ObjectiveDTO, ObjectiveVM>().ReverseMap();
 			CreateMap<ResultDTO, ResultVM>().ReverseMap();
+            CreateMap<UserSelectionsDTO, UserSelectionsVM>().ReverseMap();
 
 			// Business Logic Layer -> Presentation Layer
 			CreateMap<TableRowDTO, TableRowVM> ();
-			CreateMap<SelectListsDTO, SelectListsVM> ();
+			CreateMap<DropdownListsDTO, DropdownListsVM> ();
+			CreateMap<DropdownItemDTO, SelectListItem> ();
+
 			CreateMap<FormIndexDTO, FormIndexViewModel>()
-				.ForMember(dest => dest.SelectLists, opt => opt.MapFrom(src => src.SelectLists))
+				.ForMember(dest => dest.DropdownLists, opt => opt.MapFrom(src => src.DropdownLists))
 				.ForMember(dest => dest.TableRows, opt => opt.MapFrom(src => src.TableRows));
 
 			CreateMap<FormDTO, FormEditViewModel>()
-				.ForMember(dest => dest.PeriodSelectList, opt => opt.Ignore())
-				.ForMember(dest => dest.EmployeeSelectList, opt => opt.Ignore())
-				.ForMember(dest => dest.WorkprojectSelectList, opt => opt.Ignore());
+				.ForMember(dest => dest.PeriodsSelectList, opt => opt.Ignore())
+				.ForMember(dest => dest.EmployeesSelectList, opt => opt.Ignore())
+				.ForMember(dest => dest.WorkprojectsSelectList, opt => opt.Ignore());
 
 			// Business Logic Layer -> Data Access Layer
 			CreateMap<DefinitionDTO, Definition>()
@@ -65,6 +69,6 @@ namespace BonusSystemApplication.Mapper
 			CreateMap<ObjectiveResult, ObjectiveResultDTO>();
             CreateMap<Objective, ObjectiveDTO>();
             CreateMap<Result, ResultDTO>();
-        }
+    }
 	}
 }
