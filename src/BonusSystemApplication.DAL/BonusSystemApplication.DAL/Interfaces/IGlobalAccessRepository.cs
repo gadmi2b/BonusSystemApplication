@@ -4,6 +4,6 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IGlobalAccessRepository
     {
-        IEnumerable<GlobalAccess> GetGlobalAccessesByUserId(long userId);
+        Task<IEnumerable<GlobalAccess>> GetGlobalAccessesByUserIdAsync(long userId);
     }
 }

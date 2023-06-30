@@ -4,8 +4,8 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IWorkprojectRepository
     {
-        Workproject GetWorkprojectData(long workprojectId);
-        List<Workproject> GetWorkprojectsNames();
-        bool IsWorkprojectExists(long workprojectId);
+        Task<Workproject> GetWorkprojectDataAsync(long workprojectId);
+        Task<List<Workproject>> GetWorkprojectsNamesAsync();
+        Task<bool> IsWorkprojectExistsAsync(long workprojectId);
     }
 }

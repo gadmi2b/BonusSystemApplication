@@ -53,23 +53,23 @@ namespace BonusSystemApplication.BLL.Services
             _objectiveResultRepository = objectiveResultRepo;
         }
 
-        public FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections)
+        public async Task<FormIndexDTO> GetFormIndexDtoAsync(UserSelectionsDTO userSelections)
         {
             try
             {
                 #region Getting global accesses user has
-                IEnumerable<GlobalAccess> globalAccesses = _globalAccessRepository.GetGlobalAccessesByUserId(UserData.GetUserId());
+                IEnumerable<GlobalAccess> globalAccesses = await _globalAccessRepository.GetGlobalAccessesByUserIdAsync(UserData.GetUserId());
                 #endregion
 
                 #region Getting form ids available for User
                 //Form Ids where user has Global accesses
-                IEnumerable<long> formIdsWithGlobalAccess = _definitionRepository.GetFormIdsWhereGlobalAccess(globalAccesses);
+                IEnumerable<long> formIdsWithGlobalAccess = await _definitionRepository.GetFormIdsWhereGlobalAccessAsync(globalAccesses);
 
                 //Form Ids where user has Local access
-                IEnumerable<long> formIdsWithLocalAccess = _formRepository.GetFormIdsWhereLocalAccess(UserData.GetUserId());
+                IEnumerable<long> formIdsWithLocalAccess = await _formRepository.GetFormIdsWhereLocalAccessAsync(UserData.GetUserId());
 
                 //Form Ids where user has any Participation
-                IEnumerable<long> formIdsWithParticipation = _definitionRepository.GetFormIdsWhereParticipation(UserData.GetUserId());
+                IEnumerable<long> formIdsWithParticipation = await _definitionRepository.GetFormIdsWhereParticipationAsync(UserData.GetUserId());
 
                 //Form Ids unioning and sorting
                 List<long> availableFormIds = formIdsWithParticipation.Union(formIdsWithLocalAccess)
@@ -77,10 +77,11 @@ namespace BonusSystemApplication.BLL.Services
                                                                       .OrderBy(id => id)
                                                                       .ToList();
                 #endregion
+                
                 UserData.AvailableFormIds = availableFormIds;
 
                 #region Get forms from Database and prepare available data
-                List<Form> availableForms = _formRepository.GetForms(availableFormIds);
+                List<Form> availableForms = await _formRepository.GetFormsAsync(availableFormIds);
 
                 FormDataExtractor formDataExtractor = new FormDataExtractor();
                 FormDataAvailable formDataAvailable = new FormDataAvailable(formDataExtractor);
@@ -146,11 +147,11 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public FormDTO GetFormDTO(long formId)
+        public async Task<FormDTO> GetFormDtoAsync(long formId)
         {
             try
             {
-                FormDTO formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
+                FormDTO formDTO = _mapper.Map<FormDTO>(await _formRepository.GetFormAsync(formId));
                 PrepareThresholdTargetChallangeForPresentation(formDTO);
                 RoundOverallKpiForPresentation(formDTO);
                 RoundKpiForPresentation(formDTO);
@@ -169,11 +170,11 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public FormDTO GetPrefilledFormDTO(long formId)
+        public async Task<FormDTO> GetPrefilledFormDtoAsync(long formId)
         {
             try
             {
-                FormDTO formDTO = _mapper.Map<FormDTO>(_formRepository.GetForm(formId));
+                FormDTO formDTO = _mapper.Map<FormDTO>(await _formRepository.GetFormAsync(formId));
 
                 formDTO.Id = 0;
                 formDTO.LastSavedBy = string.Empty;
@@ -206,11 +207,11 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public FormDTO GetIsFrozenStates(long formId)
+        public async Task<FormDTO> GetIsFrozenStatesAsync(long formId)
         {
             try
             {
-                return _mapper.Map<FormDTO>(_formRepository.GetStates(formId));
+                return _mapper.Map<FormDTO>(await _formRepository.GetStatesAsync(formId));
             }
             catch (Exception ex) when (ex is AutoMapperMappingException ||
                                        ex is ArgumentNullException ||
@@ -225,11 +226,11 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public SignaturesDTO GetSignaturesDTO(long signaturesId)
+        public async Task<SignaturesDTO> GetSignaturesDtoAsync(long signaturesId)
         {
             try
             {
-                return _mapper.Map<SignaturesDTO>(_signaturesRepository.GetSignatures(signaturesId));
+                return _mapper.Map<SignaturesDTO>(await _signaturesRepository.GetSignaturesAsync(signaturesId));
             }
             catch (Exception ex) when (ex is AutoMapperMappingException ||
                                        ex is ArgumentNullException ||
@@ -244,14 +245,14 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public Dictionary<string, string> GetWorkprojectIdsNames()
+        public async Task<Dictionary<string, string>> GetWorkprojectIdsNamesAsync()
         {
             try
             {
-                return _workprojectRepository.GetWorkprojectsNames()
-                                             .OrderBy(wp => wp.Id)
-                                             .ToDictionary(w => w.Id.ToString(),
-                                                           w => w.Name);
+                List<Workproject> workprojects = await _workprojectRepository.GetWorkprojectsNamesAsync();
+                return workprojects.OrderBy(wp => wp.Id)
+                                   .ToDictionary(w => w.Id.ToString(),
+                                                 w => w.Name);
             }
             catch (Exception ex) when (ex is ArgumentNullException ||
                                        ex is InvalidOperationException)
@@ -265,14 +266,14 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public Dictionary<string, string> GetUserIdsNames()
+        public async Task<Dictionary<string, string>> GetUserIdsNamesAsync()
         {
             try
             {
-                return _userRepository.GetUsersNames()
-                                      .OrderBy(u => u.LastNameEng)
-                                      .ToDictionary(u => u.Id.ToString(),
-                                                    u => $"{u.LastNameEng} {u.FirstNameEng}");
+                List<User> users = await _userRepository.GetUsersNamesAsync();
+                return users.OrderBy(u => u.LastNameEng)
+                            .ToDictionary(u => u.Id.ToString(),
+                                        u => $"{u.LastNameEng} {u.FirstNameEng}");
             }
             catch (Exception ex) when (ex is ArgumentNullException ||
                                        ex is InvalidOperationException)
@@ -290,12 +291,12 @@ namespace BonusSystemApplication.BLL.Services
         {
             return Enum.GetNames(typeof(Periods)).ToList();
         }
-        public string GetWorkprojectDescription(long workprojectId)
+        public async Task<string> GetWorkprojectDescriptionAsync(long workprojectId)
         {
             try
             {
-                string? description = _workprojectRepository.GetWorkprojectData(workprojectId).Description;
-                return description == null ? string.Empty : description;
+                var workproject = await _workprojectRepository.GetWorkprojectDataAsync(workprojectId);
+                return workproject.Description == null ? string.Empty : workproject.Description;
             }
             catch (Exception ex) when (ex is ArgumentNullException ||
                                        ex is InvalidOperationException)
@@ -309,11 +310,11 @@ namespace BonusSystemApplication.BLL.Services
                                               "see your system administrator.");
             }
         }
-        public EmployeeDTO GetEmployeeDTO(long userId)
+        public async Task<EmployeeDTO> GetEmployeeDtoAsync(long userId)
         {
             try
             {
-                User userData = _userRepository.GetUserData(userId);
+                User userData = await _userRepository.GetUserDataAsync(userId);
                 return new EmployeeDTO
                 {
                     TeamName = userData.Team?.Name == null ? string.Empty: userData.Team.Name,
@@ -335,9 +336,9 @@ namespace BonusSystemApplication.BLL.Services
             }
         }
 
-        public Dictionary<string, object> UpdateAndReturnSignatures(long formId,
-                                                                    string checkboxId,
-                                                                    bool isCheckboxChecked)
+        public async Task<Dictionary<string, object>> UpdateAndReturnSignaturesAsync(long formId,
+                                                                                     string checkboxId,
+                                                                                     bool isCheckboxChecked)
         {
             if (string.IsNullOrEmpty(checkboxId))
                 throw new ValidationException($"Signature process is not possible. " +
@@ -375,7 +376,7 @@ namespace BonusSystemApplication.BLL.Services
                 #endregion
 
                 #region Get form from database and check signature possibility
-                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+                Form statesAndSignatures = await _formRepository.GetStatesAndSignaturesAsync(formId);
                 FormDataHandler formDataHandler = new FormDataHandler();
 
                 if (propertyLinkerHandler.AffectedPropertyLinker.PropertyType == PropertyType.ForObjectives &&
@@ -398,7 +399,7 @@ namespace BonusSystemApplication.BLL.Services
                 formDataHandler.UpdateSignatures(statesAndSignatures, propertiesValues);
                 formDataHandler.UpdateLastSavedFormData(statesAndSignatures);
 
-                _formRepository.UpdateSignatures(statesAndSignatures);
+                await _formRepository.UpdateSignaturesAsync(statesAndSignatures);
                 return propertiesValues;
             }
             catch (ValidationException ex)
@@ -420,24 +421,24 @@ namespace BonusSystemApplication.BLL.Services
             }
             #endregion
         }
-        public void UpdateForm(long formId,
-                               DefinitionDTO definitionDTO,
-                               ConclusionDTO conclusionDTO,
-                               List<ObjectiveResultDTO> objectiveResultDTOs)
+        public async Task UpdateFormAsync(long formId,
+                                          DefinitionDTO definitionDTO,
+                                          ConclusionDTO conclusionDTO,
+                                          List<ObjectiveResultDTO> objectiveResultDTOs)
         {
             try
             {
                 if (formId <= 0)
                     throw new ValidationException($"Unable to perform operation. Unknown form.");
 
-                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+                Form statesAndSignatures = await _formRepository.GetStatesAndSignaturesAsync(formId);
                 if (statesAndSignatures.Signatures.AreResultsSigned)
                     throw new ValidationException("Unable to perform operation. Results are already signed.");
 
                 if (statesAndSignatures.AreResultsFrozen)
                 {
                     #region Conclusion's comments could be updated
-                    _formRepository.UpdateConclusionComments(new Form
+                    await _formRepository.UpdateConclusionCommentsAsync(new Form
                     {
                         Id = formId,
                         LastSavedBy = UserData.GetUserName(),
@@ -455,7 +456,7 @@ namespace BonusSystemApplication.BLL.Services
                          statesAndSignatures.AreObjectivesFrozen)
                 {
                     #region Results & Conclusion could be updated
-                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
+                    List<ObjectiveResult> objectiveResults = await _objectiveResultRepository.GetObjectivesResultsAsync(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.HandleResultsUpdateProcess(objectiveResults, objectiveResultDTOs);
 
@@ -479,7 +480,7 @@ namespace BonusSystemApplication.BLL.Services
                         index++;
                     }
 
-                    _formRepository.UpdateResultsConclusion(form);
+                    await _formRepository.UpdateResultsConclusionAsync(form);
                     #endregion
                 }
                 else
@@ -489,7 +490,7 @@ namespace BonusSystemApplication.BLL.Services
                                                                                 _userRepository,
                                                                                 _definitionRepository,
                                                                                 _workprojectRepository);
-                    definitionHandler.HandleUpdateProcess(definitionDTO);
+                    await definitionHandler.HandleUpdateProcessAsync(definitionDTO);
 
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.HandleObjectivesUpdateProcess(objectiveResultDTOs);
@@ -497,7 +498,7 @@ namespace BonusSystemApplication.BLL.Services
                     ConclusionHandler conclusionHandler = new ConclusionHandler(conclusionDTO, objectiveResultDTOs);
                     conclusionHandler.HandleUpdateProcess();
 
-                    _formRepository.UpdateDefinitionObjectivesResultsConclusion(new Form
+                    await _formRepository.UpdateDefinitionObjectivesResultsConclusionAsync(new Form
                     {
                         Id = formId,
                         LastSavedAt = DateTime.Now,
@@ -529,9 +530,9 @@ namespace BonusSystemApplication.BLL.Services
             }
         }
 
-        public void CreateForm(DefinitionDTO definitionDTO,
-                               ConclusionDTO conclusionDTO,
-                               List<ObjectiveResultDTO> objectiveResultDTOs)
+        public async Task CreateFormAsync(DefinitionDTO definitionDTO,
+                                          ConclusionDTO conclusionDTO,
+                                          List<ObjectiveResultDTO> objectiveResultDTOs)
         {
             try
             {
@@ -540,7 +541,7 @@ namespace BonusSystemApplication.BLL.Services
                                                                             _userRepository,
                                                                             _definitionRepository,
                                                                             _workprojectRepository);
-                definitionHandler.HandleUpdateProcess(definitionDTO);
+                await definitionHandler.HandleUpdateProcessAsync(definitionDTO);
 
                 ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                 objectivesResultsHandler.HandleObjectivesUpdateProcess(objectiveResultDTOs);
@@ -548,7 +549,7 @@ namespace BonusSystemApplication.BLL.Services
                 ConclusionHandler conclusionHandler = new ConclusionHandler(conclusionDTO, objectiveResultDTOs);
                 conclusionHandler.HandleUpdateProcess();
 
-                _formRepository.CreateForm(new Form
+                await _formRepository.CreateFormAsync(new Form
                 {
                     Id = 0,
                     Signatures = new Signatures(),
@@ -584,16 +585,16 @@ namespace BonusSystemApplication.BLL.Services
         /// </summary>
         /// <param name="formId"></param>
         /// <returns>string representing an error message</returns>
-        public string PromoteForm(long formId)
+        public async Task<string> PromoteFormAsync(long formId)
         {
             try
             {
                 Promoter promoter = new Promoter(_formRepository,
                                                  _definitionRepository);
                 
-                Form newForm = promoter.GetPromotedForm(formId);
+                Form newForm = await promoter.GetPromotedFormAsync(formId);
 
-                _formRepository.CreateForm(newForm);
+                await _formRepository.CreateFormAsync(newForm);
                 return string.Empty;
             }
             catch (ValidationException ex)
@@ -620,13 +621,13 @@ namespace BonusSystemApplication.BLL.Services
         /// <param name="changeToState">frozen or unfrozen</param>
         /// <param name="objectivesOrResults">objectives or results</param>
         /// <exception cref="ValidationException"></exception>
-        public void ChangeState(long formId,
-                                string changeToState,
-                                string objectivesOrResults)
+        public async Task ChangeStateAsync(long formId,
+                                           string changeToState,
+                                           string objectivesOrResults)
         {
             try
             {
-                Form statesAndSignatures = _formRepository.GetStatesAndSignatures(formId);
+                Form statesAndSignatures = await _formRepository.GetStatesAndSignaturesAsync(formId);
 
                 #region Freezing Objectives
                 if (changeToState == "frozen" && objectivesOrResults == "objectives")
@@ -638,16 +639,16 @@ namespace BonusSystemApplication.BLL.Services
                     }
 
                     // check if Definition is ready to be frozen
-                    Definition definition = _definitionRepository.GetDefinition(formId);
+                    Definition definition = await _definitionRepository.GetDefinitionAsync(formId);
                     DefinitionHandler definitionValidator = new DefinitionHandler();
                     definitionValidator.HandleChangeStateProcess(definition);
 
                     // check if Objectives are ready to be frozen
-                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
+                    List<ObjectiveResult> objectiveResults = await _objectiveResultRepository.GetObjectivesResultsAsync(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.ValidateObjectivesChangeStateProcess(objectiveResults);
 
-                    _formRepository.UpdateStates(new Form
+                    await _formRepository.UpdateStatesAsync(new Form
                     {
                         Id = formId,
                         LastSavedAt = DateTime.Now,
@@ -674,11 +675,11 @@ namespace BonusSystemApplication.BLL.Services
                     }
 
                     // check if Results are ready to be frozen
-                    List<ObjectiveResult> objectiveResults = _objectiveResultRepository.GetObjectivesResults(formId);
+                    List<ObjectiveResult> objectiveResults = await _objectiveResultRepository.GetObjectivesResultsAsync(formId);
                     ObjectivesResultsHandler objectivesResultsHandler = new ObjectivesResultsHandler();
                     objectivesResultsHandler.ValidateResultsChangeStateProcess(objectiveResults);
 
-                    _formRepository.UpdateStates(new Form
+                    await _formRepository.UpdateStatesAsync(new Form
                     {
                         Id = formId,
                         LastSavedAt = DateTime.Now,
@@ -699,9 +700,9 @@ namespace BonusSystemApplication.BLL.Services
                     }
 
                     // drop all signatures
-                    _signaturesRepository.DropSignatures(formId);
+                    await _signaturesRepository.DropSignaturesAsync(formId);
 
-                    _formRepository.UpdateStates(new Form
+                    await _formRepository.UpdateStatesAsync(new Form
                     {
                         Id= formId,
                         LastSavedAt = DateTime.Now,
@@ -723,9 +724,9 @@ namespace BonusSystemApplication.BLL.Services
                     }
 
                     // drop signatures for Results only
-                    _signaturesRepository.DropSignaturesForResults(formId);
+                    await _signaturesRepository.DropSignaturesForResultsAsync(formId);
 
-                    _formRepository.UpdateStates(new Form
+                    await _formRepository.UpdateStatesAsync(new Form
                     {
                         Id = formId,
                         LastSavedAt = DateTime.Now,
@@ -755,11 +756,11 @@ namespace BonusSystemApplication.BLL.Services
             }
         }
 
-        public string DeleteForm(long formId)
+        public async Task<string> DeleteFormAsync(long formId)
         {
             try
             {
-                _formRepository.DeleteForm(formId);
+                await _formRepository.DeleteFormAsync(formId);
                 _logger.LogInformation($"Form with id={formId} was deleted.\n" +
                                        $"Operation was performed by user: id={UserData.GetUserId()}, name={UserData.GetUserName()}.");
                 return string.Empty;

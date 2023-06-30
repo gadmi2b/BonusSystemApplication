@@ -10,12 +10,11 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public GlobalAccessRepository(DataContext ctx) => _context = ctx;
 
-        public IEnumerable<GlobalAccess> GetGlobalAccessesByUserId(long userId)
+        public async Task<IEnumerable<GlobalAccess>> GetGlobalAccessesByUserIdAsync(long userId)
         {
-            return _context.GlobalAccess
-                .AsNoTracking()
+            return await _context.GlobalAccess.AsNoTracking()
                 .Where(x => x.UserId == userId)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

@@ -10,10 +10,9 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public WorkprojectRepository(DataContext ctx) => _context = ctx;
 
-        public Workproject GetWorkprojectData(long workprojectId)
+        public async Task<Workproject> GetWorkprojectDataAsync(long workprojectId)
         {
-            return _context.Workprojects
-                .AsNoTracking()
+            return await _context.Workprojects.AsNoTracking()
                 .Where(w => w.Id == workprojectId)
                 .Select(w => new Workproject
                 {
@@ -21,22 +20,21 @@ namespace BonusSystemApplication.DAL.Repositories
                     Name = w.Name,
                     Description = w.Description == null ? string.Empty : w.Description,
                 })
-                .First();
+                .FirstAsync();
         }
-        public List<Workproject> GetWorkprojectsNames()
+        public async Task<List<Workproject>> GetWorkprojectsNamesAsync()
         {
-            return _context.Workprojects
-                .AsNoTracking()
+            return await _context.Workprojects.AsNoTracking()
                 .Select(w => new Workproject
                 {
                     Id = w.Id,
                     Name= w.Name,
                 })
-                .ToList();
+                .ToListAsync();
         }
-        public bool IsWorkprojectExists(long workprojectId)
+        public async Task<bool> IsWorkprojectExistsAsync(long workprojectId)
         {
-            return _context.Workprojects.Any(w => w.Id == workprojectId);
+            return await _context.Workprojects.AnyAsync(w => w.Id == workprojectId);
         }
     }
 }

@@ -10,13 +10,12 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public ObjectiveResultRepository(DataContext ctx) => _context = ctx;
 
-        public List<ObjectiveResult> GetObjectivesResults(long formId)
+        public async Task<List<ObjectiveResult>> GetObjectivesResultsAsync(long formId)
         {
-            return _context.ObjectivesResults
-                    .AsNoTracking()
+            return await _context.ObjectivesResults.AsNoTracking()
                     .Where(or => or.FormId == formId)
                     .OrderBy(or => or.Row)
-                    .ToList();
+                    .ToListAsync();
         }
     }
 }

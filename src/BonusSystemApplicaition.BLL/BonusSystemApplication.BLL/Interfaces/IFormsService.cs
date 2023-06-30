@@ -5,35 +5,35 @@ namespace BonusSystemApplication.BLL.Interfaces
 {
     public interface IFormsService
     {
-        FormIndexDTO GetFormIndexDTO(UserSelectionsDTO userSelections);
-        FormDTO GetFormDTO(long formId);
-        FormDTO GetPrefilledFormDTO(long formId);
-        FormDTO GetIsFrozenStates(long formId);
-        EmployeeDTO GetEmployeeDTO(long userId);
-        SignaturesDTO GetSignaturesDTO(long formId);
-        string GetWorkprojectDescription(long workprojectId);
-        Dictionary<string, string> GetWorkprojectIdsNames();
-        Dictionary<string, string> GetUserIdsNames();
+        Task<FormIndexDTO> GetFormIndexDtoAsync(UserSelectionsDTO userSelections);
+        Task<FormDTO> GetFormDtoAsync(long formId);
+        Task<FormDTO> GetPrefilledFormDtoAsync(long formId);
+        Task<FormDTO> GetIsFrozenStatesAsync(long formId);
+        Task<EmployeeDTO> GetEmployeeDtoAsync(long userId);
+        Task<SignaturesDTO> GetSignaturesDtoAsync(long formId);
+        Task<string> GetWorkprojectDescriptionAsync(long workprojectId);
+        Task<Dictionary<string, string>> GetWorkprojectIdsNamesAsync();
+        Task<Dictionary<string, string>> GetUserIdsNamesAsync();
         List<string> GetPeriodNames();
 
-        Dictionary<string, object> UpdateAndReturnSignatures(long formId,
+        Task<Dictionary<string, object>> UpdateAndReturnSignaturesAsync(long formId,
                                                              string checkboxId,
                                                              bool isCheckboxChecked);
-        void UpdateForm(long formId,
+        Task UpdateFormAsync(long formId,
                         DefinitionDTO definition,
                         ConclusionDTO conclusion,
                         List<ObjectiveResultDTO> objectivesResultsDTO);
-        
-        void CreateForm(DefinitionDTO definition,
+
+        Task CreateFormAsync(DefinitionDTO definition,
                         ConclusionDTO conclusion,
                         List<ObjectiveResultDTO> objectivesResultsDTO);
-        
-        void ChangeState(long formId,
+
+        Task ChangeStateAsync(long formId,
                          string changeToState,
                          string objectivesOrResults);
-        
-        string DeleteForm(long formId);
 
-        string PromoteForm(long formId);
+        Task<string> DeleteFormAsync(long formId);
+
+        Task<string> PromoteFormAsync(long formId);
     }
 }

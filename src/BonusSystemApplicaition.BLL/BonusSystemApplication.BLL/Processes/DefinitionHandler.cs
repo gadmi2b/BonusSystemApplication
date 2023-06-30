@@ -31,7 +31,7 @@ namespace BonusSystemApplication.BLL.Processes
         /// <param name="definitionDTO"></param>
         /// <exception cref="ValidationException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public void HandleUpdateProcess(DefinitionDTO definitionDTO)
+        public async Task HandleUpdateProcessAsync(DefinitionDTO definitionDTO)
         {
             ArgumentNullException.ThrowIfNull(definitionDTO, nameof(definitionDTO));
             ArgumentNullException.ThrowIfNull(_userRepository, nameof(_userRepository));
@@ -46,8 +46,8 @@ namespace BonusSystemApplication.BLL.Processes
             #endregion
 
             #region Mandatory properties are permitted values
-            UserMustExist(definitionDTO.EmployeeId, "Employee", nameof(definitionDTO.EmployeeId));
-            WorkprojectMustExist(definitionDTO.WorkprojectId);
+            await UserMustExistAsync(definitionDTO.EmployeeId, "Employee", nameof(definitionDTO.EmployeeId));
+            await WorkprojectMustExistAsync(definitionDTO.WorkprojectId);
             YearMustBeLimited(definitionDTO.Year);
 
             if (!Enum.TryParse(definitionDTO.Period, out Periods period))
@@ -57,21 +57,21 @@ namespace BonusSystemApplication.BLL.Processes
             #endregion
 
             #region Mandatory property combination is unique
-            if (_definitionRepository.IsExistWithSamePropertyCombination(_formId,
-                                                                         definitionDTO.EmployeeId,
-                                                                         definitionDTO.WorkprojectId,
-                                                                         definitionDTO.Year,
-                                                                         period))
+            if (await _definitionRepository.IsExistWithSamePropertyCombinationAsync(_formId,
+                                                                                    definitionDTO.EmployeeId,
+                                                                                    definitionDTO.WorkprojectId,
+                                                                                    definitionDTO.Year,
+                                                                                    period))
                 throw new ValidationException("Unable to perform operation. " +
                                               "Another form with selected employee, workproject, period and year is already exist.");
             #endregion
 
             #region Additional properties are permitted values
             if (definitionDTO.ManagerId > 0)
-                UserMustExist(definitionDTO.ManagerId, "Manager", nameof(definitionDTO.ManagerId));
+                await UserMustExistAsync(definitionDTO.ManagerId, "Manager", nameof(definitionDTO.ManagerId));
 
             if (definitionDTO.ApproverId > 0)
-                UserMustExist(definitionDTO.ApproverId, "Approver", nameof(definitionDTO.ApproverId));
+                await UserMustExistAsync(definitionDTO.ApproverId, "Approver", nameof(definitionDTO.ApproverId));
             #endregion
         }
         /// <summary>
@@ -113,14 +113,14 @@ namespace BonusSystemApplication.BLL.Processes
                                               $"{selectedName} must be selected.",
                                               $"{propertyName}");
         }
-        private void UserMustExist(long userId, string selectedName, string propertyName)
+        private async Task UserMustExistAsync(long userId, string selectedName, string propertyName)
         {
-            if (!_userRepository.IsUserExist(userId))
+            if (!await _userRepository.IsUserExistAsync(userId))
                 throw new ValidationException($"Selected {selectedName} is not registered in the system.", $"{propertyName}");
         }
-        private void WorkprojectMustExist(long workprojectId)
+        private async Task WorkprojectMustExistAsync(long workprojectId)
         {
-            if (!_workprojectRepository.IsWorkprojectExists(workprojectId))
+            if (!await _workprojectRepository.IsWorkprojectExistsAsync(workprojectId))
                 throw new ValidationException("Selected Workproject is not registered in the system.",
                                               $"{nameof(DefinitionDTO.WorkprojectId)}");
         }

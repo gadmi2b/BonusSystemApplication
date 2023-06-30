@@ -16,11 +16,11 @@ namespace BonusSystemApplication.BLL.Processes.Promoting
             _definitionRepository = definitionRepository;
         }
 
-        public Form GetPromotedForm(long initialFormId)
+        public async Task<Form> GetPromotedFormAsync(long initialFormId)
         {
             try
             {
-                Form initialForm = _formRepository.GetFormForPromoting(initialFormId);
+                Form initialForm = await _formRepository.GetFormForPromotingAsync(initialFormId);
                 if (initialForm == null)
                     throw new ValidationException("Unable to promote form. " +
                                                   "Selected form could not be found.");
@@ -36,11 +36,11 @@ namespace BonusSystemApplication.BLL.Processes.Promoting
                                                    "It's forbidden to save form with more than \u00B11 " +  // \u00B1: +- sign
                                                    "year in the past or future.");
 
-                if (_definitionRepository.IsExistWithSamePropertyCombination(initialFormId,
-                                                                             initialForm.Definition.EmployeeId,
-                                                                             initialForm.Definition.WorkprojectId,
-                                                                             year,
-                                                                             period))
+                if (await _definitionRepository.IsExistWithSamePropertyCombinationAsync(initialFormId,
+                                                                                        initialForm.Definition.EmployeeId,
+                                                                                        initialForm.Definition.WorkprojectId,
+                                                                                        year,
+                                                                                        period))
                 {
                     throw new ValidationException($"{initialForm.Definition.Employee.LastNameEng} {initialForm.Definition.Employee.FirstNameEng} for " +
                                                   $"{initialForm.Definition.Period} {initialForm.Definition.Year}. " +

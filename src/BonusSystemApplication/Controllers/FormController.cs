@@ -26,17 +26,17 @@ namespace BonusSystemApplication.Controllers
             _formService = formService;
         }
 
-        public IActionResult Index(UserSelectionsVM userSelectionsVM)
+        public async Task<IActionResult> Index(UserSelectionsVM userSelectionsVM)
         {
             FormIndexViewModel formIndexViewModel = new FormIndexViewModel();
             try
             {
                 UserSelectionsDTO userSelectionsDTO = _mapper.Map<UserSelectionsDTO>(userSelectionsVM);
-                formIndexViewModel = _mapper.Map<FormIndexViewModel>(_formService.GetFormIndexDTO(userSelectionsDTO));
+                formIndexViewModel = _mapper.Map<FormIndexViewModel>(await _formService.GetFormIndexDtoAsync(userSelectionsDTO));
 
                 try
                 {
-                    string[] errors = (string[])TempData["errorMessages"];
+                    string[] errors = (string[])TempData["errorMessages"]!;
                     if (errors != null)
                         formIndexViewModel.ErrorMessages = errors.ToList();
                 }
@@ -68,7 +68,7 @@ namespace BonusSystemApplication.Controllers
             return View(formIndexViewModel);
         }
 
-        public IActionResult Edit(long? Id)
+        public async Task<IActionResult> Edit(long? Id)
         {
             #region Validate incoming form id
             if (Id == null || Id < 0)
@@ -107,7 +107,7 @@ namespace BonusSystemApplication.Controllers
             {
                 try
                 {
-                    formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetFormDTO(formId));
+                    formEditViewModel = _mapper.Map<FormEditViewModel>(await _formService.GetFormDtoAsync(formId));
                 }
                 catch (ValidationException ex)
                 {
@@ -128,13 +128,13 @@ namespace BonusSystemApplication.Controllers
             }
 
             SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
-            selectListsCreator.CreateSelectLists(formEditViewModel);
+            await selectListsCreator.CreateSelectListsAsync(formEditViewModel);
 
             return View(formEditViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(FormEditViewModel formEditViewModel)
+        public async Task<IActionResult> Edit(FormEditViewModel formEditViewModel)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace BonusSystemApplication.Controllers
                     return NotFound();
 
                 SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
-                selectListsCreator.CreateSelectLists(formEditViewModel);
+                await selectListsCreator.CreateSelectListsAsync(formEditViewModel);
 
                 if (!ModelState.IsValid)
                 {
@@ -162,20 +162,20 @@ namespace BonusSystemApplication.Controllers
 
                 if (formId > 0)
                 {
-                    _formService.UpdateForm(formId,
-                                            definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
+                    await _formService.UpdateFormAsync(formId,
+                                                       definitionDTO,
+                                                       conclusionDTO,
+                                                       objectiveResultDTOs);
 
-                    formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+                    formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(await _formService.GetSignaturesDtoAsync(formId));
 
                     return RedirectToAction(nameof(Edit), new { Id = formId });
                 }
                 else // formId = 0
                 {
-                    _formService.CreateForm(definitionDTO,
-                                            conclusionDTO,
-                                            objectiveResultDTOs);
+                    await _formService.CreateFormAsync(definitionDTO,
+                                                       conclusionDTO,
+                                                       objectiveResultDTOs);
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -205,7 +205,7 @@ namespace BonusSystemApplication.Controllers
         /// <param name="objectivesOrResults">objectives or results</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
+        public async Task<IActionResult> ChangeState(FormEditViewModel formEditViewModel, string? changeToState, string? objectivesOrResults)
         {
             try
             {
@@ -219,9 +219,9 @@ namespace BonusSystemApplication.Controllers
                     return NotFound();
 
                 SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
-                selectListsCreator.CreateSelectLists(formEditViewModel);
+                await selectListsCreator.CreateSelectListsAsync(formEditViewModel);
 
-                formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(_formService.GetSignaturesDTO(formId));
+                formEditViewModel.Signatures = _mapper.Map<SignaturesDTO, SignaturesVM>(await _formService.GetSignaturesDtoAsync(formId));
 
                 if (!ModelState.IsValid)
                 {
@@ -241,19 +241,19 @@ namespace BonusSystemApplication.Controllers
 
                     if (changeToState == "frozen")
                     {
-                        _formService.UpdateForm(formId,
-                                                definitionDTO,
-                                                conclusionDTO,
-                                                objectiveResultDTOs);
-                        _formService.ChangeState(formId,
-                                                 changeToState,
-                                                 objectivesOrResults);
+                        await _formService.UpdateFormAsync(formId,
+                                                           definitionDTO,
+                                                           conclusionDTO,
+                                                           objectiveResultDTOs);
+                        await _formService.ChangeStateAsync(formId,
+                                                            changeToState,
+                                                            objectivesOrResults);
                     }
                     else if (changeToState == "unfrozen")
                     {
-                        _formService.ChangeState(formId,
-                                                 changeToState,
-                                                 objectivesOrResults);
+                        await _formService.ChangeStateAsync(formId,
+                                                            changeToState,
+                                                            objectivesOrResults);
                     }
                 }
 
@@ -286,27 +286,27 @@ namespace BonusSystemApplication.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Form/New")]
-        public IActionResult OpenPrefilled(List<long> ids)
+        public async Task<IActionResult> OpenPrefilled(List<long> ids)
         {
             FormIdsValidator validator = new FormIdsValidator();
             validator.ValidateFormIds(ids);
 
             if (ids.Count() == 0)
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
 
             try
             {
                 // only first selected formId will be operated
-                FormEditViewModel formEditViewModel = _mapper.Map<FormEditViewModel>(_formService.GetPrefilledFormDTO(ids[0]));
+                FormEditViewModel formEditViewModel = _mapper.Map<FormEditViewModel>(await _formService.GetPrefilledFormDtoAsync(ids[0]));
 
                 SelectListsCreator selectListsCreator = new SelectListsCreator(_formService);
-                selectListsCreator.CreateSelectLists(formEditViewModel);
+                await selectListsCreator.CreateSelectListsAsync(formEditViewModel);
 
                 return View(nameof(Edit), formEditViewModel);
             }
             catch (ValidationException ex)
             {
-                TempData["errorMessages"] = ex.Message.ToList();
+                TempData["errorMessages"] = new List<string> { ex.Message };
                 return RedirectToAction(nameof(Index));
             }
             catch (AutoMapperMappingException ex)
@@ -315,9 +315,12 @@ namespace BonusSystemApplication.Controllers
                                  $"StackTrace: {ex.StackTrace}.\n" +
                                  $"TargetSite = {ex.TargetSite}.\n");
 
-                TempData["errorMessages"] = "Unable to prepare selected form for editing. " +
-                                            "Try again, and if the problem persists, " +
-                                            "see your system administrator.".ToList();
+                TempData["errorMessages"] = new List<string>
+                {
+                    "Unable to prepare selected form for editing. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator."
+                };
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -329,27 +332,35 @@ namespace BonusSystemApplication.Controllers
         /// <param name="ids">selected form ids</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Promote(List<long> ids)
+        public async Task<IActionResult> Promote(List<long> ids)
         {
-            FormIdsValidator validator = new FormIdsValidator();
-            validator.ValidateFormIds(ids);
-
-            if (ids.Count() == 0)
-            return RedirectToAction("Index");
-
-            List<string> errorMessages = new List<string>();
-            foreach (long formId in ids)
+            try
             {
-                string errorMessage = _formService.PromoteForm(formId);
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    errorMessages.Add(errorMessage);
-                    errorMessage = string.Empty;
-                }
-            }
+                FormIdsValidator validator = new FormIdsValidator();
+                validator.ValidateFormIds(ids);
 
-            TempData["errorMessages"] = errorMessages;
-            return RedirectToAction("Index");
+                if (ids.Count() == 0)
+                    return RedirectToAction(nameof(Index));
+
+                List<string> errorMessages = new List<string>();
+                foreach (long formId in ids)
+                {
+                    string errorMessage = await _formService.PromoteFormAsync(formId);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        errorMessages.Add(errorMessage);
+                        errorMessage = string.Empty;
+                    }
+                }
+
+                TempData["errorMessages"] = errorMessages;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                TempData["errorMessages"] = new List<string> { ex.Message };
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         /// <summary>
@@ -358,36 +369,37 @@ namespace BonusSystemApplication.Controllers
         /// <param name="ids">selected form ids</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Delete(List<long> ids)
+        public async Task<IActionResult> Delete(List<long> ids)
         {
             // !!! IMPORTANT !!!
             // is in progress: only for demostaiting of functionality
             // in according to Business rules using of this method should be restricted
             // only Head of HR should be able to see corresponding button and launch the process
 
-          FormIdsValidator validator = new FormIdsValidator();
-          validator.ValidateFormIds(ids);
+            FormIdsValidator validator = new FormIdsValidator();
+            validator.ValidateFormIds(ids);
 
-          if (ids.Count() == 0)
+            if (ids.Count() == 0)
             return RedirectToAction("Index");
 
-          try
+            try
             {
                 List<string> errorMessages = new List<string>();
                 foreach (long formId in ids)
                 {
-                    string message = _formService.DeleteForm(formId);
+                    string message = await _formService.DeleteFormAsync(formId);
                     if (!string.IsNullOrEmpty(message))
                     {
                         errorMessages.Add(message);
                         message = string.Empty;
                     }
+                    TempData["errorMessages"] = errorMessages;
                 }
                 return RedirectToAction(nameof(Index));
             }
             catch (ValidationException ex)
             {
-                TempData["errorMessages"] = ex.Message.ToList();
+                TempData["errorMessages"] = new List<string> { ex.Message };
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -398,7 +410,7 @@ namespace BonusSystemApplication.Controllers
         /// </summary>
         /// <param name="workprojectId">selected workproject id</param>
         /// <returns>status, message and workprojectDescription</returns>
-        public JsonResult GetWorkprojectDescription(long workprojectId)
+        public async Task<JsonResult> GetWorkprojectDescription(long workprojectId)
         {
             #region check requested id
             if(workprojectId <= 0)
@@ -410,14 +422,13 @@ namespace BonusSystemApplication.Controllers
                 });
             }
             #endregion
-
             try
             {
                 return new JsonResult(new
                 {
                     status = "success",
                     message = "Operation was complited successfully",
-                    workprojectDescription = _formService.GetWorkprojectDescription(workprojectId),
+                    workprojectDescription = await _formService.GetWorkprojectDescriptionAsync(workprojectId),
                 });
             }
             catch (ValidationException ex)
@@ -436,7 +447,7 @@ namespace BonusSystemApplication.Controllers
         /// </summary>
         /// <param name="employeeId">selected employee id</param>
         /// <returns>status, message, teamName, positionName and pid of employee</returns>
-        public JsonResult GetEmployeeData(long employeeId)
+        public async Task<JsonResult> GetEmployeeData(long employeeId)
         {
             #region check requested id
             if (employeeId <= 0)
@@ -450,7 +461,7 @@ namespace BonusSystemApplication.Controllers
             #endregion
             try
             {
-                EmployeeDTO employeeDTO = _formService.GetEmployeeDTO(employeeId);
+                EmployeeDTO employeeDTO = await _formService.GetEmployeeDtoAsync(employeeId);
 
                 return new JsonResult(new
                 {
@@ -479,7 +490,7 @@ namespace BonusSystemApplication.Controllers
         /// <param name="checkboxId">id of checked checkbox</param>
         /// <param name="isCheckboxChecked">checkbox current status</param>
         /// <returns></returns>
-        public JsonResult SignatureProcess(long formId, string checkboxId, bool isCheckboxChecked)
+        public async Task<JsonResult> SignatureProcess(long formId, string checkboxId, bool isCheckboxChecked)
         {
             if (formId <= 0 || !UserData.AvailableFormIds.Contains(formId))
             {
@@ -492,9 +503,9 @@ namespace BonusSystemApplication.Controllers
 
             try
             {
-                Dictionary<string, object> propertiesValues = _formService.UpdateAndReturnSignatures(formId,
-                                                                                                     checkboxId,
-                                                                                                     isCheckboxChecked);
+                Dictionary<string, object> propertiesValues = await _formService.UpdateAndReturnSignaturesAsync(formId,
+                                                                                                                checkboxId,
+                                                                                                                isCheckboxChecked);
                 return new JsonResult(new
                 {
                     status = "success",

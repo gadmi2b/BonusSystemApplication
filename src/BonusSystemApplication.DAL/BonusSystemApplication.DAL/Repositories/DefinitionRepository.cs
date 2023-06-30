@@ -11,21 +11,20 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public DefinitionRepository(DataContext ctx) => _context = ctx;
 
-        public Definition GetDefinition(long formId)
+        public async Task<Definition> GetDefinitionAsync(long formId)
         {
-            return _context.Definitions
-                    .AsNoTracking()
+            return await _context.Definitions.AsNoTracking()
                     .Where(d => d.FormId == formId)
-                    .First();
+                    .FirstAsync();
         }
-        public List<long> GetFormIdsWhereParticipation(long userId)
+        public async Task<List<long>> GetFormIdsWhereParticipationAsync(long userId)
         {
-            return _context.Definitions
-                .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
-                .Select(d => d.FormId)
-                .ToList();
+            return await _context.Definitions.AsNoTracking()
+                    .Where(d => d.EmployeeId == userId || d.ManagerId == userId || d.ApproverId == userId)
+                    .Select(d => d.FormId)
+                    .ToListAsync();
         }
-        public List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses)
+        public async Task<List<long>> GetFormIdsWhereGlobalAccessAsync(IEnumerable<GlobalAccess> globalAccesses)
         {
             IQueryable<Definition> queryInitial = _context.Definitions.AsQueryable()
                 .Include(d => d.Employee)
@@ -61,9 +60,9 @@ namespace BonusSystemApplication.DAL.Repositories
                 return new List<long>();
             }
 
-            return queryFiltered
+            return await queryFiltered
                 .Select(d => d.FormId)
-                .ToList();
+                .ToListAsync();
         }
 
         /// <summary>
@@ -76,19 +75,19 @@ namespace BonusSystemApplication.DAL.Repositories
         /// <param name="year"></param>
         /// <param name="period"></param>
         /// <returns></returns>
-        public bool IsExistWithSamePropertyCombination(long formId,
-                                                       long employeeId,
-                                                       long workprojectId,
-                                                       int year,
-                                                       Periods period)
+        public async Task<bool> IsExistWithSamePropertyCombinationAsync(long formId,
+                                                                        long employeeId,
+                                                                        long workprojectId,
+                                                                        int year,
+                                                                        Periods period)
         {
-            long originalFormId = _context.Definitions
+            long originalFormId = await _context.Definitions
                         .Where(d => d.EmployeeId == employeeId &&
                                     d.WorkprojectId == workprojectId &&
                                     d.Period == period &&
                                     d.Year == year)
                         .Select(d => d.FormId)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
 
             if (originalFormId == 0 ||
                 originalFormId == formId)

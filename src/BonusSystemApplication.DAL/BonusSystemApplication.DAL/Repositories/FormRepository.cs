@@ -10,10 +10,9 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public FormRepository(DataContext ctx) => _context = ctx;
 
-        public Form GetForm(long formId)
+        public async Task<Form> GetFormAsync(long formId)
         {
-            return _context.Forms
-                    .AsNoTracking()
+            return await _context.Forms.AsNoTracking()
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -69,23 +68,21 @@ namespace BonusSystemApplication.DAL.Repositories
                         // Signatures data block
                         Signatures = f.Signatures,
                     })
-                    .First();
+                    .FirstAsync();
         }
-        public Form GetFormForPromoting(long formId)
+        public async Task<Form> GetFormForPromotingAsync(long formId)
         {
-            return _context.Forms
-                    .AsNoTracking()
+            return await _context.Forms.AsNoTracking()
                     .Where(f => f.Id == formId)
                     .Include(f => f.Definition)
                         .ThenInclude(d => d.Employee)
                     .Include(f => f.ObjectivesResults)
                     .Include(f => f.LocalAccesses)
-                    .First();
+                    .FirstAsync();
         }
-        public List<Form> GetForms(List<long> formIds)
+        public async Task<List<Form>> GetFormsAsync(List<long> formIds)
         {
-            return _context.Forms
-                    .AsNoTracking()
+            return await _context.Forms.AsNoTracking()
                     .Where(f => formIds.Contains(f.Id))
                     .Select(f => new Form
                     {
@@ -119,12 +116,11 @@ namespace BonusSystemApplication.DAL.Repositories
                             },
                         }
                     })
-                    .ToList();
+                    .ToListAsync();
         }
-        public Form GetStates(long formId)
+        public async Task<Form> GetStatesAsync(long formId)
         {
-            return _context.Forms
-                    .AsNoTracking()
+            return await _context.Forms.AsNoTracking()
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -132,12 +128,11 @@ namespace BonusSystemApplication.DAL.Repositories
                         AreObjectivesFrozen = f.AreObjectivesFrozen,
                         AreResultsFrozen = f.AreResultsFrozen,
                     })
-                    .First();
+                    .FirstAsync();
         }
-        public Form GetStatesAndSignatures(long formId)
+        public async Task<Form> GetStatesAndSignaturesAsync(long formId)
         {
-            Form form = _context.Forms
-                    .AsNoTracking()
+            Form form = await _context.Forms.AsNoTracking()
                     .Where(f => f.Id == formId)
                     .Select(f => new Form
                     {
@@ -146,26 +141,26 @@ namespace BonusSystemApplication.DAL.Repositories
                         AreResultsFrozen = f.AreResultsFrozen,
                         Signatures = f.Signatures,
                     })
-                    .First();
+                    .FirstAsync();
             return form;
         }
-        public List<long> GetFormIdsWhereLocalAccess(long userId)
+        public async Task<List<long>> GetFormIdsWhereLocalAccessAsync(long userId)
         {
-            return _context.Forms
+            return await _context.Forms.AsNoTracking()
                     .Where(f => f.LocalAccesses.Any(la => la.UserId == userId))
                     .Select(f => f.Id)
-                    .ToList();
+                    .ToListAsync();
         }
 
-        public void CreateForm(Form newForm)
+        public async Task CreateFormAsync(Form newForm)
         {
-            _context.Forms.Add(newForm);
-            _context.SaveChanges();
+            await _context.Forms.AddAsync(newForm);
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdateStates(Form changedForm)
+        public async Task UpdateStatesAsync(Form changedForm)
         {
-            Form? originalForm = _context.Forms.Find(changedForm.Id);
+            Form? originalForm = await _context.Forms.FindAsync(changedForm.Id);
 
             ArgumentNullException.ThrowIfNull(originalForm, nameof(originalForm));
 
@@ -174,14 +169,14 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm!.LastSavedAt = changedForm.LastSavedAt;
             originalForm!.LastSavedBy = changedForm.LastSavedBy;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void UpdateSignatures(Form changedForm)
+        public async Task UpdateSignaturesAsync(Form changedForm)
         {
-            Form? originalForm = _context.Forms
+            Form? originalForm = await _context.Forms
                         .Include(f => f.Signatures)
                         .Where(f => f.Id == changedForm.Id)
-                        .First();
+                        .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(originalForm, nameof(originalForm));
 
@@ -189,14 +184,14 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm.LastSavedAt = changedForm.LastSavedAt;
             originalForm.Signatures = changedForm.Signatures;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void UpdateConclusionComments(Form changedForm)
+        public async Task UpdateConclusionCommentsAsync(Form changedForm)
         {
-            Form? originalForm = _context.Forms
+            Form? originalForm = await _context.Forms
                         .Include(f => f.Conclusion)
                         .Where(f => f.Id == changedForm.Id)
-                        .First();
+                        .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(originalForm, nameof(originalForm));
 
@@ -206,15 +201,15 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm.Conclusion.EmployeeComment = changedForm.Conclusion.EmployeeComment;
             originalForm.Conclusion.OtherComment = changedForm.Conclusion.OtherComment;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void UpdateResultsConclusion(Form changedForm)
+        public async Task UpdateResultsConclusionAsync(Form changedForm)
         {
-            Form? originalForm = _context.Forms
+            Form? originalForm = await _context.Forms
                         .Include(f => f.Conclusion)
                         .Include(f => f.ObjectivesResults)
                         .Where(f => f.Id == changedForm.Id)
-                        .First();
+                        .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(originalForm, nameof(originalForm));
 
@@ -226,16 +221,16 @@ namespace BonusSystemApplication.DAL.Repositories
                 originalForm.ObjectivesResults[index].Result = changedForm.ObjectivesResults[index].Result;
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void UpdateDefinitionObjectivesResultsConclusion(Form changedForm)
+        public async Task UpdateDefinitionObjectivesResultsConclusionAsync(Form changedForm)
         {
-            Form? originalForm = _context.Forms
+            Form? originalForm = await _context.Forms
                         .Include(f => f.Definition)
                         .Include(f => f.Conclusion)
                         .Include(f => f.ObjectivesResults)
                         .Where(f => f.Id == changedForm.Id)
-                        .First();
+                        .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(originalForm, nameof(originalForm));
 
@@ -253,17 +248,17 @@ namespace BonusSystemApplication.DAL.Repositories
             originalForm.Conclusion = changedForm.Conclusion;
             originalForm.ObjectivesResults = changedForm.ObjectivesResults;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteForm(long formId)
+        public async Task DeleteFormAsync(long formId)
         {
-            Form? form = _context.Forms
-                        .First(f => f.Id == formId);
+            Form? form = await _context.Forms
+                        .FirstAsync(f => f.Id == formId);
             if (form != null)
             {
                 _context.Forms.Remove(form);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

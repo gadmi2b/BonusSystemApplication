@@ -13,33 +13,33 @@ namespace BonusSystemApplication.Handlers
             _formService = formService;
         }
 
-        public void CreateSelectLists(FormEditViewModel formEditViewModel)
+        public async Task CreateSelectListsAsync(FormEditViewModel formEditViewModel)
         {
-            formEditViewModel.WorkprojectsSelectList = GetWorkprojectsSelectList(formEditViewModel.AreObjectivesFrozen,
-                                                                                 formEditViewModel.Definition.WorkprojectId);
-            formEditViewModel.EmployeesSelectList = GetEmployeesSelectList(formEditViewModel.AreObjectivesFrozen,
-                                                                           formEditViewModel.Definition.EmployeeId);
-            formEditViewModel.ManagersSelectList = GetManagersSelectList(formEditViewModel.AreObjectivesFrozen,
-                                                                         formEditViewModel.Definition.ManagerId);
-            formEditViewModel.ApproversSelectList = GetApproversSelectList(formEditViewModel.AreObjectivesFrozen,
-                                                                           formEditViewModel.Definition.ApproverId);
+            formEditViewModel.WorkprojectsSelectList = await GetWorkprojectsSelectListAsync(formEditViewModel.AreObjectivesFrozen,
+                                                                                            formEditViewModel.Definition.WorkprojectId);
+            formEditViewModel.EmployeesSelectList = await GetEmployeesSelectListAsync(formEditViewModel.AreObjectivesFrozen,
+                                                                                      formEditViewModel.Definition.EmployeeId);
+            formEditViewModel.ManagersSelectList = await GetManagersSelectListAsync(formEditViewModel.AreObjectivesFrozen,
+                                                                                    formEditViewModel.Definition.ManagerId);
+            formEditViewModel.ApproversSelectList = await GetApproversSelectListAsync(formEditViewModel.AreObjectivesFrozen,
+                                                                                      formEditViewModel.Definition.ApproverId);
             formEditViewModel.PeriodsSelectList = GetPeriodsSelectList(formEditViewModel.AreObjectivesFrozen,
                                                                        formEditViewModel.Definition.Period);
         }
 
 
-        private List<SelectListItem> GetWorkprojectsSelectList(bool isDisabled, long? selectedId)
+        private async Task<List<SelectListItem>> GetWorkprojectsSelectListAsync(bool isDisabled, long? selectedId)
         {
             ArgumentNullException.ThrowIfNull(_formService, nameof(_formService));
 
-            List<SelectListItem> items = _formService.GetWorkprojectIdsNames()
-                            .Select(d => new SelectListItem
-                            {
-                                Value = d.Key,
-                                Text = d.Value,
-                                Disabled = isDisabled,
-                            })
-                            .ToList();
+            var rawItems = await _formService.GetWorkprojectIdsNamesAsync();
+            var items = rawItems.Select(d => new SelectListItem
+                                {
+                                    Value = d.Key,
+                                    Text = d.Value,
+                                    Disabled = isDisabled,
+                                })
+                                .ToList();
             if (selectedId == null || !isDisabled)
                 return items;
 
@@ -47,18 +47,18 @@ namespace BonusSystemApplication.Handlers
             return items;
         }
 
-        private List<SelectListItem> GetEmployeesSelectList(bool isDisabled, long? selectedId)
+        private async Task<List<SelectListItem>> GetEmployeesSelectListAsync(bool isDisabled, long? selectedId)
         {
             ArgumentNullException.ThrowIfNull(_formService, nameof(_formService));
 
-            List<SelectListItem> items = _formService.GetUserIdsNames()
-                            .Select(d => new SelectListItem
-                            {
-                                Value = d.Key,
-                                Text = d.Value,
-                                Disabled = isDisabled,
-                            })
-                            .ToList();
+            var rawItems = await _formService.GetUserIdsNamesAsync();
+            var items = rawItems.Select(d => new SelectListItem
+                                {
+                                    Value = d.Key,
+                                    Text = d.Value,
+                                    Disabled = isDisabled,
+                                })
+                                .ToList();
             if (selectedId == null || !isDisabled)
                 return items;
 
@@ -66,18 +66,18 @@ namespace BonusSystemApplication.Handlers
             return items;
         }
 
-        private List<SelectListItem> GetManagersSelectList(bool isDisabled, long? selectedId)
+        private async Task<List<SelectListItem>> GetManagersSelectListAsync(bool isDisabled, long? selectedId)
         {
             ArgumentNullException.ThrowIfNull(_formService, nameof(_formService));
 
-            List<SelectListItem> items = _formService.GetUserIdsNames()
-                            .Select(d => new SelectListItem
-                            {
-                                Value = d.Key,
-                                Text = d.Value,
-                                Disabled = isDisabled,
-                            })
-                            .ToList();
+            var rawItems = await _formService.GetUserIdsNamesAsync();
+            var items = rawItems.Select(d => new SelectListItem
+                                {
+                                    Value = d.Key,
+                                    Text = d.Value,
+                                    Disabled = isDisabled,
+                                })
+                                .ToList();
             if (selectedId == null || !isDisabled)
                 return items;
 
@@ -85,18 +85,18 @@ namespace BonusSystemApplication.Handlers
             return items;
         }
 
-        private List<SelectListItem> GetApproversSelectList(bool isDisabled, long? selectedId)
+        private async Task<List<SelectListItem>> GetApproversSelectListAsync(bool isDisabled, long? selectedId)
         {
             ArgumentNullException.ThrowIfNull(_formService, nameof(_formService));
 
-            List<SelectListItem> items = _formService.GetUserIdsNames()
-                            .Select(d => new SelectListItem
-                            {
-                                Value = d.Key,
-                                Text = d.Value,
-                                Disabled = isDisabled,
-                            })
-                            .ToList();
+            var rawItems = await _formService.GetUserIdsNamesAsync();
+            var items = rawItems.Select(d => new SelectListItem
+                                {
+                                    Value = d.Key,
+                                    Text = d.Value,
+                                    Disabled = isDisabled,
+                                })
+                                .ToList();
             if (selectedId == null || !isDisabled)
                 return items;
 

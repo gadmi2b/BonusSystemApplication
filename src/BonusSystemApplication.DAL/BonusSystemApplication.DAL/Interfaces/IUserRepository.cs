@@ -4,8 +4,8 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IUserRepository
     {
-        User GetUserData(long userId);
-        List<User> GetUsersNames();
-        bool IsUserExist(long userId);
+        Task<User> GetUserDataAsync(long userId);
+        Task<List<User>> GetUsersNamesAsync();
+        Task<bool> IsUserExistAsync(long userId);
     }
 }

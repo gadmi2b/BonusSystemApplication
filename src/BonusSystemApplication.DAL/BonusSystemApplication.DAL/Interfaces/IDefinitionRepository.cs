@@ -4,14 +4,14 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IDefinitionRepository
     {
-        List<long> GetFormIdsWhereParticipation(long userId);
-        List<long> GetFormIdsWhereGlobalAccess(IEnumerable<GlobalAccess> globalAccesses);
+        Task<List<long>> GetFormIdsWhereParticipationAsync(long userId);
+        Task<List<long>> GetFormIdsWhereGlobalAccessAsync(IEnumerable<GlobalAccess> globalAccesses);
+        Task<Definition> GetDefinitionAsync(long formId);
 
-        Definition GetDefinition(long formId);
-        bool IsExistWithSamePropertyCombination(long formId,
-                                                long employeeId,
-                                                long workprojectId,
-                                                int year,
-                                                Periods period);
+        Task<bool> IsExistWithSamePropertyCombinationAsync(long formId,
+                                                           long employeeId,
+                                                           long workprojectId,
+                                                           int year,
+                                                           Periods period);
     }
 }

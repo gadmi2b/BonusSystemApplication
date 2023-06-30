@@ -4,22 +4,22 @@ namespace BonusSystemApplication.DAL.Interfaces
 {
     public interface IFormRepository
     {
-        Form GetForm(long formId);
-        Form GetFormForPromoting(long formId);
-        List<Form> GetForms(List<long> formIds);
-        Form GetStates(long formId);
-        Form GetStatesAndSignatures(long formId);
-        List<long> GetFormIdsWhereLocalAccess(long userId);
+        Task<Form> GetFormAsync(long formId);
+        Task<Form> GetFormForPromotingAsync(long formId);
+        Task<List<Form>> GetFormsAsync(List<long> formIds);
+        Task<Form> GetStatesAsync(long formId);
+        Task<Form> GetStatesAndSignaturesAsync(long formId);
+        Task<List<long>> GetFormIdsWhereLocalAccessAsync(long userId);
 
-        void CreateForm(Form form);
+        Task CreateFormAsync(Form form);
 
-        void UpdateStates(Form form);
-        void UpdateSignatures(Form form);
-        void UpdateResultsConclusion(Form form);
-        void UpdateConclusionComments(Form form);
-        void UpdateDefinitionObjectivesResultsConclusion(Form form);
+        Task UpdateStatesAsync(Form form);
+        Task UpdateSignaturesAsync(Form form);
+        Task UpdateResultsConclusionAsync(Form form);
+        Task UpdateConclusionCommentsAsync(Form form);
+        Task UpdateDefinitionObjectivesResultsConclusionAsync(Form form);
 
-        void DeleteForm(long formId);
+        Task DeleteFormAsync(long formId);
 
     }
 }

@@ -10,10 +10,9 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public UserRepository(DataContext ctx) => _context = ctx;
 
-        public User GetUserData(long userId)
+        public async Task<User> GetUserDataAsync(long userId)
         {
-            return _context.Users
-                .AsNoTracking()
+            return await _context.Users.AsNoTracking()
                 .Where(u => u.Id == userId)
                 .Select(u => new User
                 {
@@ -30,23 +29,22 @@ namespace BonusSystemApplication.DAL.Repositories
                         Name = u.Team == null ? string.Empty : u.Team.Name,
                     },
                 })
-                .First();
+                .FirstAsync();
         }
-        public List<User> GetUsersNames()
+        public async Task<List<User>> GetUsersNamesAsync()
         {
-            return _context.Users
-                .AsNoTracking()
+            return await _context.Users.AsNoTracking()
                 .Select(u => new User
                 {
                     Id = u.Id,
                     FirstNameEng = u.FirstNameEng,
                     LastNameEng = u.LastNameEng,
                 })
-                .ToList();
+                .ToListAsync();
         }
-        public bool IsUserExist(long userId)
+        public async Task<bool> IsUserExistAsync(long userId)
         {
-            return _context.Users.Any(u => u.Id == userId);
+            return await _context.Users.AnyAsync(u => u.Id == userId);
         }
     }
 }

@@ -27,19 +27,24 @@ namespace BonusSystemApplication.Mapper
 			// Business Logic Layer -> Presentation Layer
 			CreateMap<TableRowDTO, TableRowVM> ();
 			CreateMap<DropdownListsDTO, DropdownListsVM> ();
-			CreateMap<DropdownItemDTO, SelectListItem> ();
+			CreateMap<DropdownItemDTO, SelectListItem>()
+				.ForMember(dest => dest.Group, opt => opt.Ignore());
 
 			CreateMap<FormIndexDTO, FormIndexViewModel>()
 				.ForMember(dest => dest.DropdownLists, opt => opt.MapFrom(src => src.DropdownLists))
-				.ForMember(dest => dest.TableRows, opt => opt.MapFrom(src => src.TableRows));
+				.ForMember(dest => dest.TableRows, opt => opt.MapFrom(src => src.TableRows))
+                .ForMember(dest => dest.ErrorMessages, opt => opt.Ignore());
 
-			CreateMap<FormDTO, FormEditViewModel>()
+
+            CreateMap<FormDTO, FormEditViewModel>()
 				.ForMember(dest => dest.PeriodsSelectList, opt => opt.Ignore())
 				.ForMember(dest => dest.EmployeesSelectList, opt => opt.Ignore())
-				.ForMember(dest => dest.WorkprojectsSelectList, opt => opt.Ignore());
+				.ForMember(dest => dest.WorkprojectsSelectList, opt => opt.Ignore())
+                .ForMember(dest => dest.ManagersSelectList, opt => opt.Ignore())
+				.ForMember(dest => dest.ApproversSelectList, opt => opt.Ignore());
 
-			// Business Logic Layer -> Data Access Layer
-			CreateMap<DefinitionDTO, Definition>()
+            // Business Logic Layer -> Data Access Layer
+            CreateMap<DefinitionDTO, Definition>()
 				.ForMember(dest => dest.Form, opt => opt.Ignore())
 				.ForMember(dest => dest.FormId, opt => opt.Ignore())
 				.ForMember(dest => dest.Manager, opt => opt.Ignore())

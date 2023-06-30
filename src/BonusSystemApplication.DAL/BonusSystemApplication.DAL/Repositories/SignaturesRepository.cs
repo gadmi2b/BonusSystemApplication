@@ -10,19 +10,18 @@ namespace BonusSystemApplication.DAL.Repositories
         private DataContext _context;
         public SignaturesRepository(DataContext ctx) => _context = ctx;
 
-        public Signatures GetSignatures(long formId)
+        public async Task<Signatures> GetSignaturesAsync(long formId)
         {
-            return _context.Signatures
-                .AsNoTracking()
+            return await _context.Signatures.AsNoTracking()
                 .Where(s => s.FormId == formId)
-                .First();
+                .FirstAsync();
         }
 
-        public void DropSignatures(long formId)
+        public async Task DropSignaturesAsync(long formId)
         {
-            Signatures signatures = _context.Signatures
+            Signatures? signatures = await _context.Signatures
                 .Where(s => s.FormId == formId)
-                .First();
+                .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(signatures, nameof(signatures));
 
@@ -42,13 +41,13 @@ namespace BonusSystemApplication.DAL.Repositories
             signatures.ForResultsIsSignedByApprover = false;
             signatures.ForResultsApproverSignature = string.Empty;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void DropSignaturesForResults(long formId)
+        public async Task DropSignaturesForResultsAsync(long formId)
         {
-            Signatures signatures = _context.Signatures
+            Signatures? signatures = await _context.Signatures
                 .Where(s => s.FormId == formId)
-                .First();
+                .FirstAsync();
 
             ArgumentNullException.ThrowIfNull(signatures, nameof(signatures));
 
@@ -60,7 +59,7 @@ namespace BonusSystemApplication.DAL.Repositories
             signatures.ForResultsIsSignedByApprover = false;
             signatures.ForResultsApproverSignature = string.Empty;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
