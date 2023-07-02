@@ -20,7 +20,6 @@
 /* 
  * https://habr.com/ru/post/247373/
  * A tables in SQL are non sorted values located in a heap: that's why indexes (a way to fast data search):
- *  - §ª§ß§Õ§Ö§Ü§ã §ã§à§ã§ä§à§Ú§ä §Ú§Ù §ß§Ñ§Ò§à§â§Ñ §ã§ä§â§Ñ§ß§Ú§è - §å§Ù§Ý§à§Ó §Ú§ß§Õ§Ö§Ü§ã§Ñ, §Ü§à§ä§à§â§í§Ö §à§â§Ô§Ñ§ß§Ú§Ù§à§Ó§Ñ§ß§í §Ó §Ó§Ú§Õ§Ö §Õ§â§Ö§Ó§à§Ó§Ú§Õ§ß§à§Û §ã§ä§â§å§Ü§ä§å§â§í ¡ª §ã§Ò§Ñ§Ý§Ñ§ß§ã§Ú§â§à§Ó§Ñ§ß§ß§à§Ô§à §Õ§Ö§â§Ö§Ó§Ñ.
  *  
  * Primary key -  automatically unique clastered index [ballanced-tree leafs contain row data]
  * Unique constraint - automat. unique non-clastered index [ballanced-tree leafs contain pointers to row data in heap]

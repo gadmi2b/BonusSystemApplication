@@ -5,7 +5,10 @@ namespace BonusSystemApplication.DAL.EF
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
+        public DataContext(DbContextOptions<DataContext> opts) : base(opts)
+        {
+            Database.EnsureCreated();
+        }
         public DbSet<Form> Forms { get; set; }
         public DbSet<Definition> Definitions { get; set; }
         public DbSet<ObjectiveResult> ObjectivesResults { get; set; }

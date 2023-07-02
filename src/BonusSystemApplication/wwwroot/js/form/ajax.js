@@ -1,10 +1,4 @@
-﻿  // --- to send an object ---
-  //let data = {
-  //  selectedId: element.value,
-  //}
-  //let requestData = JSON.stringify(data);
-
-function requestWorkprojectDescription(element) {
+﻿function requestWorkprojectDescription(element) {
   $.ajax({
     type: "Get",
     url: '/Form/GetWorkprojectDescription',
